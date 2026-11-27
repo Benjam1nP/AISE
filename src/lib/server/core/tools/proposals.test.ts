@@ -86,6 +86,33 @@ describe('report_design_proposals', () => {
 		expect(await ctx.store.exists(PROPOSALS_PATH)).toBe(false);
 	});
 
+	it('refuses a missing class or method on the browser, and allows other kinds to name it', async () => {
+		const withBrowser: DesignDoc = {
+			...design,
+			nodes: [...design.nodes, { id: 'DSN-020', name: 'Browser', kind: 'client', reqIds: [] }],
+			components: [
+				...design.components,
+				{ id: 'DSN-021', name: 'Browser page', classIds: [], nodeId: 'DSN-020', reqIds: [] }
+			]
+		};
+		await ctx.store.writeFile('.aise/design.json', JSON.stringify(withBrowser));
+		const r = await report([
+			item({ kind: 'missing_class', elementIds: ['DSN-021'] }),
+			item({ elementIds: ['DSN-001', 'DSN-020'] }),
+			item({ kind: 'uncovered_criterion', elementIds: ['DSN-021'] })
+		]);
+		expect(r.isError).toBe(true);
+		expect(r.content).toContain(
+			'proposals[0]: a missing_class proposal cannot touch the browser (DSN-021), which holds no classes'
+		);
+		expect(r.content).toContain(
+			'proposals[1]: a missing_method proposal cannot touch the browser (DSN-020)'
+		);
+		expect(r.content).not.toContain('proposals[2]');
+		const ok = await report([item({ kind: 'uncovered_criterion', elementIds: ['DSN-021'] })]);
+		expect(ok.isError).toBe(false);
+	});
+
 	it('replaces open proposals, keeps resolved ones and never reuses a number', async () => {
 		const before: DesignProposals = {
 			designHash: 'old',

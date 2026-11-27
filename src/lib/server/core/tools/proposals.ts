@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { clientComponents, clientNodeIds } from '../client';
 import { designHash } from '../code-state';
 import { ID_PATTERNS, nextId } from '../ids';
 import { DesignDoc } from '../schemas/design';
@@ -97,7 +98,14 @@ function proposalProblems(
 		].flatMap((list) => list.map((e) => e.id))
 	);
 	const reqIds = new Set(reqs?.requirements.map((r) => r.id));
+	// the browser holds no classes, so the design save would refuse a class or method there
+	const client = new Set([...clientNodeIds(design), ...clientComponents(design).map((c) => c.id)]);
 	proposals.forEach((p, i) => {
+		const onClient = p.elementIds.filter((id) => client.has(id));
+		if ((p.kind === 'missing_class' || p.kind === 'missing_method') && onClient.length > 0)
+			problems.push(
+				`proposals[${i}]: a ${p.kind} proposal cannot touch the browser (${onClient.join(', ')}), which holds no classes; put the class or method on a service node and name its component or class instead`
+			);
 		for (const id of p.elementIds)
 			if (!elements.has(id))
 				problems.push(`proposals[${i}].elementIds: unknown design element "${id}"`);

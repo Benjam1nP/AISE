@@ -24,6 +24,7 @@ import { runAgent } from '../agents/loop';
 import type { AgentDef, AgentEvent, RunResult } from '../agents/types';
 import { generateCode, type FileStatus, type GenerateEvent } from '../codegen/generate';
 import { appendChat, deleteChat, readChat, type ChatEntry, type ChatKey } from '../core/chat';
+import { clientComponents } from '../core/client';
 import {
 	codeHash,
 	designHash,
@@ -1918,7 +1919,8 @@ export class Orchestrator {
 		]);
 		const current = reqs && coverage && coverage.designHash === designHash(design);
 		const uncovered = current ? uncoveredCriteria(coverage.rows, reqs) : null;
-		const agent = { def: this.agents.review, brief: reviewBrief(uncovered) };
+		const pageReqIds = new Set(design ? clientComponents(design).flatMap((c) => c.reqIds) : []);
+		const agent = { def: this.agents.review, brief: reviewBrief(uncovered, pageReqIds) };
 		return this.startRun(store, name, claim, 'P3', REVIEW_MESSAGE, true, {}, agent);
 	}
 
