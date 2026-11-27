@@ -18,7 +18,10 @@ function serve(contents: Record<string, string>) {
 	return fetchMock;
 }
 
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => {
+	vi.unstubAllGlobals();
+	vi.restoreAllMocks();
+});
 
 describe('CodePanel', () => {
 	it('copies the whole open file and confirms it', async () => {
