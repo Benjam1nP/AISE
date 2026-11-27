@@ -12,5 +12,3 @@ What we show for each grading criterion (requirements §5), and where it is. Sho
 | C5 Requirement to code        | Navigation from a requirement to its diagram element, code and test                                             | live demo                                                                        | #2         |
 | C6 End to end and scalability | Small, medium and larger compared                                                                               | [scaling-comparison.md](scaling-comparison.md)                                   | #9         |
 | C7 Artefact quality           | A generated test failing on an injected bug and passing after the fix; review of sample artefacts               | [injected-bug.md](injected-bug.md), [artefact-quality.md](artefact-quality.md)   | #7         |
-
-Files linked here that do not exist yet are written by their issue.

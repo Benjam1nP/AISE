@@ -2893,7 +2893,9 @@ volumes:
 		await approvedP2WithCode();
 		orch = new Orchestrator({ root, run: fakeRun, summarise: fakeSummarise });
 		await expect(orch.checkDeploy('todo')).rejects.toBeInstanceOf(ConflictError);
-		await put('compose.yaml', COMPOSE.replace('build: .', 'build: .\n    restart: always'));
+		// env_file is refused by the text check, before Docker runs; a key only Compose's config
+		// output reveals (restart) would spawn the Docker CLI and time out on a cold runner (#38).
+		await put('compose.yaml', COMPOSE.replace('build: .', 'build: .\n    env_file: .env'));
 		await expect(orch.checkDeploy('todo')).resolves.toBeUndefined();
 		const s = await snap();
 		expect(s.deployCheck).toMatchObject({
