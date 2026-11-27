@@ -43,13 +43,19 @@ const short = (text: string) => defang(clip(oneLine(text), 200));
 const titleOf = (t: Ticket) => short(t.title);
 /** A run summary or walk note longer than any usual one; the system prompt explains the marker. */
 const MAX_PROSE_CHARS = 1500;
-/** Shortens prose at its last sentence end within the limit and marks it as shortened. */
+/**
+ * Shortens prose at its last sentence end within the limit (else at its last word) and marks it
+ * as shortened.
+ */
 function prose(text: string): string {
 	const flat = oneLine(text);
 	if (flat.length <= MAX_PROSE_CHARS) return flat;
-	const head = flat.slice(0, MAX_PROSE_CHARS);
-	const end = head.search(/[.!?](?=\s[^.!?]*$)/);
-	return `${end > 0 ? head.slice(0, end + 1) : head} (shortened for this brief)`;
+	// One more character shows whether the last one in the limit ends a word or a sentence.
+	const head = flat.slice(0, MAX_PROSE_CHARS + 1);
+	const ends = [...head.matchAll(/[.!?](?=\s)/g)].map((m) => m.index);
+	const end = ends.length > 0 ? ends[ends.length - 1] + 1 : head.lastIndexOf(' ');
+	const cut = end > 0 ? head.slice(0, end) : head.slice(0, MAX_PROSE_CHARS);
+	return `${cut.trimEnd()} (shortened for this brief)`;
 }
 
 /** The first chat message of a ticket (plain, for the chat view). */

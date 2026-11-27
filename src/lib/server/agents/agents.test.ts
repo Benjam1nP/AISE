@@ -1288,6 +1288,20 @@ describe('maintenance agent and ticket briefs', () => {
 		expect(maintenanceAgent.system).toMatch(/shortened for this brief.*not missing/i);
 	});
 
+	it('keeps a sentence that ends exactly at the limit (#24)', () => {
+		const sentence = `${'a'.repeat(1499)}.`;
+		const long = `${sentence} ${'b'.repeat(600)}`;
+		const brief = closeBrief(ticket(), data({ steps: [step({ summary: long })] }), []);
+		expect(brief).toContain(`${sentence} (shortened for this brief)`);
+	});
+
+	it('cuts overlong prose without a sentence end at a word, not mid word (#24)', () => {
+		const long = 'word '.repeat(400);
+		const brief = closeBrief(ticket(), data({ steps: [step({ summary: long })] }), []);
+		expect(brief).toMatch(/word \(shortened for this brief\)/);
+		expect(brief).not.toMatch(/wo \(shortened|w \(shortened|wor \(shortened/);
+	});
+
 	it('spends a budget on the diffs in path order and names every path', () => {
 		const diff = 'x'.repeat(5000);
 		const files = Array.from({ length: 50 }, (_, i) => ({
