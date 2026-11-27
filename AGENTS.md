@@ -37,7 +37,7 @@ C1 phases beyond coding, C2 artefact alignment under change, C3 usability, C4 do
 ## Repository layout
 
 - `docs/superpowers/specs/2026-11-04-ai-se-environment-design.md` the design. Read it before architectural work.
-- `docs/pdf/` the requirements PDF; the course slides in `docs/pdf/slides/` are gitignored (local copy only). Reference material only; do not modify.
+- `docs/pdf/` course slides and the requirements PDF. Reference material only; do not modify.
 - `docs/context/` structured Markdown translations and master cross-reference index (`docs/context/INDEX.md`) for AI agents.
 - `docs/assets/` README banner. `docs/questions/` kickoff questions and answers; `docs/diagrams/` overview diagram and visual design summary (`design-summary.html`).
 

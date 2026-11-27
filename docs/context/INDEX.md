@@ -1,6 +1,6 @@
 # AI Context Knowledge Base & Course Reference Index
 
-This directory contains structured Markdown translations of the course slides, case studies, and project requirements from `docs/pdf/`, generated with [Docling](https://github.com/docling-project/docling). Only the requirements PDF is in the repository; the slide PDFs (`docs/pdf/slides/`) are kept locally and gitignored.
+This directory contains structured Markdown translations of the course slides, case studies, and project requirements from `docs/pdf/`, generated with [Docling](https://github.com/docling-project/docling).
 
 These documents provide authoritative context for all phases of our AI-assisted software engineering environment.
 
