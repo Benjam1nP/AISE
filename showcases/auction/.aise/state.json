@@ -25,7 +25,8 @@
       "status": "not_started"
     },
     "P4": {
-      "status": "awaiting_approval",
+      "status": "approved",
+      "approvedAt": "2026-11-27T11:10:16.538Z",
       "designHashes": {
         "DSN-012": "dd673261e1ec4a19b85a56a9c87b5865160a4904ced23b50dabb07f1e58bda20",
         "DSN-013": "a476ce378845ad5ce352eb2cd7d86c07607c45988001266743551ab8bfadd030",
@@ -60,7 +61,8 @@
       }
     },
     "P5": {
-      "status": "awaiting_approval",
+      "status": "approved",
+      "approvedAt": "2026-11-27T11:10:16.628Z",
       "reqHashes": {
         "REQ-001": "f8c70bf18f448cf36036473310249368b29af3548c6362f9e9b15e2e84e27c59",
         "REQ-002": "1262b59c481c383acc492c14093d6f8d101fc492d98166b8d349c5b53bc1d92c",
@@ -90,7 +92,13 @@
       }
     },
     "P6": {
-      "status": "not_started"
+      "status": "approved",
+      "approvedAt": "2026-11-27T11:11:46.869Z",
+      "deployHashes": {
+        "DSN-001": "0f155bb5e11be07f0d3b0f965f8a776dd7611dccaac2d736b52e4ccd5dc1d9b9",
+        "DSN-002": "7c79da6d7029cd680ce7ae034b623daa3da506807ca6e13d1ee1824db0c82720",
+        "dependencies": "45c93ca748e57462e98272018be92de1d2bd1c85c4fa38b9addfb2a1abd84837"
+      }
     },
     "P7": {
       "status": "not_started"

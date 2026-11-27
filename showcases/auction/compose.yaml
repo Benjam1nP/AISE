@@ -1,0 +1,24 @@
+services:
+  api-server:
+    build: .
+    command: npm start
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      PORT: "8080"
+      DB_PATH: "/data/app.db"
+      LIVE_UPDATE_SERVER_PUBLIC_URL: "ws://localhost:8081"
+    volumes:
+      - data:/data
+  live-update-server:
+    build: .
+    command: npm run start:live-update-server
+    ports:
+      - "127.0.0.1:8081:8081"
+    environment:
+      LIVE_UPDATE_SERVER_PORT: "8081"
+      API_SERVER_URL: "ws://api-server:8080"
+    depends_on:
+      - api-server
+volumes:
+  data:
