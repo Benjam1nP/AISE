@@ -10,6 +10,8 @@ from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
 from pptx.oxml.ns import qn
 from pptx.util import Emu, Inches, Pt
 
+if len(sys.argv) != 3:
+    sys.exit("usage: python build_deck.py <template.pptx> <out.pptx>  (template: presentation/template/, gitignored)")
 TPL, OUT = sys.argv[1], sys.argv[2]
 
 GREEN = RGBColor(0x00, 0x80, 0x2F)
@@ -38,6 +40,8 @@ def new_slide(layout, number=True):
         for ph in LAYOUT[layout].placeholders:
             if ph.placeholder_format.type is not None and "SLIDE_NUMBER" in str(ph.placeholder_format.type):
                 el = copy.deepcopy(ph._element)
+                ids = [int(e.get("id")) for e in s.shapes._spTree.iter(qn("p:cNvPr"))]
+                el.find(".//" + qn("p:cNvPr")).set("id", str(max(ids, default=1) + 1))
                 s.shapes._spTree.append(el)
     return s
 
@@ -241,7 +245,7 @@ sw, sg = 2.92, 0.2
 for i, (h, b) in enumerate(sync):
     box(s, 0.52 + i * (sw + sg), 5.85, sw, 0.62, fill=CARD, shape=MSO_SHAPE.RECTANGLE, align=PP_ALIGN.LEFT, inset=0.12,
         runs=[[(h + ": ", {"bold": True, "color": GREEN}), (b, {})]], size=12, name=f"Sync {h}")
-notes(s, "1:30. (Gate summary after each run: Haiku 5.5, no tools.) The developer works in a SvelteKit UI; HTTP actions go in, events come back over SSE. The orchestrator is plain code: it owns the phases, the gates and staleness, and starts one agent per run with a brief. Sonnet 5.5 runs the phase agents. Haiku 5.5 runs the parallel workers, one file each, cheap and fast, and escalates to Sonnet on the third attempt; Haiku also writes the short gate summary. Opus 5.5 runs maintenance, because it has to reason over every artefact at once. Every write goes through one tool registry: zod-validated tools with a scope per agent, the same tools served over stdio as an MCP server. Docker runs typecheck, tests and the deploy check. Sync: the JSON design model is the source of truth and Mermaid is rendered from it, agents never write Mermaid. Shared IDs and @trace comments link everything, hashes mark later phases stale, and detect_drift compares code with the design.")
+notes(s, "1:30. The developer works in a SvelteKit UI; HTTP actions go in, events come back over SSE. The orchestrator is plain code: it owns the phases, the gates and staleness, and starts one agent per run with a brief. Sonnet 5.5 runs the phase agents. Haiku 5.5 runs the parallel workers, one file each, cheap and fast, and escalates to Sonnet on the third attempt; Haiku also writes the short gate summary. Opus 5.5 runs maintenance, because it has to reason over every artefact at once. Every write goes through one tool registry: zod-validated tools with a scope per agent, the same tools served over stdio as an MCP server. Docker runs typecheck, tests and the deploy check. Sync: the JSON design model is the source of truth and Mermaid is rendered from it, agents never write Mermaid. Shared IDs and @trace comments link everything, hashes mark later phases stale, and detect_drift compares code with the design.")
 
 # 4 Workflow ------------------------------------------------------------------
 s = new_slide("Nur Titel")
