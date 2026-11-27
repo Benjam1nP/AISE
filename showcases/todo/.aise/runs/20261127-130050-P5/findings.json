@@ -1,0 +1,42 @@
+{
+  "findings": [],
+  "testFixes": [
+    {
+      "runId": "20261127-130050-P5",
+      "test": "SEQ-005 scenario: Delete task",
+      "file": "test/UC-005.test.ts",
+      "reason": "TaskService.add now takes (text, dueDate); test passed one argument and failed typecheck."
+    },
+    {
+      "runId": "20261127-130050-P5",
+      "test": "REQ-001 AC1: Entering text and confirming adds a new task to the list",
+      "file": "test/UC-002.test.ts",
+      "reason": "requirement changed: REQ-001 (add now takes a due date; AC8 and AC9 added, service calls updated)"
+    },
+    {
+      "runId": "20261127-130050-P5",
+      "test": "REQ-005 AC1: After editing and confirming, the task shows the new text and keeps its done state",
+      "file": "test/UC-004.test.ts",
+      "reason": "requirement changed: REQ-005 (due date editing; AC5 and AC6 added)"
+    },
+    {
+      "runId": "20261127-130050-P5",
+      "test": "SEQ-001 scenario: View task list",
+      "file": "test/UC-001.test.ts",
+      "reason": "requirement changed: SEQ-001 now lists with the today parameter and overdue flag"
+    },
+    {
+      "runId": "20261127-130050-P5",
+      "test": "SEQ-002 scenario: Add task",
+      "file": "test/UC-002.test.ts",
+      "reason": "requirement changed: SEQ-002 now includes dueDate normalization"
+    },
+    {
+      "runId": "20261127-130050-P5",
+      "test": "SEQ-004 scenario: Edit task",
+      "file": "test/UC-004.test.ts",
+      "reason": "requirement changed: SEQ-004 now includes dueDate normalization"
+    }
+  ],
+  "fixResults": []
+}

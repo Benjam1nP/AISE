@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- @trace DSN-003 REQ-004 REQ-007 REQ-008 REQ-002 -->
+<!-- @trace DSN-003 REQ-004 REQ-007 REQ-008 REQ-002 REQ-001 REQ-005 REQ-009 REQ-010 -->
 <meta charset="utf-8">
 <title>Tasks</title>
 <style>
 body { font-family: sans-serif; max-width: 600px; margin: 2em auto; }
 li { margin: 0.3em 0; list-style: none; }
 .done { text-decoration: line-through; color: #777; }
+.overdue { color: #b00; font-weight: bold; }
 #error { color: #b00; }
 </style>
 </head>
@@ -15,11 +16,17 @@ li { margin: 0.3em 0; list-style: none; }
 <h1>Tasks</h1>
 <form id="add">
 <input id="text" type="text" maxlength="400" required>
+<input id="due" type="date" title="Due date (optional)">
 <button type="submit">Add</button>
 </form>
 <p id="error"></p>
 <ul id="list"></ul>
 <script>
+function today() {
+  const d = new Date();
+  const p = function (n) { return String(n).padStart(2, '0'); };
+  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+}
 async function send(url, method, body) {
   const r = await fetch(url, {
     method: method,
@@ -34,7 +41,7 @@ async function send(url, method, body) {
   await load();
 }
 async function load() {
-  const r = await fetch('/api/tasks');
+  const r = await fetch('/api/tasks?today=' + today());
   const tasks = await r.json();
   const ul = document.getElementById('list');
   ul.textContent = '';
@@ -45,13 +52,17 @@ async function load() {
     cb.checked = t.done;
     cb.onchange = function () { send('/api/tasks/' + t.id, 'PATCH', { done: cb.checked }); };
     const span = document.createElement('span');
-    span.textContent = ' ' + t.text + ' ';
+    span.textContent = ' ' + t.text + (t.dueDate ? ' (due ' + t.dueDate + ')' : '') + ' ';
     if (t.done) { span.className = 'done'; }
+    if (t.overdue) { span.className += ' overdue'; }
     const edit = document.createElement('button');
     edit.textContent = 'Edit';
     edit.onclick = function () {
       const text = prompt('Edit task', t.text);
-      if (text !== null) { send('/api/tasks/' + t.id, 'PATCH', { text: text }); }
+      if (text === null) { return; }
+      const due = prompt('Due date YYYY-MM-DD (empty clears)', t.dueDate || '');
+      if (due === null) { return; }
+      send('/api/tasks/' + t.id, 'PATCH', { text: text, dueDate: due === '' ? null : due });
     };
     const del = document.createElement('button');
     del.textContent = 'Delete';
@@ -63,9 +74,11 @@ async function load() {
 document.getElementById('add').onsubmit = function (e) {
   e.preventDefault();
   const i = document.getElementById('text');
-  const value = i.value;
+  const due = document.getElementById('due');
+  const body = { text: i.value, dueDate: due.value === '' ? null : due.value };
   i.value = '';
-  send('/api/tasks', 'POST', { text: value });
+  due.value = '';
+  send('/api/tasks', 'POST', body);
 };
 load();
 </script>

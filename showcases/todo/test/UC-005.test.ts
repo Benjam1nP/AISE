@@ -39,7 +39,7 @@ describe('UC-005 Delete task', () => {
     const store = new TaskStore(db);
     const service = new TaskService(store);
     const controller = new TaskController(service);
-    const task = await service.add('Write report');
+    const task = await service.add('Write report', null);
     await controller.remove(task.id);
     const found = await store.findById(task.id);
     expect(found).toBeNull();

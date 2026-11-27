@@ -1,0 +1,67 @@
+{
+  "id": "20261127-125907-P3",
+  "phase": "P3",
+  "agent": "review",
+  "status": "done",
+  "startedAt": "2026-11-27T12:59:07.247Z",
+  "finishedAt": "2026-11-27T12:59:15.447Z",
+  "usage": {
+    "input": 370,
+    "output": 929,
+    "cacheRead": 12456,
+    "cacheWrite": 8585
+  },
+  "costUsd": 0.030311800000000003,
+  "summary": "The agent read the requirements and design, then submitted two design proposals for the uncovered criteria, with no failed tool calls. It proposed a new `TaskListView` class on the Browser page, with `renderTask` covering REQ-002 AC3 (ticked checkbox and struck-through text) and `renderList` covering REQ-007 AC1, each called from the matching sequence (SEQ-003 and SEQ-001). Check whether those two sequences really need the new class and whether the proposal matches how the Browser page is meant to be structured before you approve this phase.",
+  "ticketId": "TCK-001",
+  "prevTicket": {
+    "status": "in_progress",
+    "plan": {
+      "entry": "P1",
+      "affectedIds": [
+        "REQ-001",
+        "REQ-005",
+        "REQ-007",
+        "REQ-003",
+        "UC-001",
+        "UC-002",
+        "UC-004",
+        "SEQ-001",
+        "SEQ-002",
+        "SEQ-004",
+        "DSN-003",
+        "DSN-005",
+        "DSN-006",
+        "DSN-007",
+        "DSN-008"
+      ],
+      "files": [
+        "docs/requirements.md",
+        "docs/design.md",
+        "src/tasks-app/Task.ts",
+        "src/tasks-app/TaskController.ts",
+        "src/tasks-app/TaskService.ts",
+        "src/tasks-app/TaskStore.ts",
+        "src/app/app.ts",
+        "public/index.html",
+        "test/UC-001.test.ts",
+        "test/UC-002.test.ts",
+        "test/UC-004.test.ts"
+      ],
+      "steps": [
+        "P1: Remove 'Due dates' from the out-of-scope list (keep priorities and categories out of scope).",
+        "P1: Add a new requirement 'Task due date': a task may have an optional calendar due date (date only, no time), set when adding and set, changed or cleared when editing; an invalid date is rejected; the due date is stored on the server and kept after reopening.",
+        "P1: Add a new requirement 'Due date display and overdue': the list shows the due date next to a task that has one; an open task whose due date is before today (user's local date) is visibly marked overdue; a done task or a task without a due date is never marked overdue; list order of REQ-007 stays unchanged.",
+        "P1: Update REQ-001 and REQ-005 texts and criteria to mention the optional due date on add and edit.",
+        "P2: Add optional attribute dueDate (ISO date string YYYY-MM-DD or null) to Task DSN-005.",
+        "P2: Extend TaskController DSN-006 create body with dueDate and update body with dueDate (null clears it).",
+        "P2: Extend TaskService DSN-007 add and add a setDueDate (or edit) operation with date validation; update SEQ-002 and SEQ-004 accordingly.",
+        "P2: Extend TaskStore DSN-008 to persist dueDate (new nullable column with migration of existing databases).",
+        "P2: Update UC-001, UC-002, UC-004 descriptions and Browser page DSN-003 for due date input, display and overdue marking; link the new requirements.",
+        "P3: Add tests for the new requirements' acceptance criteria and adjust UC-001, UC-002, UC-004 tests.",
+        "P4: Implement dueDate in Task, TaskStore (column and migration), TaskService validation, TaskController and app routes, and the date input, display and overdue marker in public/index.html.",
+        "P5: Run all tests and check that existing tasks without due date still load and behave as before."
+      ]
+    }
+  }
+}

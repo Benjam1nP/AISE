@@ -120,15 +120,15 @@ run. Nothing hit a turn or cost limit; the deploy agent needed one deploy check.
 Run on 2026-11-27 for #3, in the browser through the project page (Playwright driving the real UI),
 dev server with `AISE_PROJECTS_DIR=showcases`. Artefacts: `showcases/todo/`.
 
-| Phase | Runs                                           | Cost (USD) | Agent time | Gate at approval                     | Notes                                                |
-| ----- | ---------------------------------------------- | ---------- | ---------- | ------------------------------------ | ---------------------------------------------------- |
-| P1    | 3 (idea, 2 answer rounds)                      | 0.07       | 37 s       | passed                               | 8 requirements, 7 clarifying questions asked         |
-| P2    | 3 (auto, proposal apply refused, 1 refinement) | 0.23       | 86 s       | passed, warning REQ-002 AC3 (visual) | 4 classes, 5 use cases, 5 sequences, 2 nodes, 1 link |
-| P3    | 2 (auto review, review after refinement)       | 0.05       | 13 s       | no open proposals                    | 1 proposal accepted; its apply was refused (#21)     |
-| P4    | 2 (generation, 1 fix)                          | 0.14       | 61 s       | passed, app starts                   | 7 files, 358 lines (285 TypeScript, 73 HTML)         |
-| P5    | 2 (generation, fix loop of 1 round)            | 0.09       | 46 s       | passed                               | 5 test files, 28 passed, 2 manual (visual criteria)  |
-| P6    | 1                                              | 0.02       | 16 s       | passed, deploy check `/health` 200   | Dockerfile, compose, RUN.md                          |
-| total | 13                                             | 0.60       | 4.3 min    |                                      | no override, no turn or cost limit hit               |
+| Phase    | Runs                                           | Cost (USD) | Agent time | Gate at approval                     | Notes                                                |
+| -------- | ---------------------------------------------- | ---------- | ---------- | ------------------------------------ | ---------------------------------------------------- |
+| P1       | 3 (idea, 2 answer rounds)                      | 0.07       | 37 s       | passed                               | 8 requirements, 7 clarifying questions asked         |
+| P2       | 3 (auto, proposal apply refused, 1 refinement) | 0.23       | 86 s       | passed, warning REQ-002 AC3 (visual) | 4 classes, 5 use cases, 5 sequences, 2 nodes, 1 link |
+| P3       | 2 (auto review, review after refinement)       | 0.05       | 13 s       | no open proposals                    | 1 proposal accepted; its apply was refused (#21)     |
+| P4       | 2 (generation, 1 fix)                          | 0.14       | 61 s       | passed, app starts                   | 7 files, 358 lines (285 TypeScript, 73 HTML)         |
+| P5       | 2 (generation, fix loop of 1 round)            | 0.09       | 46 s       | passed                               | 5 test files, 28 passed, 2 manual (visual criteria)  |
+| P6       | 1                                              | 0.02       | 16 s       | passed, deploy check `/health` 200   | Dockerfile, compose, RUN.md                          |
+| P1 to P6 | 13                                             | 0.60       | 4.3 min    |                                      | no override, no turn or cost limit hit               |
 
 What happened along the way:
 
@@ -139,3 +139,27 @@ What happened along the way:
   one chat message wired the route through it.
 - P5: the generated tests caught `DELETE /api/tasks/:id` answering 204 against the wiring contract
   (200); the fix loop had the code agent fix it in one round.
+
+P7, ticket TCK-001 "Tasks need a due date" (change request, starts at P1), walked P1, P2, P3, P4, P5 and
+P6 again and closed with its change report in `.aise/tickets.json`:
+
+| Step             | Runs | Cost (USD) | Agent time | Result                                                                         |
+| ---------------- | ---- | ---------- | ---------- | ------------------------------------------------------------------------------ |
+| Triage and plan  | 1    | 0.15       | 22 s       | 12 step plan from P1, 15 affected elements, 3 assumptions written down         |
+| P1               | 1    | 0.04       | 18 s       | REQ-009 and REQ-010 added, REQ-001 and REQ-005 changed, due dates in scope     |
+| P2 and P3        | 4    | 0.33       | 108 s      | `dueDate`, `TaskView` (DSN-009), `TaskService.isOverdue`; 4 proposals rejected |
+| P4               | 1    | 0.15       | 55 s       | gate met, old test type errors shown for P5 (#18), app starts                  |
+| P5               | 1    | 0.29       | 95 s       | 48 passed, 2 manual; tests of UC-001 to UC-005 updated                         |
+| P6               | 0    | 0          | 7 s check  | deploy check out of date after the code change (#19), rerun passed             |
+| Close and report | 1    | 0.18       | 22 s       | change report, open items listed                                               |
+| ticket total     | 9    | 1.13       | 5.4 min    | no override                                                                    |
+| project total    | 22   | 1.73       | 9.7 min    | 10 requirements, 5 classes, 434 lines of code, 48 tests                        |
+
+What happened in P7:
+
+- After the design update the overdue criteria (REQ-010 AC3 to AC6) had no method, because the
+  design agent left them to the class free browser page. One message moved the rule to the server
+  (`TaskService.isOverdue`, `GET /api/tasks?today=`), so the tests cover it.
+- Both automatic reviews again proposed browser side classes (PRP-002 to PRP-005); all rejected (#21).
+- The change report says a P1 note about REQ-003 was cut off; that is the brief clipping notes at
+  300 characters (#24). The plan labels its test and code steps with the wrong phase (#25).

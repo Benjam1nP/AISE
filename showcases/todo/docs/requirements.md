@@ -6,7 +6,7 @@
 
 functional, must
 
-The system shall let the user add a task by entering a text description which, after leading and trailing spaces are trimmed, is 1 to 200 characters long.
+The system shall let the user add a task by entering a text description which, after leading and trailing spaces are trimmed, is 1 to 200 characters long, and optionally a due date.
 
 Acceptance criteria:
 
@@ -17,6 +17,8 @@ Acceptance criteria:
 - Leading and trailing spaces are removed from the stored text
 - A description of 200 characters after trimming is accepted
 - A description of 201 characters after trimming is rejected
+- A task can be added without a due date
+- A task can be added with a due date, and it is shown with that due date
 
 ## REQ-002 Mark task done or not done
 
@@ -55,7 +57,7 @@ Acceptance criteria:
 
 functional, must
 
-The system shall let the user edit the text of an existing task, applying the same trimming and length rules as when adding a task.
+The system shall let the user edit the text and the optional due date of an existing task, applying the same trimming and length rules as when adding a task.
 
 Acceptance criteria:
 
@@ -63,6 +65,8 @@ Acceptance criteria:
 - The edited text is kept after reopening the app
 - An empty, whitespace-only, or over 200 character (after trimming) edit is rejected and the old text is kept
 - Leading and trailing spaces in the edited text are removed
+- When editing, a due date can be set on a task without one, changed on a task with one, or cleared
+- After editing the due date, the task shows the new due date, or none if cleared
 
 ## REQ-006 Delete task
 
@@ -99,8 +103,41 @@ Acceptance criteria:
 
 - The app opens directly to the task list without any login step
 
+## REQ-009 Task due date
+
+functional, must
+
+The system shall let a task have an optional calendar due date (date only, no time), which the user can set when adding a task and set, change or clear when editing it, and shall store it on the server.
+
+Acceptance criteria:
+
+- A task without a due date is valid and can be saved
+- A due date entered when adding a task is saved with the task
+- A due date can be set, changed and cleared when editing a task
+- An invalid date is rejected and the previously stored due date is kept (or none when adding, no task is created)
+- The due date contains no time component
+- The due date is still present after reopening the app, including after the browser's local data is reset
+- Existing tasks without a due date still load and behave as before
+
+## REQ-010 Due date display and overdue
+
+functional, must
+
+The system shall show the due date next to each task that has one and visibly mark an open task as overdue when its due date is before today's date in the user's local time zone.
+
+Acceptance criteria:
+
+- A task with a due date shows that date next to its text
+- A task without a due date shows no date
+- An open task with a due date before today (user's local date) is visibly marked overdue
+- An open task with a due date of today or later is not marked overdue
+- A done task is never marked overdue, even if its due date is past
+- A task without a due date is never marked overdue
+- Unticking a done task whose due date is past marks it overdue
+- The list order defined in REQ-007 is unchanged by due dates
+
 ## Out of scope
 
 - User accounts, login and multi-user support
-- Due dates, priorities and categories
+- Priorities and categories
 - Browser-only storage as the sole persistence

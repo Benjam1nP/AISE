@@ -1,0 +1,20 @@
+{
+  "id": "20261127-125612-P7",
+  "phase": "P7",
+  "agent": "maintenance",
+  "status": "done",
+  "startedAt": "2026-11-27T12:56:12.607Z",
+  "finishedAt": "2026-11-27T12:56:35.006Z",
+  "usage": {
+    "input": 876,
+    "output": 2369,
+    "cacheRead": 31745,
+    "cacheWrite": 17419
+  },
+  "costUsd": 0.1470931,
+  "summary": "The agent saved a P7 plan that starts at P1, because the requirements list \"Due dates\" as out of scope and that has to change first, and it lays out the requirement, design, code and test changes for adding optional due dates. Before approving, check the three assumptions the agent wrote into the plan: dates only with no time, \"overdue\" meaning before today's local date, and no change to list order. All tool calls succeeded, so nothing failed, and the agent reports that the current code matches the design.",
+  "ticketId": "TCK-001",
+  "prevTicket": {
+    "status": "open"
+  }
+}

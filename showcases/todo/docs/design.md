@@ -38,21 +38,28 @@ classDiagram
     +text : string
     +done : boolean
     +createdAt : number
+    +dueDate : string | null
+  }
+  class TaskView {
+    <<interface>>
+    +overdue : boolean
   }
   class TaskController {
     +page() Promise~string~
-    +list() Promise~Task[]~
-    +create(body: #123; text: string#59; #125;) Promise~Task~
-    +update(id: string, body: #123; text?: string#59; done?: boolean#59; #125;) Promise~Task~
+    +list(today: string | undefined) Promise~TaskView[]~
+    +create(body: #123; text: string#59; dueDate?: string | null#59; #125;) Promise~Task~
+    +update(id: string, body: #123; text?: string#59; done?: boolean#59; dueDate?: string | null#59; #125;) Promise~Task~
     +remove(id: string) Promise~void~
   }
   class TaskService {
-    +list() Promise~Task[]~
-    +add(text: string) Promise~Task~
+    +list(today: string | undefined) Promise~TaskView[]~
+    +isOverdue(task: Task, today: string) boolean
+    +add(text: string, dueDate: string | null) Promise~Task~
     +setDone(id: string, done: boolean) Promise~Task~
-    +editText(id: string, text: string) Promise~Task~
+    +editText(id: string, text: string, dueDate: string | null | undefined) Promise~Task~
     +remove(id: string) Promise~void~
     +normalizeText(text: string) string
+    +normalizeDueDate(dueDate: string | null) string | null
   }
   class TaskStore {
     +findAll() Promise~Task[]~
@@ -61,9 +68,11 @@ classDiagram
     +update(task: Task) Promise~void~
     +delete(id: string) Promise~void~
   }
+  Task <|.. TaskView
   TaskController ..> TaskService
   TaskService ..> TaskStore
   click Task call aiseSelect("DSN-005")
+  click TaskView call aiseSelect("DSN-009")
   click TaskController call aiseSelect("DSN-006")
   click TaskService call aiseSelect("DSN-007")
   click TaskStore call aiseSelect("DSN-008")
@@ -79,9 +88,10 @@ sequenceDiagram
   participant DSN_006 as TaskController
   participant DSN_007 as TaskService
   participant DSN_008 as TaskStore
-  ACT_001->>DSN_006: list()
-  DSN_006->>DSN_007: list()
+  ACT_001->>DSN_006: list(today)
+  DSN_006->>DSN_007: list(today)
   DSN_007->>DSN_008: findAll()
+  DSN_007->>DSN_007: isOverdue(task, today)
 ```
 
 ### SEQ-002 Add task
@@ -93,8 +103,9 @@ sequenceDiagram
   participant DSN_007 as TaskService
   participant DSN_008 as TaskStore
   ACT_001->>DSN_006: create(body)
-  DSN_006->>DSN_007: add(text)
+  DSN_006->>DSN_007: add(text, dueDate)
   DSN_007->>DSN_007: normalizeText(text)
+  DSN_007->>DSN_007: normalizeDueDate(dueDate)
   DSN_007->>DSN_008: insert(task)
 ```
 
@@ -121,8 +132,9 @@ sequenceDiagram
   participant DSN_007 as TaskService
   participant DSN_008 as TaskStore
   ACT_001->>DSN_006: update(id, body)
-  DSN_006->>DSN_007: editText(id, text)
+  DSN_006->>DSN_007: editText(id, text, dueDate)
   DSN_007->>DSN_007: normalizeText(text)
+  DSN_007->>DSN_007: normalizeDueDate(dueDate)
   DSN_007->>DSN_008: findById(id)
   DSN_007->>DSN_008: update(task)
 ```
@@ -160,17 +172,18 @@ flowchart TB
 ## Elements
 
 - ACT-001 User (actor)
-- UC-001 View task list (use case) (REQ-003, REQ-004, REQ-007, REQ-008)
-- UC-002 Add task (use case) (REQ-001, REQ-003)
-- UC-003 Mark task done or not done (use case) (REQ-002, REQ-003, REQ-007)
-- UC-004 Edit task (use case) (REQ-005, REQ-003)
+- UC-001 View task list (use case) (REQ-003, REQ-004, REQ-007, REQ-008, REQ-009, REQ-010)
+- UC-002 Add task (use case) (REQ-001, REQ-003, REQ-009)
+- UC-003 Mark task done or not done (use case) (REQ-002, REQ-003, REQ-007, REQ-010)
+- UC-004 Edit task (use case) (REQ-005, REQ-003, REQ-009)
 - UC-005 Delete task (use case) (REQ-006, REQ-003)
-- DSN-005 Task (interface) (REQ-001, REQ-002, REQ-007)
-- DSN-006 TaskController (class) (REQ-001, REQ-002, REQ-004, REQ-005, REQ-006, REQ-007, REQ-008)
-- DSN-007 TaskService (class) (REQ-001, REQ-002, REQ-005, REQ-006, REQ-007)
-- DSN-008 TaskStore (class) (REQ-003, REQ-006)
-- DSN-003 Browser page (component) (REQ-004, REQ-007, REQ-008, REQ-002)
-- DSN-004 Tasks app (component) (REQ-001, REQ-002, REQ-003, REQ-005, REQ-006, REQ-007, REQ-008)
+- DSN-005 Task (interface) (REQ-001, REQ-002, REQ-007, REQ-009, REQ-010)
+- DSN-009 TaskView (interface) (REQ-010)
+- DSN-006 TaskController (class) (REQ-001, REQ-002, REQ-004, REQ-005, REQ-006, REQ-007, REQ-008, REQ-009, REQ-010)
+- DSN-007 TaskService (class) (REQ-001, REQ-002, REQ-005, REQ-006, REQ-007, REQ-009, REQ-010)
+- DSN-008 TaskStore (class) (REQ-003, REQ-006, REQ-009)
+- DSN-003 Browser page (component) (REQ-004, REQ-007, REQ-008, REQ-002, REQ-001, REQ-005, REQ-009, REQ-010)
+- DSN-004 Tasks app (component) (REQ-001, REQ-002, REQ-003, REQ-005, REQ-006, REQ-007, REQ-008, REQ-009, REQ-010)
 - DSN-001 Browser (client node) (REQ-004)
 - DSN-002 Tasks (service node) (REQ-003, REQ-004, REQ-008)
 - DSN-001 Browser to DSN-002 Tasks (HTTP: page and task API)

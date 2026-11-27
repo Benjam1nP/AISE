@@ -1,10 +1,209 @@
 {
-  "at": "2026-11-27T12:18:18.766Z",
-  "codeHash": "08e1ad5edb2177d2fd5cedafa55d87c35c61f1373116b3d3cbf7a37eef9a6e99",
-  "designHash": "ba01fbd11d1111749a330ced3643292a5942b96060d475194eb5ec4ef975a8e5",
+  "at": "2026-11-27T13:00:36.766Z",
+  "codeHash": "b0496e6664078397e20b8eb89a7bca0904a895390b6d65baec37ad0fe3960623",
+  "designHash": "53e21b0d47d4b111bb27b9f21f831599b57b9f1f3661aa04621eb7afef9a0f83",
   "typecheck": {
-    "ok": true,
-    "errors": [],
+    "ok": false,
+    "errors": [
+      {
+        "file": "test/UC-001.test.ts",
+        "line": 61,
+        "col": 32,
+        "message": "TS2554: Expected 2 arguments, but got 1."
+      },
+      {
+        "file": "test/UC-001.test.ts",
+        "line": 63,
+        "col": 32,
+        "message": "TS2554: Expected 1 arguments, but got 0."
+      },
+      {
+        "file": "test/UC-001.test.ts",
+        "line": 72,
+        "col": 29,
+        "message": "TS2554: Expected 2 arguments, but got 1."
+      },
+      {
+        "file": "test/UC-001.test.ts",
+        "line": 74,
+        "col": 29,
+        "message": "TS2554: Expected 2 arguments, but got 1."
+      },
+      {
+        "file": "test/UC-001.test.ts",
+        "line": 76,
+        "col": 29,
+        "message": "TS2554: Expected 2 arguments, but got 1."
+      },
+      {
+        "file": "test/UC-001.test.ts",
+        "line": 78,
+        "col": 32,
+        "message": "TS2554: Expected 1 arguments, but got 0."
+      },
+      {
+        "file": "test/UC-001.test.ts",
+        "line": 87,
+        "col": 29,
+        "message": "TS2554: Expected 2 arguments, but got 1."
+      },
+      {
+        "file": "test/UC-001.test.ts",
+        "line": 89,
+        "col": 29,
+        "message": "TS2554: Expected 2 arguments, but got 1."
+      },
+      {
+        "file": "test/UC-001.test.ts",
+        "line": 91,
+        "col": 29,
+        "message": "TS2554: Expected 2 arguments, but got 1."
+      },
+      {
+        "file": "test/UC-001.test.ts",
+        "line": 92,
+        "col": 33,
+        "message": "TS2554: Expected 1 arguments, but got 0."
+      },
+      {
+        "file": "test/UC-001.test.ts",
+        "line": 99,
+        "col": 29,
+        "message": "TS2554: Expected 2 arguments, but got 1."
+      },
+      {
+        "file": "test/UC-001.test.ts",
+        "line": 101,
+        "col": 29,
+        "message": "TS2554: Expected 2 arguments, but got 1."
+      },
+      {
+        "file": "test/UC-001.test.ts",
+        "line": 103,
+        "col": 29,
+        "message": "TS2554: Expected 2 arguments, but got 1."
+      },
+      {
+        "file": "test/UC-001.test.ts",
+        "line": 107,
+        "col": 33,
+        "message": "TS2554: Expected 1 arguments, but got 0."
+      },
+      {
+        "file": "test/UC-001.test.ts",
+        "line": 114,
+        "col": 29,
+        "message": "TS2554: Expected 2 arguments, but got 1."
+      },
+      {
+        "file": "test/UC-001.test.ts",
+        "line": 116,
+        "col": 29,
+        "message": "TS2554: Expected 2 arguments, but got 1."
+      },
+      {
+        "file": "test/UC-001.test.ts",
+        "line": 118,
+        "col": 29,
+        "message": "TS2554: Expected 2 arguments, but got 1."
+      },
+      {
+        "file": "test/UC-001.test.ts",
+        "line": 122,
+        "col": 33,
+        "message": "TS2554: Expected 1 arguments, but got 0."
+      },
+      {
+        "file": "test/UC-001.test.ts",
+        "line": 152,
+        "col": 37,
+        "message": "TS2554: Expected 1 arguments, but got 0."
+      },
+      {
+        "file": "test/UC-002.test.ts",
+        "line": 16,
+        "col": 32,
+        "message": "TS2554: Expected 2 arguments, but got 1."
+      },
+      {
+        "file": "test/UC-002.test.ts",
+        "line": 17,
+        "col": 31,
+        "message": "TS2554: Expected 1 arguments, but got 0."
+      },
+      {
+        "file": "test/UC-002.test.ts",
+        "line": 23,
+        "col": 32,
+        "message": "TS2554: Expected 2 arguments, but got 1."
+      },
+      {
+        "file": "test/UC-002.test.ts",
+        "line": 29,
+        "col": 26,
+        "message": "TS2554: Expected 2 arguments, but got 1."
+      },
+      {
+        "file": "test/UC-002.test.ts",
+        "line": 30,
+        "col": 26,
+        "message": "TS2554: Expected 1 arguments, but got 0."
+      },
+      {
+        "file": "test/UC-002.test.ts",
+        "line": 35,
+        "col": 26,
+        "message": "TS2554: Expected 2 arguments, but got 1."
+      },
+      {
+        "file": "test/UC-002.test.ts",
+        "line": 36,
+        "col": 26,
+        "message": "TS2554: Expected 1 arguments, but got 0."
+      },
+      {
+        "file": "test/UC-002.test.ts",
+        "line": 41,
+        "col": 32,
+        "message": "TS2554: Expected 2 arguments, but got 1."
+      },
+      {
+        "file": "test/UC-002.test.ts",
+        "line": 48,
+        "col": 32,
+        "message": "TS2554: Expected 2 arguments, but got 1."
+      },
+      {
+        "file": "test/UC-002.test.ts",
+        "line": 55,
+        "col": 26,
+        "message": "TS2554: Expected 2 arguments, but got 1."
+      },
+      {
+        "file": "test/UC-002.test.ts",
+        "line": 56,
+        "col": 26,
+        "message": "TS2554: Expected 1 arguments, but got 0."
+      },
+      {
+        "file": "test/UC-004.test.ts",
+        "line": 83,
+        "col": 32,
+        "message": "TS2554: Expected 2 arguments, but got 1."
+      },
+      {
+        "file": "test/UC-004.test.ts",
+        "line": 87,
+        "col": 32,
+        "message": "TS2554: Expected 1 arguments, but got 0."
+      },
+      {
+        "file": "test/UC-005.test.ts",
+        "line": 42,
+        "col": 32,
+        "message": "TS2554: Expected 2 arguments, but got 1."
+      }
+    ],
     "timedOut": false
   },
   "drift": [],

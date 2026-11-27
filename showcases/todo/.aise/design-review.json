@@ -1,5 +1,5 @@
 {
-  "designHash": "ba01fbd11d1111749a330ced3643292a5942b96060d475194eb5ec4ef975a8e5",
+  "designHash": "53e21b0d47d4b111bb27b9f21f831599b57b9f1f3661aa04621eb7afef9a0f83",
   "rows": [
     {
       "reqId": "REQ-001",
@@ -8,6 +8,10 @@
         {
           "classId": "DSN-007",
           "method": "add"
+        },
+        {
+          "sequenceId": "SEQ-002",
+          "step": 5
         }
       ]
     },
@@ -72,6 +76,30 @@
       ]
     },
     {
+      "reqId": "REQ-001",
+      "criterion": 8,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "normalizeDueDate"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 9,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "add"
+        },
+        {
+          "classId": "DSN-006",
+          "method": "list"
+        }
+      ]
+    },
+    {
       "reqId": "REQ-002",
       "criterion": 1,
       "coveredBy": [
@@ -95,7 +123,7 @@
       "reqId": "REQ-002",
       "criterion": 3,
       "coveredBy": [],
-      "note": "Visual only; described in UC-003 and UC-001 and on the Browser page component, no class in the browser."
+      "note": "Purely visual, rendered by the browser page, which has no classes; described in UC-001 and UC-003."
     },
     {
       "reqId": "REQ-003",
@@ -103,11 +131,15 @@
       "coveredBy": [
         {
           "classId": "DSN-008",
-          "method": "findAll"
+          "method": "insert"
         },
         {
           "classId": "DSN-008",
           "method": "update"
+        },
+        {
+          "classId": "DSN-008",
+          "method": "findAll"
         }
       ]
     },
@@ -168,6 +200,30 @@
       ]
     },
     {
+      "reqId": "REQ-005",
+      "criterion": 5,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "editText"
+        },
+        {
+          "classId": "DSN-007",
+          "method": "normalizeDueDate"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-005",
+      "criterion": 6,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "editText"
+        }
+      ]
+    },
+    {
       "reqId": "REQ-006",
       "criterion": 1,
       "coveredBy": [
@@ -190,13 +246,8 @@
     {
       "reqId": "REQ-007",
       "criterion": 1,
-      "coveredBy": [
-        {
-          "classId": "DSN-007",
-          "method": "list"
-        }
-      ],
-      "note": "Strike-through is rendered by the page, described in UC-001."
+      "coveredBy": [],
+      "note": "Strike-through is rendered by the browser page, which has no classes; described in UC-001."
     },
     {
       "reqId": "REQ-007",
@@ -234,11 +285,11 @@
       "coveredBy": [
         {
           "classId": "DSN-007",
-          "method": "setDone"
+          "method": "list"
         },
         {
           "classId": "DSN-007",
-          "method": "list"
+          "method": "setDone"
         }
       ]
     },
@@ -249,6 +300,164 @@
         {
           "classId": "DSN-006",
           "method": "page"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-009",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "normalizeDueDate"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-009",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "add"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-009",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "editText"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-009",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "normalizeDueDate"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-009",
+      "criterion": 5,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "normalizeDueDate"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-009",
+      "criterion": 6,
+      "coveredBy": [
+        {
+          "classId": "DSN-008",
+          "method": "findAll"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-009",
+      "criterion": 7,
+      "coveredBy": [
+        {
+          "classId": "DSN-008",
+          "method": "findAll"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-006",
+          "method": "list"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-006",
+          "method": "list"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "isOverdue"
+        },
+        {
+          "sequenceId": "SEQ-001",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "isOverdue"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 5,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "isOverdue"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 6,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "isOverdue"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 7,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "isOverdue"
+        },
+        {
+          "classId": "DSN-007",
+          "method": "setDone"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 8,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "list"
         }
       ]
     }

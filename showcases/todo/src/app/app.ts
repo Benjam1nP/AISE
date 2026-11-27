@@ -20,8 +20,9 @@ export function createApp(db: DatabaseSync = new DatabaseSync(':memory:')): Expr
   });
   app.use(express.static(fileURLToPath(new URL('../../public', import.meta.url))));
 
-  app.get('/api/tasks', async (_req, res) => {
-    res.json(await taskController.list());
+  app.get('/api/tasks', async (req, res) => {
+    const today = typeof req.query.today === 'string' ? req.query.today : undefined;
+    res.json(await taskController.list(today));
   });
   app.post('/api/tasks', async (req, res) => {
     res.status(201).json(await taskController.create(req.body));

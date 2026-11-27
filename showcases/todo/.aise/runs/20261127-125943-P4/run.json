@@ -1,0 +1,94 @@
+{
+  "id": "20261127-125943-P4",
+  "phase": "P4",
+  "agent": "code",
+  "status": "done",
+  "startedAt": "2026-11-27T12:59:43.857Z",
+  "finishedAt": "2026-11-27T13:00:39.125Z",
+  "usage": {
+    "input": 1041,
+    "output": 8377,
+    "cacheRead": 108609,
+    "cacheWrite": 23437
+  },
+  "costUsd": 0.15109309999999998,
+  "summary": "The agent implemented the new design across the source files (Task, TaskView, TaskStore, TaskService, TaskController, app.ts and public/index.html), and detect_drift and start_app both passed. Before approving, check the typecheck failure: it is still failing in four old tests under test/ (UC-001, UC-002, UC-004, UC-005) because they use the old add, editText and list signatures, and the agent could not write to test/, so someone needs to update those tests before the phase can be considered clean. The developer should also confirm that the new nullable due date and the today parameter on list match what the design intends, since the service and controller behaviour (sorting, overdue rules, and the null-versus-undefined handling in editText) were chosen by the agent.",
+  "prevPhase": {
+    "status": "stale",
+    "approvedAt": "2026-11-27T12:17:37.640Z",
+    "designHashes": {
+      "DSN-005": "c94459b6053aac99e520971e86cda8c59ef12d70d470d4bb544e953c5ca5e31c",
+      "DSN-006": "ac910026ed198677d2b2772728d0f7fb50ffe400c0b4cbf3959be72e8707e458",
+      "DSN-007": "a4db7c4b59be8b0ab2984ddc6e585afdc91dbb2fd441ebd9695b813ff8848c11",
+      "DSN-008": "319c016b2e756716c3494cb2ec5340e81be403572aced060b0634d0083ad4d24",
+      "DSN-003": "ef68c1afa77c96b9569776cc628dbffc1b53da6c215e3c1d577c7cd5f8b2f46d",
+      "DSN-004": "9f41fc238897f1e57fd8a3d570ce896ac781f931d30de48995e92140b93173c8",
+      "DSN-001": "597488c14b5303d7e7f1933958608e6196bf6ed33ad375d2d9a55a639163b1fa",
+      "DSN-002": "281af52c9317d5e11bd90b75f9ceb522cdb02f2e52c3cafa2b4044fe77032112"
+    }
+  },
+  "prevArtefactHash": "08e1ad5edb2177d2fd5cedafa55d87c35c61f1373116b3d3cbf7a37eef9a6e99",
+  "postArtefactHash": "b0496e6664078397e20b8eb89a7bca0904a895390b6d65baec37ad0fe3960623",
+  "designHashes": {
+    "DSN-005": "d098fd060aaf70a5cdc536288c2b40b5206128ed745fcf623e69904b1a18451f",
+    "DSN-009": "58712da7b8ce0e2dda987c644aac1fd35876f29de76af1ff139f35c1ce6f4772",
+    "DSN-006": "b90392d5e157c9d4dcbfa4e971e8e5de3e10dfa3849d254165152fe670ea23a2",
+    "DSN-007": "e002f93c7ba440037648ad4b4852dc806e19eb8f971ba30507b42cd829e25979",
+    "DSN-008": "cf2181910e3af9032ace5b9c32582b72e1f625d21653b4a3a74a1f9679ae2b96",
+    "DSN-003": "d682e168e37732be119a30dbc60de8aa6942c0743cb38f073e1de571a33f16cd",
+    "DSN-004": "1dd3795db12cd114d84c75fea5aa0f6e1bfde29f7181511ee2c12e9b3d465710",
+    "DSN-001": "597488c14b5303d7e7f1933958608e6196bf6ed33ad375d2d9a55a639163b1fa",
+    "DSN-002": "281af52c9317d5e11bd90b75f9ceb522cdb02f2e52c3cafa2b4044fe77032112"
+  },
+  "ticketId": "TCK-001",
+  "prevTicket": {
+    "status": "in_progress",
+    "plan": {
+      "entry": "P1",
+      "affectedIds": [
+        "REQ-001",
+        "REQ-005",
+        "REQ-007",
+        "REQ-003",
+        "UC-001",
+        "UC-002",
+        "UC-004",
+        "SEQ-001",
+        "SEQ-002",
+        "SEQ-004",
+        "DSN-003",
+        "DSN-005",
+        "DSN-006",
+        "DSN-007",
+        "DSN-008"
+      ],
+      "files": [
+        "docs/requirements.md",
+        "docs/design.md",
+        "src/tasks-app/Task.ts",
+        "src/tasks-app/TaskController.ts",
+        "src/tasks-app/TaskService.ts",
+        "src/tasks-app/TaskStore.ts",
+        "src/app/app.ts",
+        "public/index.html",
+        "test/UC-001.test.ts",
+        "test/UC-002.test.ts",
+        "test/UC-004.test.ts"
+      ],
+      "steps": [
+        "P1: Remove 'Due dates' from the out-of-scope list (keep priorities and categories out of scope).",
+        "P1: Add a new requirement 'Task due date': a task may have an optional calendar due date (date only, no time), set when adding and set, changed or cleared when editing; an invalid date is rejected; the due date is stored on the server and kept after reopening.",
+        "P1: Add a new requirement 'Due date display and overdue': the list shows the due date next to a task that has one; an open task whose due date is before today (user's local date) is visibly marked overdue; a done task or a task without a due date is never marked overdue; list order of REQ-007 stays unchanged.",
+        "P1: Update REQ-001 and REQ-005 texts and criteria to mention the optional due date on add and edit.",
+        "P2: Add optional attribute dueDate (ISO date string YYYY-MM-DD or null) to Task DSN-005.",
+        "P2: Extend TaskController DSN-006 create body with dueDate and update body with dueDate (null clears it).",
+        "P2: Extend TaskService DSN-007 add and add a setDueDate (or edit) operation with date validation; update SEQ-002 and SEQ-004 accordingly.",
+        "P2: Extend TaskStore DSN-008 to persist dueDate (new nullable column with migration of existing databases).",
+        "P2: Update UC-001, UC-002, UC-004 descriptions and Browser page DSN-003 for due date input, display and overdue marking; link the new requirements.",
+        "P3: Add tests for the new requirements' acceptance criteria and adjust UC-001, UC-002, UC-004 tests.",
+        "P4: Implement dueDate in Task, TaskStore (column and migration), TaskService validation, TaskController and app routes, and the date input, display and overdue marker in public/index.html.",
+        "P5: Run all tests and check that existing tasks without due date still load and behave as before."
+      ]
+    }
+  }
+}
