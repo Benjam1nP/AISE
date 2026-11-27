@@ -114,3 +114,28 @@ rejected with 400.
 
 Earlier P4 and P5 work on this showcase (findings 1 to 17) brought the project to $4.68 before this
 run. Nothing hit a turn or cost limit; the deploy agent needed one deploy check.
+
+## Small: todo through P1 to P7
+
+Run on 2026-11-27 for #3, in the browser through the project page (Playwright driving the real UI),
+dev server with `AISE_PROJECTS_DIR=showcases`. Artefacts: `showcases/todo/`.
+
+| Phase | Runs                                           | Cost (USD) | Agent time | Gate at approval                     | Notes                                                |
+| ----- | ---------------------------------------------- | ---------- | ---------- | ------------------------------------ | ---------------------------------------------------- |
+| P1    | 3 (idea, 2 answer rounds)                      | 0.07       | 37 s       | passed                               | 8 requirements, 7 clarifying questions asked         |
+| P2    | 3 (auto, proposal apply refused, 1 refinement) | 0.23       | 86 s       | passed, warning REQ-002 AC3 (visual) | 4 classes, 5 use cases, 5 sequences, 2 nodes, 1 link |
+| P3    | 2 (auto review, review after refinement)       | 0.05       | 13 s       | no open proposals                    | 1 proposal accepted; its apply was refused (#21)     |
+| P4    | 2 (generation, 1 fix)                          | 0.14       | 61 s       | passed, app starts                   | 7 files, 358 lines (285 TypeScript, 73 HTML)         |
+| P5    | 2 (generation, fix loop of 1 round)            | 0.09       | 46 s       | passed                               | 5 test files, 28 passed, 2 manual (visual criteria)  |
+| P6    | 1                                              | 0.02       | 16 s       | passed, deploy check `/health` 200   | Dockerfile, compose, RUN.md                          |
+| total | 13                                             | 0.60       | 4.3 min    |                                      | no override, no turn or cost limit hit               |
+
+What happened along the way:
+
+- P3: the review agent proposed a `TaskListView` class on the Browser client node; accepting it
+  started a design run whose save was refused (client components hold no classes). Resolved in the
+  design chat by describing the done look on the page component instead. Filed as #21.
+- P4: the code agent served `GET /` statically and left the design's `TaskController.page` unused;
+  one chat message wired the route through it.
+- P5: the generated tests caught `DELETE /api/tasks/:id` answering 204 against the wiring contract
+  (200); the fix loop had the code agent fix it in one round.
