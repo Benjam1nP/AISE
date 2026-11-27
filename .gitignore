@@ -30,5 +30,7 @@ results.sarif
 # presentation template, copied in locally
 /presentation/template/
 
+# course slides (instructor material, docs/context has the Markdown); our own slides go in presentation/
+/docs/pdf/slides/
 # third party agent skills, restored from skills-lock.json with `npx skills`
 /.claude/skills/
