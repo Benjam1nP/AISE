@@ -412,6 +412,24 @@ describe('runCodeChecks', () => {
 		expect(await readChecks(store)).toEqual(checks);
 	});
 
+	it('starts the app when the only typecheck errors are under test/ (they belong to P5)', async () => {
+		await store.writeJson('.aise/design.json', DesignDoc, design());
+		await put('package.json', '{}');
+		await put('tsconfig.json', '{}');
+		await put('src/app/main.ts', 'export {};');
+		const err = (file: string) => ({ file, line: 1, col: 1, message: 'TS2554' });
+		const start = async () => ({ ok: true, entries: [], timedOut: false });
+		const tc = (files: string[]) => async () => ({
+			ok: false,
+			errors: files.map(err),
+			timedOut: false
+		});
+		const run = (files: string[]) => runCodeChecks(ctx(), { typecheck: tc(files), start });
+		expect((await run(['test/a.test.ts', './test/b.test.ts'])).start).not.toBeNull();
+		expect((await run(['test/a.test.ts', 'src/a.ts'])).start).toBeNull();
+		expect((await run(['test/a.test.ts', ''])).start).toBeNull();
+	});
+
 	it('readChecks is null for a malformed checks file', async () => {
 		for (const text of ['{not json', '{"at": 1}', '[]']) {
 			await put('.aise/checks/P4.json', text);

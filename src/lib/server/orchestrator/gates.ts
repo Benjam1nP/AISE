@@ -1,4 +1,4 @@
-import { designHash, type CodeChecks } from '../core/code-state';
+import { codeTypecheckOk, designHash, isTestFileError, type CodeChecks } from '../core/code-state';
 import { DEPLOY_FILES, type DeployCheck } from '../core/deploy-state';
 import { MAIN_ENTRY } from '../core/nodes';
 import type { DesignDoc } from '../core/schemas/design';
@@ -67,16 +67,14 @@ function codeChecks(
 		];
 	}
 	const tc = checks.typecheck;
+	// Errors under test/ belong to P5 ("Tests type check"); P4 approval comes before the tests are updated.
+	const errors = tc?.errors.filter((e) => !isTestFileError(e.file)).length ?? 0;
 	return [
 		...exists,
 		check(
 			'Typecheck passes',
-			tc?.ok === true,
-			tc === null
-				? 'no package.json'
-				: tc.timedOut
-					? 'timed out'
-					: count(tc.errors.length, 'error', 'errors')
+			tc !== null && codeTypecheckOk(tc),
+			tc === null ? 'no package.json' : tc.timedOut ? 'timed out' : count(errors, 'error', 'errors')
 		),
 		check(
 			'Code matches the design',
@@ -96,7 +94,11 @@ function startCheck(checks: CodeChecks): GateCheck {
 		return check(
 			label,
 			false,
-			tc === null ? 'no package.json' : !tc.ok ? 'not run, typecheck fails' : 'no app entry'
+			tc === null
+				? 'no package.json'
+				: !codeTypecheckOk(tc)
+					? 'not run, typecheck fails'
+					: 'no app entry'
 		);
 	const failed = start.entries.filter((e) => !e.ok).map((e) => `${e.entry} ${e.error ?? 'failed'}`);
 	return check(label, start.ok, start.timedOut ? 'timed out' : failed.join(', '));
@@ -111,8 +113,7 @@ export type TestGateInput = {
 };
 
 /** tsc errors that belong to the tests: a file under `test/`, or a global error without a file. */
-export const isTestError = (file: string) =>
-	file === '' || file.replaceAll('\\', '/').replace(/^\.\//, '').startsWith('test/');
+export const isTestError = (file: string) => file === '' || isTestFileError(file);
 
 /**
  * P5 reads the stored checks; it never runs them. Coverage counts the stored result; coverage,
