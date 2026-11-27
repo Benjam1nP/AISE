@@ -1,0 +1,21 @@
+{
+  "id": "20261120-233554-P1",
+  "phase": "P1",
+  "agent": "requirements",
+  "status": "done",
+  "startedAt": "2026-11-20T23:35:54.499Z",
+  "finishedAt": "2026-11-20T23:36:13.457Z",
+  "usage": {
+    "input": 568,
+    "output": 3131,
+    "cacheRead": 11555,
+    "cacheWrite": 6169
+  },
+  "costUsd": 0.046563499999999994,
+  "summary": "The agent read and rewrote the requirements document for P1 and saved it with 12 requirements, with no failed tool calls. The developer should check the ownership and time-zone rules, and the open question is whether admins are exempt from the \"no cancelling after start\" rule, which the agent has asked them to decide. Since the agent recorded no assumptions, the developer should also confirm that the out-of-scope items (no emails, no ownership recovery) match what they intended.",
+  "prevPhase": {
+    "status": "awaiting_approval"
+  },
+  "prevArtefactHash": "e8967d471076adb57c37a1375b17ff871ce32e47b8806ec2c7623a6719c1b55e",
+  "postArtefactHash": "faecb3af11a0598fd2e8a71b78448c55ab08a6f4788168d40c503f52ac8e76ab"
+}

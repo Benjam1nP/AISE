@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI-assisted SE environment · Design summary</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper: #f5f5f5; --color-paper-2: #ececec;
+      --color-ink: #2d3142; --color-muted: #4f5d75; --color-soft: #7a8399;
+      --color-rule: rgba(45,49,66,0.12);
+      --color-accent: #eb6c36; --color-accent-tint: rgba(235,108,54,0.08);
+      --color-link: #2e5aa8; --color-link-tint: rgba(46,90,168,0.08);
+      --color-ok: #3c7a57; --color-ok-tint: rgba(60,122,87,0.10);
+      --font-sans: 'Geist', system-ui, sans-serif;
+      --font-serif: 'Instrument Serif', serif;
+      --font-mono: 'Geist Mono', ui-monospace, monospace;
+    }
+    body { font-family: var(--font-sans); background: var(--color-paper); color: var(--color-ink); padding: 3rem 2rem 4rem; line-height: 1.5; }
+    .container { max-width: 1120px; margin: 0 auto; }
+    a { color: var(--color-link); }
+    code, .mono { font-family: var(--font-mono); font-size: 0.78em; }
+
+    .eyebrow { font-family: var(--font-mono); font-size: 0.66rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-muted); }
+    h1 { font-family: var(--font-serif); font-weight: 400; font-size: clamp(2rem, 3vw + 1rem, 2.75rem); letter-spacing: -0.02em; line-height: 1.1; margin: 0.75rem 0 0.75rem; }
+    h2 { font-family: var(--font-serif); font-weight: 400; font-size: 1.75rem; letter-spacing: -0.01em; line-height: 1.15; }
+    h3 { font-size: 0.9rem; font-weight: 600; }
+    .lead { font-size: 1.05rem; color: var(--color-muted); max-width: 70ch; }
+    .meta { margin-top: 1rem; font-family: var(--font-mono); font-size: 0.72rem; color: var(--color-soft); }
+
+    section { margin-top: 3.5rem; }
+    .section-head { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 0.4rem; }
+    .section-head .num { font-family: var(--font-mono); font-size: 0.72rem; color: var(--color-accent); }
+    .section-sub { color: var(--color-muted); font-size: 0.92rem; max-width: 72ch; margin-bottom: 1.25rem; }
+
+    .panel { background: #fff; border: 1px solid var(--color-rule); border-radius: 8px; padding: 1.25rem; }
+    .panel-2 { background: var(--color-paper-2); border: 1px solid var(--color-rule); border-radius: 8px; padding: 1.25rem; overflow-x: auto; }
+
+    .icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+    .icon.lg { width: 22px; height: 22px; }
+
+    /* Stats */
+    .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; margin-top: 2rem; }
+    .stat { background: #fff; border: 1px solid var(--color-rule); border-radius: 8px; padding: 1rem 1.1rem; }
+    .stat b { display: block; font-family: var(--font-serif); font-weight: 400; font-size: 2.2rem; line-height: 1; }
+    .stat span { font-size: 0.8rem; color: var(--color-muted); }
+
+    /* Idea cards */
+    .three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+    .idea { background: #fff; border: 1px solid var(--color-rule); border-radius: 8px; padding: 1.1rem 1.2rem; }
+    .idea .ih { display: flex; align-items: center; gap: 0.55rem; margin-bottom: 0.5rem; color: var(--color-accent); }
+    .idea .ih h3 { color: var(--color-ink); }
+    .idea p { font-size: 0.86rem; color: var(--color-muted); }
+
+    /* Pipeline */
+    .pipeline { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; position: relative; }
+    .phase { position: relative; background: #fff; border: 1px solid var(--color-rule); border-radius: 8px; padding: 0.85rem 0.75rem 0.9rem; margin-right: 22px; display: flex; flex-direction: column; gap: 0.35rem; min-height: 190px; }
+    .phase:last-child { margin-right: 0; }
+    .phase .ph-top { display: flex; align-items: center; justify-content: space-between; color: var(--color-muted); }
+    .phase .ph-id { font-family: var(--font-mono); font-size: 0.7rem; color: var(--color-accent); font-weight: 600; }
+    .phase h3 { font-size: 0.85rem; }
+    .phase p { font-size: 0.74rem; color: var(--color-muted); line-height: 1.4; }
+    .phase .chip { align-self: flex-start; }
+    .phase .out { margin-top: auto; font-family: var(--font-mono); font-size: 0.66rem; color: var(--color-ink); background: var(--color-paper); border-radius: 4px; padding: 0.25rem 0.4rem; }
+    .phase.focal { border-color: var(--color-accent); background: linear-gradient(var(--color-accent-tint), var(--color-accent-tint)), #fff; }
+    .gate { position: absolute; right: -24px; top: 50%; transform: translateY(-50%); width: 26px; height: 26px; border-radius: 50%; background: var(--color-ok); color: #fff; display: grid; place-items: center; z-index: 2; box-shadow: 0 0 0 3px var(--color-paper-2); }
+    .gate .icon { width: 15px; height: 15px; stroke-width: 2; }
+    .phase:last-child .gate { display: none; }
+    .back-note { display: flex; align-items: center; gap: 0.6rem; margin-top: 1rem; font-size: 0.8rem; color: var(--color-muted); }
+    .back-line { flex: 1; height: 0; border-top: 1.5px dashed var(--color-soft); position: relative; }
+    .back-line::before { content: ''; position: absolute; left: -2px; top: -5px; border: 4px solid transparent; border-right: 7px solid var(--color-soft); transform: translateX(-8px); }
+    .legend-row { display: flex; flex-wrap: wrap; gap: 1.25rem; margin-top: 0.9rem; font-size: 0.75rem; color: var(--color-muted); }
+    .legend-row span { display: inline-flex; align-items: center; gap: 0.4rem; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+    /* Chips */
+    .chip { display: inline-flex; align-items: center; gap: 0.3rem; font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.02em; padding: 0.15rem 0.45rem; border-radius: 999px; border: 1px solid var(--color-rule); color: var(--color-muted); background: #fff; white-space: nowrap; }
+    .chip.opus { color: var(--color-accent); border-color: rgba(235,108,54,0.45); background: var(--color-accent-tint); }
+    .chip.sonnet { color: var(--color-link); border-color: rgba(46,90,168,0.40); background: var(--color-link-tint); }
+    .chip.haiku { color: var(--color-muted); border-color: rgba(79,93,117,0.35); background: rgba(79,93,117,0.06); }
+    .chip.ok { color: var(--color-ok); border-color: rgba(60,122,87,0.4); background: var(--color-ok-tint); }
+    .chip.stretch { color: var(--color-muted); border-style: dashed; }
+
+    /* Agents */
+    .agents { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+    .agent { background: #fff; border: 1px solid var(--color-rule); border-radius: 8px; padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: 0.55rem; }
+    .agent .ah { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+    .agent .ah div { display: flex; align-items: center; gap: 0.5rem; }
+    .agent p { font-size: 0.8rem; color: var(--color-muted); }
+    .agent .row { display: flex; flex-wrap: wrap; gap: 0.3rem; align-items: center; }
+    .agent .lbl { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-soft); width: 100%; }
+    .note { margin-top: 0.9rem; font-size: 0.82rem; color: var(--color-muted); }
+
+    /* Trace chain */
+    .chain { display: grid; grid-template-columns: 1fr 24px 1fr 24px 1fr 24px 1fr; align-items: stretch; }
+    .link-arrow { display: grid; place-items: center; color: var(--color-link); }
+    .tnode { background: #fff; border: 1px solid var(--color-rule); border-radius: 8px; padding: 0.85rem; display: flex; flex-direction: column; gap: 0.45rem; min-width: 0; }
+    .tnode .where { font-family: var(--font-mono); font-size: 0.64rem; color: var(--color-soft); }
+    .tnode pre { font-family: var(--font-mono); font-size: 0.68rem; line-height: 1.5; background: var(--color-paper); border-radius: 4px; padding: 0.55rem; white-space: pre-wrap; word-break: break-word; color: var(--color-ink); }
+    .tnode h3 { display: flex; align-items: center; gap: 0.45rem; }
+    .id { color: var(--color-accent); font-weight: 600; }
+    .cm { color: var(--color-soft); }
+    .kw { color: var(--color-link); }
+
+    /* Drift */
+    .drift { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 1rem; align-items: start; }
+    .items { display: flex; flex-direction: column; gap: 0.5rem; }
+    .item { background: #fff; border: 1px solid var(--color-rule); border-radius: 6px; padding: 0.65rem 0.75rem; font-size: 0.8rem; display: grid; grid-template-columns: 22px 1fr; gap: 0.5rem; }
+    .item .sym { font-family: var(--font-mono); font-weight: 600; text-align: center; border-radius: 4px; }
+    .item .sym.add { color: var(--color-ok); background: var(--color-ok-tint); }
+    .item .sym.mod { color: var(--color-accent); background: var(--color-accent-tint); }
+    .item .sym.del { color: #a23b3b; background: rgba(162,59,59,0.08); }
+    .item .actions { display: flex; gap: 0.35rem; margin-top: 0.4rem; flex-wrap: wrap; }
+    .btn { font-family: var(--font-mono); font-size: 0.64rem; padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid var(--color-rule); background: var(--color-paper); color: var(--color-ink); }
+    .btn.pick { border-color: var(--color-accent); color: var(--color-accent); background: var(--color-accent-tint); }
+
+    /* Matrix tables */
+    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    th, td { text-align: left; padding: 0.55rem 0.6rem; border-bottom: 1px solid var(--color-rule); vertical-align: top; }
+    th { font-family: var(--font-mono); font-size: 0.64rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-muted); }
+    td .sub { display: block; color: var(--color-muted); font-size: 0.76rem; }
+    .matrix td.c, .matrix th.c { text-align: center; width: 76px; }
+    .cell { display: inline-block; width: 16px; height: 16px; border-radius: 4px; vertical-align: middle; }
+    .cell.s { background: var(--color-accent); }
+    .cell.p { background: rgba(235,108,54,0.28); }
+    .cell.n { background: transparent; border: 1px solid var(--color-rule); }
+    .flow .step { display: inline-flex; width: 22px; height: 22px; border-radius: 50%; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.62rem; }
+    .flow .on { background: var(--color-link); color: #fff; }
+    .flow .start { background: var(--color-accent); color: #fff; }
+    .flow .off { border: 1px dashed var(--color-rule); color: var(--color-soft); }
+
+    /* Two columns */
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .tree { font-family: var(--font-mono); font-size: 0.74rem; line-height: 1.75; white-space: pre; color: var(--color-ink); overflow-x: auto; }
+    .tree .c { color: var(--color-soft); }
+    .tree .k { color: var(--color-accent); }
+
+    /* Gantt */
+    .gantt { position: relative; }
+    .g-axis, .g-row { display: grid; grid-template-columns: 260px 1fr; align-items: center; }
+    .g-row { min-height: 54px; }
+    .g-axis { margin-bottom: 0.4rem; }
+    .g-track { position: relative; height: 30px; }
+    .g-axis .g-track { height: 18px; }
+    .g-tick { position: absolute; top: 0; font-family: var(--font-mono); font-size: 0.62rem; color: var(--color-soft); transform: translateX(-50%); white-space: nowrap; }
+    .g-grid { position: absolute; top: 26px; bottom: 0; left: 260px; right: 0; pointer-events: none; }
+    .g-grid i { position: absolute; top: 0; bottom: 0; border-left: 1px dashed var(--color-rule); }
+    .g-label { font-size: 0.8rem; padding-right: 0.75rem; }
+    .g-label small { display: block; color: var(--color-muted); font-size: 0.72rem; }
+    .g-bar { position: absolute; top: 5px; height: 20px; border-radius: 4px; background: var(--color-ink); color: #fff; font-family: var(--font-mono); font-size: 0.6rem; display: flex; align-items: center; padding: 0 0.45rem; white-space: nowrap; overflow: hidden; }
+    .g-bar.accent { background: var(--color-accent); }
+    .g-bar.buffer { background: repeating-linear-gradient(45deg, #fff, #fff 5px, var(--color-paper-2) 5px, var(--color-paper-2) 10px); color: var(--color-muted); border: 1px solid var(--color-rule); }
+    .g-ms { position: absolute; top: 8px; width: 13px; height: 13px; background: var(--color-accent); transform: translateX(-50%) rotate(45deg); border: 2px solid var(--color-paper-2); }
+    .g-ms.ink { background: var(--color-ink); }
+    .g-mslabel { position: absolute; top: 6px; font-size: 0.7rem; color: var(--color-muted); white-space: nowrap; }
+
+    .demo-bar { display: flex; height: 34px; border-radius: 6px; overflow: hidden; gap: 2px; }
+    .seg { display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.62rem; color: #fff; background: var(--color-ink); white-space: nowrap; overflow: hidden; }
+    .seg.muted { background: var(--color-muted); }
+    .seg.accent { background: var(--color-accent); }
+    .seg.buffer { background: repeating-linear-gradient(45deg, #fff, #fff 5px, var(--color-paper-2) 5px, var(--color-paper-2) 10px); color: var(--color-muted); }
+    .demo-axis { display: flex; justify-content: space-between; margin-top: 0.35rem; font-family: var(--font-mono); font-size: 0.62rem; color: var(--color-soft); }
+
+    /* Cuts */
+    .cuts { list-style: none; counter-reset: cut; display: flex; flex-direction: column; gap: 0.5rem; }
+    .cuts li { counter-increment: cut; display: grid; grid-template-columns: 28px 1fr; gap: 0.5rem; font-size: 0.86rem; align-items: center; }
+    .cuts li::before { content: counter(cut); font-family: var(--font-mono); font-size: 0.7rem; color: #fff; background: var(--color-muted); width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; }
+    .calls { list-style: none; display: flex; flex-direction: column; gap: 0.45rem; font-size: 0.85rem; color: var(--color-muted); }
+    .calls b { color: var(--color-ink); font-weight: 600; }
+
+    /* OSS */
+    .oss { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; }
+    .ocard { background: #fff; border: 1px solid var(--color-rule); border-radius: 8px; padding: 0.95rem; display: flex; flex-direction: column; gap: 0.45rem; }
+    .ocard p { font-size: 0.78rem; color: var(--color-muted); }
+    .ocard .row { display: flex; gap: 0.3rem; flex-wrap: wrap; margin-top: auto; }
+
+    .footer { margin-top: 3.5rem; padding-top: 1.25rem; border-top: 1px solid var(--color-rule); font-family: var(--font-mono); font-size: 0.7rem; color: var(--color-soft); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }
+
+    @media (max-width: 980px) {
+      .stats { grid-template-columns: repeat(3, 1fr); }
+      .pipeline { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+      .phase { margin-right: 0; min-height: 0; }
+      .gate { display: none; }
+      .three, .agents, .two, .drift { grid-template-columns: 1fr; }
+      .chain { grid-template-columns: 1fr; gap: 0.5rem; }
+      .link-arrow { transform: rotate(90deg); height: 20px; }
+      .oss { grid-template-columns: repeat(2, 1fr); }
+      .g-axis, .g-row { grid-template-columns: 140px 1fr; }
+      .g-grid { left: 140px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Icon set -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8M8 13h5"/></symbol>
+  <symbol id="i-design" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="6" rx="1"/><rect x="14" y="3" width="7" height="6" rx="1"/><rect x="8.5" y="15" width="7" height="6" rx="1"/><path d="M6.5 9v3h11V9M12 12v3"/></symbol>
+  <symbol id="i-refine" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v5h-5"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M13.5 5l-3 14"/></symbol>
+  <symbol id="i-test" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3"/><path d="M7.5 15h9"/></symbol>
+  <symbol id="i-deploy" viewBox="0 0 24 24"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/></symbol>
+  <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M15 4a5 5 0 0 0-4.6 6.9L4 17.3V20h2.7l6.4-6.4A5 5 0 0 0 20 9l-3 1-2-2 1-3z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+  <symbol id="i-bot" viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="12" rx="3"/><path d="M12 4v4M9 14h.01M15 14h.01"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15M14 7l5 5-5 5"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 6h6l2 2h10v11H3z"/></symbol>
+  <symbol id="i-scissors" viewBox="0 0 24 24"><circle cx="6" cy="7" r="2.5"/><circle cx="6" cy="17" r="2.5"/><path d="M8 8.5L20 18M8 15.5L20 6"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></symbol>
+</svg>
+
+<div class="container">
+
+  <header>
+    <div class="eyebrow">Design summary · Coding with AI · WS 2026</div>
+    <h1>An AI-assisted software engineering environment</h1>
+    <p class="lead">A local web workspace that takes a project from a vague idea to tested, deployed code, then keeps requirements, diagrams, code and tests aligned while it changes. The developer approves every phase; agents do the work.</p>
+    <p class="meta">Source of truth: <a href="../superpowers/specs/2026-11-04-ai-se-environment-design.md">docs/superpowers/specs/2026-11-04-ai-se-environment-design.md</a> · Architecture picture: <a href="project-overview.html">project-overview.html</a></p>
+
+    <div class="stats">
+      <div class="stat"><b>7</b><span>phases, one gate each</span></div>
+      <div class="stat"><b>6</b><span>agents, one file each</span></div>
+      <div class="stat"><b>12</b><span>MCP tools on one server</span></div>
+      <div class="stat"><b>3</b><span>showcases: to-do, booking, auction</span></div>
+      <div class="stat"><b>3</b><span>weeks of build, done Nov 24</span></div>
+    </div>
+  </header>
+
+  <!-- 1. Three ideas -->
+  <section>
+    <div class="section-head"><span class="num">01</span><h2>Three ideas carry the design</h2></div>
+    <p class="section-sub">Everything else follows from these. They target C2 (alignment under change) and C5 (requirement to diagram to code), the two criteria we want to be clearly best at.</p>
+    <div class="three">
+      <div class="idea">
+        <div class="ih"><svg class="icon lg"><use href="#i-design"/></svg><h3>One model, many diagrams</h3></div>
+        <p>The design is one typed JSON file. Every UML diagram is rendered from it by plain code, so the LLM never writes Mermaid and the diagrams cannot contradict each other.</p>
+      </div>
+      <div class="idea">
+        <div class="ih"><svg class="icon lg"><use href="#i-link"/></svg><h3>Shared IDs everywhere</h3></div>
+        <p><code>REQ</code>, <code>UC</code>, <code>DSN</code> and <code>SEQ</code> IDs appear in the requirements, the design, a <code>@trace</code> tag in the code and the test names. Any artefact leads to the others.</p>
+      </div>
+      <div class="idea">
+        <div class="ih"><svg class="icon lg"><use href="#i-alert"/></svg><h3>Drift is computed, not guessed</h3></div>
+        <p>ts-morph extracts a class model from the code and compares it with the design. Each difference is a drift item; the developer picks the repair direction.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Phases -->
+  <section>
+    <div class="section-head"><span class="num">02</span><h2>Seven phases, a gate after each</h2></div>
+    <p class="section-sub">Requirements come first: the agent keeps asking until nothing is vague or missing. Each gate is checked by code; the developer can still approve with a failing check, and the override is recorded.</p>
+    <div class="panel-2">
+      <div class="pipeline">
+        <div class="phase">
+          <div class="ph-top"><span class="ph-id">P1</span><svg class="icon"><use href="#i-chat"/></svg></div>
+          <h3>Requirements</h3>
+          <p>Asks up to 5 questions per round until no open questions are left.</p>
+          <span class="chip sonnet">Sonnet</span>
+          <div class="out">requirements.json</div>
+          <span class="gate" title="Gate"><svg class="icon"><use href="#i-check"/></svg></span>
+        </div>
+        <div class="phase">
+          <div class="ph-top"><span class="ph-id">P2</span><svg class="icon"><use href="#i-design"/></svg></div>
+          <h3>Design</h3>
+          <p>Use case, class, sequence and deployment diagrams from one model.</p>
+          <span class="chip opus">Opus</span>
+          <div class="out">design.json</div>
+          <span class="gate"><svg class="icon"><use href="#i-check"/></svg></span>
+        </div>
+        <div class="phase">
+          <div class="ph-top"><span class="ph-id">P3</span><svg class="icon"><use href="#i-refine"/></svg></div>
+          <h3>Refinement</h3>
+          <p>Chat about the diagrams; changes stay consistent. Self review on request.</p>
+          <span class="chip opus">Opus</span>
+          <div class="out">design.json</div>
+          <span class="gate"><svg class="icon"><use href="#i-check"/></svg></span>
+        </div>
+        <div class="phase">
+          <div class="ph-top"><span class="ph-id">P4</span><svg class="icon"><use href="#i-code"/></svg></div>
+          <h3>Code</h3>
+          <p>One file per class, names from the class diagram, <code>@trace</code> tags.</p>
+          <span class="chip sonnet">Sonnet</span>
+          <div class="out">src/</div>
+          <span class="gate"><svg class="icon"><use href="#i-check"/></svg></span>
+        </div>
+        <div class="phase">
+          <div class="ph-top"><span class="ph-id">P5</span><svg class="icon"><use href="#i-test"/></svg></div>
+          <h3>Tests</h3>
+          <p>One test per acceptance criterion, run in Docker, failures explained and fixed.</p>
+          <span class="chip sonnet">Sonnet</span>
+          <div class="out">test/</div>
+          <span class="gate"><svg class="icon"><use href="#i-check"/></svg></span>
+        </div>
+        <div class="phase">
+          <div class="ph-top"><span class="ph-id">P6</span><svg class="icon"><use href="#i-deploy"/></svg></div>
+          <h3>Deploy</h3>
+          <p>Compose services follow the deployment diagram; health check must answer.</p>
+          <span class="chip sonnet">Sonnet</span>
+          <div class="out">compose.yaml</div>
+          <span class="gate"><svg class="icon"><use href="#i-check"/></svg></span>
+        </div>
+        <div class="phase focal">
+          <div class="ph-top"><span class="ph-id">P7</span><svg class="icon"><use href="#i-wrench"/></svg></div>
+          <h3>Maintenance</h3>
+          <p>Change requests, bug reports and hand edits propagate; drift is detected and repaired.</p>
+          <span class="chip opus">Opus</span>
+          <div class="out">CR-001.md</div>
+        </div>
+      </div>
+      <div class="back-note"><div class="back-line"></div><span>Going back is always allowed. Changing an approved artefact marks every later phase stale.</span></div>
+      <div class="legend-row">
+        <span><span class="gate" style="position:static;transform:none;width:16px;height:16px;box-shadow:none"><svg class="icon" style="width:10px;height:10px"><use href="#i-check"/></svg></span> approval gate</span>
+        <span><span class="chip opus">Opus</span> reasoning across artefacts</span>
+        <span><span class="chip sonnet">Sonnet</span> output follows a clear spec</span>
+        <span><span class="chip haiku">Haiku</span> gate summaries only</span>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:1rem">
+      <table>
+        <thead><tr><th style="width:70px">Phase</th><th>Gate passes when</th><th style="width:40%">What the developer sees</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">P1</td><td>no open questions, or "Approve anyway" turns them into assumptions</td><td>questions in the chat, requirements panel filling in</td></tr>
+          <tr><td class="mono">P2, P3</td><td>schema and references valid, every must REQ linked</td><td>rendered diagrams, "why" answers, review findings</td></tr>
+          <tr><td class="mono">P4</td><td>typecheck passes, drift check is clean</td><td>file tree, editor, trace tags</td></tr>
+          <tr><td class="mono">P5</td><td>full test suite passes</td><td>results per use case, failure explanations, fix diffs</td></tr>
+          <tr><td class="mono">P6</td><td><code>docker compose up</code> answers the health check</td><td>Dockerfile, compose file, run docs</td></tr>
+          <tr><td class="mono">P7</td><td>each affected phase passed its own gate again</td><td>impact list, diffs, change report</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 3. Architecture -->
+  <section>
+    <div class="section-head"><span class="num">03</span><h2>Architecture</h2></div>
+    <p class="section-sub">One TypeScript package. The orchestrator is plain code; only the agents call LLMs. Agents never call each other: they hand off through files, so every step is inspectable.</p>
+    <div class="panel-2">
+      <svg viewBox="0 0 1000 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="arch-t arch-d" style="width:100%;min-width:860px;display:block">
+        <title id="arch-t">Runtime architecture</title>
+        <desc id="arch-d">The developer uses the SvelteKit UI. The SvelteKit server holds the orchestrator and the agents. Agents call the Anthropic API and the MCP tool server, which reads and writes the project folder and runs Docker.</desc>
+        <defs>
+          <marker id="a" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+          <marker id="aa" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#eb6c36"/></marker>
+        </defs>
+        <g font-family="'Geist', sans-serif">
+          <!-- server zone -->
+          <rect x="380" y="30" width="300" height="320" rx="10" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.15)" stroke-dasharray="4,3"/>
+          <text x="396" y="50" font-family="'Geist Mono', monospace" font-size="9" letter-spacing="0.14em" fill="#7a8399">SVELTEKIT SERVER</text>
+          <!-- mcp zone -->
+          <rect x="720" y="150" width="260" height="200" rx="10" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.15)" stroke-dasharray="4,3"/>
+          <text x="736" y="170" font-family="'Geist Mono', monospace" font-size="9" letter-spacing="0.14em" fill="#7a8399">MCP TOOL SERVER · STDIO</text>
+
+          <!-- arrows -->
+          <line x1="150" y1="190" x2="196" y2="190" stroke="#4f5d75" stroke-width="1.3" marker-end="url(#a)"/>
+          <path d="M 350,180 H 372 V 110 H 402" fill="none" stroke="#4f5d75" stroke-width="1.3" marker-end="url(#a)"/>
+          <text x="364" y="100" text-anchor="end" font-family="'Geist Mono', monospace" font-size="8" fill="#4f5d75">actions · SSE events</text>
+          <line x1="530" y1="140" x2="530" y2="222" stroke="#eb6c36" stroke-width="1.3" marker-end="url(#aa)"/>
+          <text x="538" y="178" font-family="'Geist Mono', monospace" font-size="8" fill="#eb6c36">start run</text><text x="538" y="190" font-family="'Geist Mono', monospace" font-size="8" fill="#eb6c36">artefact paths</text>
+          <path d="M 660,240 H 700 V 75 H 736" fill="none" stroke="#4f5d75" stroke-width="1.3" marker-end="url(#a)"/>
+          <path d="M 660,266 H 736" fill="none" stroke="#4f5d75" stroke-width="1.3" marker-end="url(#a)"/>
+          <text x="666" y="258" font-family="'Geist Mono', monospace" font-size="8" fill="#4f5d75">tool calls</text>
+
+          <!-- developer -->
+          <rect x="30" y="160" width="120" height="60" rx="8" fill="rgba(79,93,117,0.10)" stroke="#7a8399"/>
+          <text x="90" y="186" text-anchor="middle" font-size="13" font-weight="600" fill="#2d3142">Developer</text>
+          <text x="90" y="203" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="9" fill="#4f5d75">browser</text>
+
+          <!-- UI -->
+          <rect x="200" y="150" width="150" height="80" rx="8" fill="#fff" stroke="#2d3142"/>
+          <text x="275" y="178" text-anchor="middle" font-size="13" font-weight="600" fill="#2d3142">Workspace UI</text>
+          <text x="275" y="195" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="9" fill="#4f5d75">chat · artefact tabs</text>
+          <text x="275" y="210" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="9" fill="#4f5d75">Mermaid · CodeMirror</text>
+
+          <!-- orchestrator -->
+          <rect x="402" y="70" width="256" height="70" rx="8" fill="rgba(235,108,54,0.08)" stroke="#eb6c36"/>
+          <text x="530" y="98" text-anchor="middle" font-size="13" font-weight="600" fill="#2d3142">Orchestrator</text>
+          <text x="530" y="116" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="9" fill="#4f5d75">plain code · phases · gates · staleness</text>
+
+          <!-- agents -->
+          <rect x="402" y="226" width="258" height="100" rx="8" fill="#fff" stroke="#2d3142"/>
+          <text x="530" y="250" text-anchor="middle" font-size="13" font-weight="600" fill="#2d3142">Agents</text>
+          <text x="530" y="267" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="9" fill="#4f5d75">own loop on the Anthropic SDK</text>
+          <text x="530" y="283" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="9" fill="#4f5d75">prompt · model · tool subset · write scope</text>
+          <text x="530" y="306" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="9" fill="#eb6c36">REQ · DESIGN · CODE · TEST · DEPLOY · MAINT</text>
+
+          <!-- anthropic -->
+          <rect x="736" y="45" width="230" height="60" rx="8" fill="rgba(79,93,117,0.10)" stroke="#7a8399"/>
+          <text x="851" y="71" text-anchor="middle" font-size="13" font-weight="600" fill="#2d3142">Anthropic API</text>
+          <text x="851" y="88" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="9" fill="#4f5d75">Opus · Sonnet · Haiku · caching</text>
+
+          <!-- mcp core -->
+          <rect x="736" y="236" width="230" height="56" rx="8" fill="#fff" stroke="#2d3142"/>
+          <text x="851" y="259" text-anchor="middle" font-size="13" font-weight="600" fill="#2d3142">12 tools over core</text>
+          <text x="851" y="276" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="9" fill="#4f5d75">schemas · render · trace · drift</text>
+          <line x1="790" y1="292" x2="790" y2="306" stroke="#4f5d75" stroke-width="1.2"/>
+          <line x1="912" y1="292" x2="912" y2="306" stroke="#4f5d75" stroke-width="1.2"/>
+          <rect x="736" y="306" width="110" height="36" rx="6" fill="#ececec" stroke="#7a8399"/>
+          <text x="791" y="328" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="9" fill="#2d3142">project folder</text>
+          <rect x="856" y="306" width="110" height="36" rx="6" fill="#ececec" stroke="#7a8399"/>
+          <text x="911" y="328" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="9" fill="#2d3142">Docker</text>
+          <text x="851" y="200" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="8.5" fill="#7a8399">also usable from Claude Code</text>
+          <text x="851" y="213" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="8.5" fill="#7a8399">and MCP Inspector</text>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- 4. Agents -->
+  <section>
+    <div class="section-head"><span class="num">04</span><h2>Agents</h2></div>
+    <p class="section-sub">Each agent is one file: system prompt, model, allowed tools, and where it may write. Narrow tools keep prompts small and limit damage: the requirements agent cannot touch code.</p>
+    <div class="agents">
+      <div class="agent">
+        <div class="ah"><div><svg class="icon"><use href="#i-chat"/></svg><h3>Requirements</h3></div><span class="chip sonnet">Sonnet</span></div>
+        <p>Turns the idea into <code>REQ</code> items with acceptance criteria. Asks instead of guessing.</p>
+        <div class="row"><span class="lbl">Tools</span><span class="chip">read/write_requirements</span></div>
+        <div class="row"><span class="lbl">Phases</span><span class="chip">P1</span></div>
+      </div>
+      <div class="agent">
+        <div class="ah"><div><svg class="icon"><use href="#i-design"/></svg><h3>Design</h3></div><span class="chip opus">Opus</span></div>
+        <p>Builds and refines the design model, explains choices, reviews its own design on request.</p>
+        <div class="row"><span class="lbl">Tools</span><span class="chip">read_requirements</span><span class="chip">read/update_design</span><span class="chip">trace</span></div>
+        <div class="row"><span class="lbl">Phases</span><span class="chip">P2</span><span class="chip">P3</span></div>
+      </div>
+      <div class="agent">
+        <div class="ah"><div><svg class="icon"><use href="#i-code"/></svg><h3>Code</h3></div><span class="chip sonnet">Sonnet</span></div>
+        <p>Writes code that mirrors the class model. Also applies code side drift repairs and test fixes.</p>
+        <div class="row"><span class="lbl">Tools</span><span class="chip">read_design</span><span class="chip">files</span><span class="chip">trace</span><span class="chip">typecheck</span><span class="chip">detect_drift</span></div>
+        <div class="row"><span class="lbl">Writes</span><span class="chip">src/</span><span class="chip">public/</span><span class="chip">package.json</span></div>
+      </div>
+      <div class="agent">
+        <div class="ah"><div><svg class="icon"><use href="#i-test"/></svg><h3>Test</h3></div><span class="chip sonnet">Sonnet</span></div>
+        <p>Derives tests from requirements, design and the code's API surface, never from method bodies (it cannot read <code>src/</code>). Runs them, explains failures, proposes fixes.</p>
+        <div class="row"><span class="lbl">Tools</span><span class="chip">read_requirements</span><span class="chip">read_design</span><span class="chip">code_model</span><span class="chip">files</span><span class="chip">run_tests</span></div>
+        <div class="row"><span class="lbl">Writes</span><span class="chip">test/</span></div>
+      </div>
+      <div class="agent">
+        <div class="ah"><div><svg class="icon"><use href="#i-deploy"/></svg><h3>Deploy</h3></div><span class="chip sonnet">Sonnet</span></div>
+        <p>Writes Docker artefacts that follow the deployment diagram, then proves they start.</p>
+        <div class="row"><span class="lbl">Tools</span><span class="chip">read_design</span><span class="chip">files</span><span class="chip">deploy_check</span></div>
+        <div class="row"><span class="lbl">Writes</span><span class="chip">Dockerfile</span><span class="chip">compose.yaml</span><span class="chip">RUN.md</span></div>
+      </div>
+      <div class="agent" style="border-color:var(--color-accent)">
+        <div class="ah"><div><svg class="icon"><use href="#i-wrench"/></svg><h3>Maintenance</h3></div><span class="chip opus">Opus</span></div>
+        <p>Computes the impact of a change, explains drift items and suggests a repair direction for each. Writes nothing; the orchestrator turns its plan into update runs of the other agents.</p>
+        <div class="row"><span class="lbl">Tools</span><span class="chip">all read tools</span><span class="chip">trace</span><span class="chip">detect_drift</span></div>
+        <div class="row"><span class="lbl">Phases</span><span class="chip">P7</span></div>
+      </div>
+    </div>
+    <p class="note"><svg class="icon" style="vertical-align:-4px"><use href="#i-bot"/></svg> Haiku writes the gate summaries and the summary paragraph of each change report: a helper call, not an agent. The list of touched artefacts and the diffs are computed by code. Every run logs tokens and cost per phase.</p>
+  </section>
+
+  <!-- 5. Traceability -->
+  <section>
+    <div class="section-head"><span class="num">05</span><h2>How one requirement travels</h2></div>
+    <p class="section-sub">Example from the to-do showcase (illustrative). The Trace tab and the generated <code>docs/trace.md</code> show this chain for every requirement, and flag any requirement without a design element or a test.</p>
+    <div class="chain">
+      <div class="tnode">
+        <h3><svg class="icon"><use href="#i-chat"/></svg>Requirement</h3>
+        <span class="where">.aise/requirements.json</span>
+<pre><span class="id">REQ-003</span> must
+The system shall let a user
+mark a task as done.
+AC1 a done task shows as done
+AC2 done tasks stay done
+    after a restart</pre>
+      </div>
+      <div class="link-arrow"><svg class="icon"><use href="#i-arrow"/></svg></div>
+      <div class="tnode">
+        <h3><svg class="icon"><use href="#i-design"/></svg>Design</h3>
+        <span class="where">.aise/design.json</span>
+<pre><span class="id">UC-002</span> Complete task
+  reqs: <span class="id">REQ-003</span>
+<span class="id">DSN-004</span> TaskService
+  complete(id): Task
+  reqs: <span class="id">REQ-003</span>
+<span class="id">SEQ-002</span> calls complete()</pre>
+      </div>
+      <div class="link-arrow"><svg class="icon"><use href="#i-arrow"/></svg></div>
+      <div class="tnode">
+        <h3><svg class="icon"><use href="#i-code"/></svg>Code</h3>
+        <span class="where">src/tasks/TaskService.ts</span>
+<pre><span class="cm">/** @trace <span class="id">DSN-004</span> <span class="id">REQ-003</span> */</span>
+<span class="kw">export class</span> TaskService {
+  complete(id: string): Task {
+    ...
+  }
+}</pre>
+      </div>
+      <div class="link-arrow"><svg class="icon"><use href="#i-arrow"/></svg></div>
+      <div class="tnode">
+        <h3><svg class="icon"><use href="#i-test"/></svg>Test</h3>
+        <span class="where">test/UC-002.test.ts</span>
+<pre><span class="kw">describe</span>("<span class="id">UC-002</span> Complete task", () =&gt; {
+  <span class="kw">it</span>("<span class="id">REQ-003</span> AC1: ...")
+  <span class="kw">it</span>("<span class="id">REQ-003</span> AC2: ...")
+})</pre>
+      </div>
+    </div>
+    <p class="note"><b>Suspect links.</b> On design approval we store a hash of each requirement (text, type, priority, acceptance criteria). If <code>REQ-003</code> changes later, <code>UC-002</code> and <code>DSN-004</code> are marked suspect until someone reviews them.</p>
+  </section>
+
+  <!-- 6. Drift -->
+  <section>
+    <div class="section-head"><span class="num">06</span><h2>Drift detection and repair</h2></div>
+    <p class="section-sub">Runs after every code edit in the UI, when a project opens, and on demand. Deterministic and cheap: no LLM is needed to find drift, only to explain and repair it.</p>
+    <div class="drift">
+      <div class="panel-2">
+        <svg viewBox="0 0 560 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Drift loop: design model and code model are compared; the developer chooses to update the design or the code." style="width:100%;display:block">
+          <defs>
+            <marker id="d1" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+            <marker id="d2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#eb6c36"/></marker>
+          </defs>
+          <g font-family="'Geist', sans-serif">
+            <rect x="20" y="40" width="150" height="60" rx="8" fill="#fff" stroke="#2d3142"/>
+            <text x="95" y="66" text-anchor="middle" font-size="12.5" font-weight="600" fill="#2d3142">design.json</text>
+            <text x="95" y="83" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="9" fill="#4f5d75">class model</text>
+
+            <rect x="390" y="40" width="150" height="60" rx="8" fill="#fff" stroke="#2d3142"/>
+            <text x="465" y="66" text-anchor="middle" font-size="12.5" font-weight="600" fill="#2d3142">src/</text>
+            <text x="465" y="83" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="9" fill="#4f5d75">exported classes</text>
+
+            <rect x="390" y="140" width="150" height="50" rx="8" fill="rgba(79,93,117,0.10)" stroke="#7a8399"/>
+            <text x="465" y="162" text-anchor="middle" font-size="12" font-weight="600" fill="#2d3142">code model</text>
+            <text x="465" y="178" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="9" fill="#4f5d75">ts-morph extract</text>
+            <line x1="465" y1="100" x2="465" y2="136" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#d1)"/>
+
+            <rect x="205" y="135" width="150" height="60" rx="8" fill="rgba(235,108,54,0.08)" stroke="#eb6c36"/>
+            <text x="280" y="161" text-anchor="middle" font-size="12.5" font-weight="600" fill="#2d3142">compare</text>
+            <text x="280" y="178" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="9" fill="#4f5d75">match by @trace, then name</text>
+            <path d="M 95,100 V 165 H 201" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#d1)"/>
+            <line x1="390" y1="165" x2="359" y2="165" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#d1)"/>
+
+            <rect x="205" y="225" width="150" height="50" rx="8" fill="#fff" stroke="#2d3142"/>
+            <text x="280" y="247" text-anchor="middle" font-size="12" font-weight="600" fill="#2d3142">developer picks</text>
+            <text x="280" y="263" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="9" fill="#4f5d75">per drift item</text>
+            <line x1="280" y1="195" x2="280" y2="221" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#d1)"/>
+
+            <path d="M 205,250 H 40 V 104" fill="none" stroke="#eb6c36" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#d2)"/>
+            <text x="48" y="240" font-family="'Geist Mono', monospace" font-size="9" fill="#eb6c36">update design</text>
+            <path d="M 355,250 H 552 V 70 H 544" fill="none" stroke="#eb6c36" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#d2)"/>
+            <text x="440" y="230" font-family="'Geist Mono', monospace" font-size="9" fill="#eb6c36">update code</text>
+            <text x="440" y="242" font-family="'Geist Mono', monospace" font-size="8" fill="#7a8399">via code agent</text>
+            <text x="280" y="28" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="9" letter-spacing="0.12em" fill="#7a8399">src/app/ wiring and public/ are ignored</text>
+          </g>
+        </svg>
+      </div>
+      <div>
+        <div class="items">
+          <div class="item"><span class="sym add">+</span><div><b>TaskService.archive()</b> is in the code, missing in the design.<div class="actions"><span class="btn pick">Update design</span><span class="btn">Update code</span></div></div></div>
+          <div class="item"><span class="sym mod">~</span><div><b>Task.dueDate</b> is <code>Date</code> in the design, <code>string</code> in the code.<div class="actions"><span class="btn">Update design</span><span class="btn pick">Update code</span></div></div></div>
+          <div class="item"><span class="sym del">&minus;</span><div><b>TagRepository</b> (<code>DSN-007</code>) is in the design, missing in the code.<div class="actions"><span class="btn">Update design</span><span class="btn pick">Update code</span></div></div></div>
+        </div>
+        <p class="note">Example drift items after a hand edit. The maintenance agent suggests a direction for each one; "Update design" may also suggest a new requirement. A basic sequence check (does the calling method call the target?) is second in the cut order; component level drift via dependency-cruiser comes after class drift works. Design types use TypeScript syntax, so loose types never show up as false drift.</p>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:1rem">
+      <table>
+        <thead><tr><th>Drift item</th><th>Update design</th><th>Update code</th></tr></thead>
+        <tbody>
+          <tr><td><b>missing in code</b></td><td>remove the element from the design</td><td>implement it</td></tr>
+          <tr><td><b>missing in design</b></td><td>add it to the design, link REQs</td><td>delete it from the code</td></tr>
+          <tr><td><b>changed</b></td><td>take the code's version</td><td>change the code to match the design</td></tr>
+        </tbody>
+      </table>
+      <p class="note">Known limit: a class renamed in code without its <code>@trace</code> tag shows as one item missing and one added.</p>
+    </div>
+  </section>
+
+  <!-- 7. Change propagation -->
+  <section>
+    <div class="section-head"><span class="num">07</span><h2>Change propagation in P7</h2></div>
+    <p class="section-sub">The maintenance agent computes the impact from the trace links; the orchestrator re-runs the affected phases in order, in update mode (patch the affected IDs, never regenerate), each with its gate. The change report lists every artefact touched, with diffs.</p>
+    <div class="panel">
+      <table class="matrix flow">
+        <thead><tr><th>Change kind (all four on the to-do app, three live)</th><th class="c">Req</th><th class="c">Design</th><th class="c">Code</th><th class="c">Tests</th><th class="c">Deploy</th></tr></thead>
+        <tbody>
+          <tr><td>Requirement change<span class="sub">"Tasks get a due date"</span></td><td class="c"><span class="step start">1</span></td><td class="c"><span class="step on">2</span></td><td class="c"><span class="step on">3</span></td><td class="c"><span class="step on">4</span></td><td class="c"><span class="step off">if</span></td></tr>
+          <tr><td>Design change<span class="sub">"Split BookingService into two classes"</span></td><td class="c"><span class="step off">check</span></td><td class="c"><span class="step start">1</span></td><td class="c"><span class="step on">2</span></td><td class="c"><span class="step on">3</span></td><td class="c"><span class="step off">if</span></td></tr>
+          <tr><td>Bug report<span class="sub">"Done tasks reappear after a restart"</span></td><td class="c"><span class="step off">link</span></td><td class="c"><span class="step off">link</span></td><td class="c"><span class="step on">2</span></td><td class="c"><span class="step start">1</span></td><td class="c"><span class="step off">if</span></td></tr>
+          <tr><td>Hand edit to code<span class="sub">developer adds a method in the editor</span></td><td class="c"><span class="step off">maybe</span></td><td class="c"><span class="step on">2</span></td><td class="c"><span class="step start">1</span></td><td class="c"><span class="step on">3</span></td><td class="c"><span class="step off">if</span></td></tr>
+        </tbody>
+      </table>
+      <div class="legend-row">
+        <span><span class="step start" style="display:inline-flex;width:14px;height:14px;border-radius:50%;background:var(--color-accent)"></span> where the change starts</span>
+        <span><span style="display:inline-flex;width:14px;height:14px;border-radius:50%;background:var(--color-link)"></span> re-run in update mode, own gate</span>
+        <span><span style="display:inline-flex;width:14px;height:14px;border-radius:50%;border:1px dashed var(--color-soft)"></span> only if the impact reaches it</span>
+      </div>
+      <p class="note">A bug report starts with a failing test linked to the affected REQ and UC IDs, then the P5 fix loop runs. For a hand edit, drift detection finds the change first; choosing "update design" makes the design follow the code, and the agent may propose a new requirement. Stale phases show "Update" or "Still valid"; a later phase cannot be approved while an earlier one is stale.</p>
+    </div>
+  </section>
+
+  <!-- 8. Artefacts -->
+  <section>
+    <div class="section-head"><span class="num">08</span><h2>Where everything lives</h2></div>
+    <p class="section-sub">Files only, no database. JSON is validated with zod on every write; an invalid write fails the tool call and the agent gets the errors back.</p>
+    <div class="two">
+      <div class="panel">
+        <h3 style="display:flex;gap:0.5rem;align-items:center;margin-bottom:0.75rem"><svg class="icon"><use href="#i-folder"/></svg>A project folder</h3>
+<div class="tree">showcases/todo/
+├─ <span class="k">.aise/</span>
+│  ├─ state.json          <span class="c">phase status, approval hashes</span>
+│  ├─ requirements.json   <span class="c">P1 source of truth</span>
+│  ├─ design.json         <span class="c">P2/P3 source of truth</span>
+│  ├─ chat/&lt;phase&gt;.jsonl  <span class="c">conversation per phase</span>
+│  ├─ runs/&lt;runId&gt;/       <span class="c">events, cost, file backups</span>
+│  └─ changes/CR-001.md   <span class="c">change reports</span>
+├─ docs/                  <span class="c">generated: requirements,</span>
+│                         <span class="c">design (Mermaid), trace</span>
+├─ src/app/               <span class="c">wiring, ignored by drift</span>
+├─ src/&lt;component&gt;/       <span class="c">one file per class</span>
+├─ public/  test/
+└─ Dockerfile  compose.yaml</div>
+      </div>
+      <div class="panel">
+        <h3 style="display:flex;gap:0.5rem;align-items:center;margin-bottom:0.75rem"><svg class="icon"><use href="#i-shield"/></svg>Rules that keep it safe and simple</h3>
+        <ul class="calls">
+          <li><b>Generated code only runs in Docker.</b> Tests, mutation runs and deploy checks never execute on the host.</li>
+          <li><b>Write scopes per agent.</b> File tools reject paths outside the project and outside the agent's folders.</li>
+          <li><b>Discard any run.</b> The write tool backs up a file before an agent first touches it; discarding restores the backups.</li>
+          <li><b>Readable on GitHub.</b> <code>docs/*.md</code> are generated from the JSON, and GitHub renders their Mermaid diagrams.</li>
+          <li><b>Errors are explained.</b> Tool and validation errors go back to the agent; API errors retry 3 times, then the UI offers Retry or Retry with Sonnet.</li>
+          <li><b>Secrets in <code>.env</code>.</b> Gitignored, never committed.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. Criteria -->
+  <section>
+    <div class="section-head"><span class="num">09</span><h2>What earns which grade criterion</h2></div>
+    <p class="section-sub">Our reading of where each part of the design produces evidence. C2 and C5 are the ones we want to be clearly best at.</p>
+    <div class="panel" style="overflow-x:auto">
+      <table class="matrix">
+        <thead><tr><th>Feature</th><th class="c">C1 phases</th><th class="c">C2 change</th><th class="c">C3 usability</th><th class="c">C4 agents</th><th class="c">C5 trace</th><th class="c">C6 showcases</th><th class="c">C7 quality</th></tr></thead>
+        <tbody>
+          <tr><td>Requirements chat with clarifying questions</td><td class="c"><i class="cell s"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell p"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell p"></i></td></tr>
+          <tr><td>One design model, generated diagrams</td><td class="c"><i class="cell s"></i></td><td class="c"><i class="cell s"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell p"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell s"></i></td></tr>
+          <tr><td>Gates, staleness, discard run</td><td class="c"><i class="cell p"></i></td><td class="c"><i class="cell p"></i></td><td class="c"><i class="cell s"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell n"></i></td></tr>
+          <tr><td>Shared IDs and trace view</td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell p"></i></td><td class="c"><i class="cell p"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell s"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell n"></i></td></tr>
+          <tr><td>Drift detection and repair</td><td class="c"><i class="cell p"></i></td><td class="c"><i class="cell s"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell s"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell n"></i></td></tr>
+          <tr><td>Tests from use cases, Stryker mutation score</td><td class="c"><i class="cell s"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell p"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell s"></i></td></tr>
+          <tr><td>Docker deploy check</td><td class="c"><i class="cell s"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell p"></i></td><td class="c"><i class="cell s"></i></td></tr>
+          <tr><td>Agent split, MCP server, cost log</td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell p"></i></td><td class="c"><i class="cell s"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell n"></i></td></tr>
+          <tr><td>Three showcases plus one change each</td><td class="c"><i class="cell p"></i></td><td class="c"><i class="cell s"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell n"></i></td><td class="c"><i class="cell s"></i></td><td class="c"><i class="cell p"></i></td></tr>
+        </tbody>
+      </table>
+      <div class="legend-row"><span><i class="cell s"></i> main evidence</span><span><i class="cell p"></i> supporting</span></div>
+    </div>
+  </section>
+
+  <!-- 10. Demo -->
+  <section>
+    <div class="section-head"><span class="num">10</span><h2>The live demo in 12 minutes</h2></div>
+    <p class="section-sub">On the to-do app. Checkpoints are plain copies of the project folder taken at each gate by a script, so a slow run can be skipped while every phase is still shown. The bug injection and the hand edit stay separate: a bug changes behaviour, not structure, so it produces no drift.</p>
+    <div class="panel-2">
+      <div class="demo-bar">
+        <span style="width:8.33%" class="seg muted">intro</span>
+        <span style="width:12.5%" class="seg">P1</span>
+        <span style="width:12.5%" class="seg">P2/P3</span>
+        <span style="width:8.33%" class="seg">P4</span>
+        <span style="width:12.5%" class="seg">P5</span>
+        <span style="width:6.25%" class="seg">P6</span>
+        <span style="width:12.5%" class="seg accent">P7 req</span>
+        <span style="width:10.42%" class="seg accent">P7 edit</span>
+        <span style="width:8.33%" class="seg muted">C6</span>
+        <span style="width:8.33%" class="seg buffer">wrap</span>
+      </div>
+      <div class="demo-axis"><span>0:00</span><span>3:00</span><span>6:00</span><span>9:00</span><span>12:00</span></div>
+      <table style="margin-top:1rem">
+        <thead><tr><th style="width:70px">Time</th><th>What we show</th><th style="width:110px">Criteria</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">0:00</td><td>Problem, architecture slide</td><td><span class="chip">C4</span></td></tr>
+          <tr><td class="mono">1:00</td><td>P1: vague idea, one question round, approve</td><td><span class="chip">C1</span></td></tr>
+          <tr><td class="mono">2:30</td><td>P2/P3: diagrams, a design change through chat, all diagrams update</td><td><span class="chip">C1</span> <span class="chip">C2</span></td></tr>
+          <tr><td class="mono">4:00</td><td>P4 from checkpoint: trace a requirement to diagram, code and test</td><td><span class="chip">C5</span></td></tr>
+          <tr><td class="mono">5:00</td><td>P5: tests run; inject a bug by hand, test fails, explanation, fix, green</td><td><span class="chip">C7</span></td></tr>
+          <tr><td class="mono">6:30</td><td>P6: <code>docker compose up</code>, app answers</td><td><span class="chip">C1</span></td></tr>
+          <tr><td class="mono">7:15</td><td>P7: requirement change propagates, change report with diffs</td><td><span class="chip">C2</span> <span class="chip">C5</span></td></tr>
+          <tr><td class="mono">8:45</td><td>P7: hand edit adds a method, drift found, design updated</td><td><span class="chip">C2</span></td></tr>
+          <tr><td class="mono">10:00</td><td>Booking and auction artefacts in the repo, what broke on the large one</td><td><span class="chip">C6</span></td></tr>
+          <tr><td class="mono">11:00</td><td>Wrap up, buffer</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 11. Timeline -->
+  <section>
+    <div class="section-head"><span class="num">11</span><h2>Timeline</h2></div>
+    <p class="section-sub">About 20 person days, built in three weeks so December stays free for rehearsal and the report.</p>
+    <div class="panel-2">
+      <div class="gantt">
+        <div class="g-axis"><div></div><div class="g-track">
+          <span class="g-tick" style="left:0%;transform:none">Nov 4</span>
+          <span class="g-tick" style="left:16.28%">Nov 11</span>
+          <span class="g-tick" style="left:32.56%">Nov 18</span>
+          <span class="g-tick" style="left:48.84%">Nov 25</span>
+          <span class="g-tick" style="left:65.12%">Dec 2</span>
+          <span class="g-tick" style="left:81.40%">Dec 9</span>
+          <span class="g-tick" style="left:97.67%;transform:translateX(-100%)">Dec 16</span>
+        </div></div>
+        <div class="g-grid"><i style="left:16.28%"></i><i style="left:32.56%"></i><i style="left:48.84%"></i><i style="left:65.12%"></i><i style="left:81.40%"></i></div>
+        <div class="g-row"><div class="g-label">Week 1<small>skeleton, schemas, tool registry, agent loop, P1, P2</small></div><div class="g-track"><span class="g-bar" style="left:0%;width:16.28%">foundation</span></div></div>
+        <div class="g-row"><div class="g-label">Week 2<small>MCP server, P3 to P6, trace view, booking to P4</small></div><div class="g-track"><span class="g-bar" style="left:16.28%;width:16.28%">phases</span></div></div>
+        <div class="g-row"><div class="g-label">Week 3<small>P7, drift, showcases, demo script, slides</small></div><div class="g-track"><span class="g-bar accent" style="left:32.56%;width:16.28%">P7 + showcases</span></div></div>
+        <div class="g-row"><div class="g-label">Buffer</div><div class="g-track"><span class="g-bar buffer" style="left:48.84%;width:16.28%">buffer</span></div></div>
+        <div class="g-row"><div class="g-label">Milestones</div><div class="g-track">
+          <span class="g-ms" style="left:15.12%" title="Nov 10: to-do idea to approved diagrams"></span>
+          <span class="g-ms" style="left:31.40%" title="Nov 17: to-do app in Docker, booking through P4"></span>
+          <span class="g-ms" style="left:47.67%" title="Nov 24: build done"></span>
+          <span class="g-ms ink" style="left:68.60%" title="Dec 3: dress rehearsal"></span>
+          <span class="g-ms ink" style="left:77.91%" title="Dec 7: presentation slot"></span>
+          <span class="g-ms ink" style="left:94.19%" title="Dec 14: presentation slot"></span>
+          <span class="g-ms ink" style="left:98.84%" title="Dec 16: code submission"></span>
+        </div></div>
+      </div>
+      <div class="legend-row" style="margin-top:1.1rem">
+        <span><b style="color:var(--color-accent)">Nov 10</b> to-do idea to approved diagrams</span>
+        <span><b style="color:var(--color-accent)">Nov 17</b> to-do app in Docker, booking through P4</span>
+        <span><b style="color:var(--color-accent)">Nov 24</b> build done</span>
+        <span><b>Dec 3</b> rehearsal</span>
+        <span><b>Dec 7 / 14</b> presentations</span>
+        <span><b>Dec 16</b> code</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11. Open source -->
+  <section>
+    <div class="section-head"><span class="num">12</span><h2>Open source we build on</h2></div>
+    <p class="section-sub">Only where it saves real build time or produces visible evidence. Base stack: SvelteKit, Mermaid, Anthropic and MCP SDKs, zod, ts-morph, Vitest, Docker.</p>
+    <div class="oss">
+      <div class="ocard"><h3 style="display:flex;gap:0.45rem;align-items:center"><svg class="icon"><use href="#i-star"/></svg>Stryker</h3><p>Mutation score for the generated tests: proof that they catch bugs.</p><div class="row"><span class="chip ok">now</span><span class="chip">C7</span></div></div>
+      <div class="ocard"><h3 style="display:flex;gap:0.45rem;align-items:center"><svg class="icon"><use href="#i-code"/></svg>CodeMirror 6</h3><p>Code editor and diff view (<code>@codemirror/merge</code>) in one library.</p><div class="row"><span class="chip ok">now</span><span class="chip">C3</span><span class="chip">C2</span></div></div>
+      <div class="ocard"><h3 style="display:flex;gap:0.45rem;align-items:center"><svg class="icon"><use href="#i-bot"/></svg>MCP Inspector</h3><p>Inspect and demo the MCP server on its own.</p><div class="row"><span class="chip ok">now</span><span class="chip">C4</span></div></div>
+      <div class="ocard"><h3 style="display:flex;gap:0.45rem;align-items:center"><svg class="icon"><use href="#i-design"/></svg>dependency-cruiser</h3><p>Component level drift from rules generated out of the design.</p><div class="row"><span class="chip ok">after drift</span><span class="chip">C2</span><span class="chip">C5</span></div></div>
+      <div class="ocard"><h3 style="display:flex;gap:0.45rem;align-items:center"><svg class="icon"><use href="#i-link"/></svg>Svelte Flow</h3><p>Clickable trace graph next to the trace table.</p><div class="row"><span class="chip stretch">stretch</span><span class="chip">C5</span></div></div>
+    </div>
+    <p class="note"><b>Prior art for the report:</b> GitHub Spec Kit (spec to code, no diagrams or drift), BMAD (role based agents), OpenFastTrace (ID tags in code), Doorstop (suspect links).</p>
+  </section>
+
+  <!-- 12. Calls and cuts -->
+  <section>
+    <div class="section-head"><span class="num">13</span><h2>Calls made, and what we cut first</h2></div>
+    <div class="two">
+      <div class="panel">
+        <h3 style="display:flex;gap:0.5rem;align-items:center;margin-bottom:0.75rem"><svg class="icon"><use href="#i-check"/></svg>Calls made in the design</h3>
+        <ul class="calls">
+          <li><b>Own agent loop</b> over a framework: easier to explain, scope and log.</li>
+          <li><b>Mermaid</b> over PlantUML: renders in the browser and on GitHub; use cases drawn as flowcharts.</li>
+          <li><b>No git inside projects:</b> run backups give undo and diffs.</li>
+          <li><b>Routes are controller classes;</b> wiring in <code>src/app/</code> is outside drift.</li>
+          <li><b>Non functional requirements</b> link to components or nodes, or are "verified manually".</li>
+          <li><b>Update mode patches,</b> never regenerates; hand edits survive.</li>
+          <li><b>Multi service auction</b> is one codebase with several entry points.</li>
+          <li><b>Docs:</b> README, ARCHITECTURE (living), CHANGELOG, decisions.md. No PRODUCT.md or PRD.md.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3 style="display:flex;gap:0.5rem;align-items:center;margin-bottom:0.75rem"><svg class="icon"><use href="#i-scissors"/></svg>Cut order if we fall behind</h3>
+        <ol class="cuts">
+          <li>P3 self review</li>
+          <li>Sequence drift</li>
+          <li>Activity diagrams</li>
+          <li>Trace view as a plain list</li>
+          <li>Smaller auction showcase</li>
+        </ol>
+        <p class="note"><b>Expected limits:</b> the auction showcase will stress real time tests, sequence diagrams for concurrent bidding, and the external API (Frankfurter exchange rates, mocked in tests). Renames without <code>@trace</code> tags show as remove plus add. We document what breaks.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <span>design summary · draft · 2026-11-04</span>
+    <span>summarises docs/superpowers/specs/2026-11-04-ai-se-environment-design.md</span>
+  </footer>
+</div>
+</body>
+</html>

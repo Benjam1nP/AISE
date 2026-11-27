@@ -1,0 +1,21 @@
+{
+  "id": "20261120-233620-P1",
+  "phase": "P1",
+  "agent": "requirements",
+  "status": "done",
+  "startedAt": "2026-11-20T23:36:20.715Z",
+  "finishedAt": "2026-11-20T23:36:35.949Z",
+  "usage": {
+    "input": 351,
+    "output": 2730,
+    "cacheRead": 12994,
+    "cacheWrite": 5755
+  },
+  "costUsd": 0.041507699999999995,
+  "summary": "The agent reread the requirements document and rewrote REQ-011 so an admin can cancel any booking that has not yet ended, including one in progress, while cancelling an ended booking is rejected and users stay blocked from changing a booking once it has started. Both tool calls succeeded, the document still holds 12 requirements, and the answered question was removed with no open questions or assumptions left. Check that the new REQ-011 wording matches the intended admin cancellation rule before approving P1 for the next phase.",
+  "prevPhase": {
+    "status": "awaiting_approval"
+  },
+  "prevArtefactHash": "faecb3af11a0598fd2e8a71b78448c55ab08a6f4788168d40c503f52ac8e76ab",
+  "postArtefactHash": "eff59c2bd77a4aa7e50f571c4adaf9c5f8f5ff2593e91e4c5df28811a54b9200"
+}

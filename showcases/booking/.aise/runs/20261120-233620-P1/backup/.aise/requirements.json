@@ -1,0 +1,177 @@
+{
+  "requirements": [
+    {
+      "id": "REQ-001",
+      "title": "View room availability",
+      "text": "The system shall let a user see which active meeting rooms are free for a chosen date and time range, showing each room's name, capacity, floor and equipment.",
+      "type": "functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "Given a date and time range, rooms with no booking overlapping that range are listed as free",
+        "Rooms with an overlapping booking are not shown as free",
+        "Each listed room shows name, capacity, floor and equipment",
+        "Deactivated rooms are not listed as bookable"
+      ]
+    },
+    {
+      "id": "REQ-002",
+      "title": "Book a room",
+      "text": "The system shall let a user book a free, active room for a chosen time slot that starts in the future.",
+      "type": "functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "A user can create a booking for a free room with a start and end time",
+        "The new booking appears in the room's schedule and in the user's bookings",
+        "Booking a deactivated room is rejected",
+        "A booking whose start is in the past is rejected with an error message"
+      ]
+    },
+    {
+      "id": "REQ-003",
+      "title": "No overlapping bookings",
+      "text": "The system shall reject any booking or booking change that overlaps in time with an existing booking for the same room.",
+      "type": "functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "A booking whose time range overlaps an existing booking for the same room is rejected with an error message",
+        "Two simultaneous requests for the same room and overlapping time result in only one stored booking",
+        "Bookings in different rooms at the same time are allowed",
+        "A booking that starts exactly when another ends in the same room is allowed"
+      ]
+    },
+    {
+      "id": "REQ-004",
+      "title": "Cancel own booking",
+      "text": "The system shall let a user cancel their own bookings that have not yet started, where ownership is determined by the email stored with the booking.",
+      "type": "functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "A user can cancel a not-yet-started booking created with their email",
+        "After cancellation the time slot is shown as free",
+        "A user cannot cancel a booking created with a different email",
+        "Cancelling a booking that has already started or ended is rejected for a user"
+      ]
+    },
+    {
+      "id": "REQ-005",
+      "title": "Admin manages rooms",
+      "text": "The system shall let an admin add and edit rooms and delete rooms that have no future bookings.",
+      "type": "functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "An admin can add a room with name, capacity, floor and equipment list, and it becomes available for booking",
+        "An admin can edit a room's name, capacity, floor and equipment",
+        "An admin can delete a room that has no future bookings",
+        "Deleting a room with one or more future bookings is rejected with an error message",
+        "Non-admin users cannot perform these actions"
+      ]
+    },
+    {
+      "id": "REQ-006",
+      "title": "Browser-based",
+      "text": "The system shall be usable in a web browser without installing client software.",
+      "type": "non-functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "All user and admin functions are accessible through a web browser"
+      ]
+    },
+    {
+      "id": "REQ-007",
+      "title": "Time slot rules",
+      "text": "The system shall accept only bookings whose start and end fall on 15-minute steps, last 15 minutes to 4 hours, lie within 07:00 to 20:00 Europe/Zurich time on a weekday (a booking may end exactly at 20:00), and start no more than 60 days ahead.",
+      "type": "functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "A booking with a start or end not on a 15-minute step is rejected",
+        "A booking shorter than 15 minutes or longer than 4 hours is rejected",
+        "A booking outside 07:00-20:00 Europe/Zurich or on a Saturday or Sunday is rejected",
+        "A booking ending exactly at 20:00 is accepted; one ending after 20:00 is rejected",
+        "A booking starting more than 60 days ahead is rejected",
+        "A valid 15-minute booking and a valid 4-hour booking are accepted"
+      ]
+    },
+    {
+      "id": "REQ-008",
+      "title": "Name and email identity",
+      "text": "The system shall ask a user for name and email once, store them in the browser, and attach them to bookings the user creates, without a sign-in.",
+      "type": "functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "On first use the user is asked for name and email",
+        "On later visits in the same browser the user is not asked again",
+        "Each booking shows the name and email of its creator",
+        "Booking is not possible until name and email are provided",
+        "A user who clears browser data or uses another browser cannot cancel or change earlier bookings themselves; an admin can cancel them"
+      ]
+    },
+    {
+      "id": "REQ-009",
+      "title": "Admin password access",
+      "text": "The system shall grant admin functions only to a user who enters the admin password configured in an environment variable.",
+      "type": "functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "Entering the correct password enables admin functions",
+        "Entering a wrong password does not enable admin functions",
+        "Admin actions called without valid admin authentication are rejected by the server",
+        "The password is read from an environment variable and is not stored in the source code"
+      ]
+    },
+    {
+      "id": "REQ-010",
+      "title": "Change own booking time",
+      "text": "The system shall let a user change the start and end time of their own booking that has not yet started, applying the same time slot and overlap rules as for new bookings.",
+      "type": "functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "A user can change the time of their own not-yet-started booking to a free valid slot in the same room",
+        "A change that violates the overlap rule or time slot rules is rejected and the original booking stays unchanged",
+        "A user cannot change a booking created with a different email",
+        "Changing a booking that has already started or ended is rejected",
+        "A change moving the start into the past is rejected"
+      ]
+    },
+    {
+      "id": "REQ-011",
+      "title": "Admin cancels any booking",
+      "text": "The system shall let an admin cancel any user's booking.",
+      "type": "functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "An admin can cancel a booking created by any user",
+        "After cancellation the time slot is shown as free"
+      ]
+    },
+    {
+      "id": "REQ-012",
+      "title": "Deactivate room",
+      "text": "The system shall let an admin deactivate and reactivate a room, where a deactivated room accepts no new bookings while its existing future bookings stay valid.",
+      "type": "functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "An admin can deactivate a room",
+        "New bookings for a deactivated room are rejected",
+        "A room with future bookings can be deactivated and those bookings remain active",
+        "An admin can reactivate a deactivated room and it accepts bookings again"
+      ]
+    }
+  ],
+  "openQuestions": [
+    {
+      "id": "Q-005",
+      "text": "Can an admin cancel a booking that has already started (or ended), or does the no-cancellation-after-start rule apply to admins too?",
+      "reqIds": [
+        "REQ-011"
+      ]
+    }
+  ],
+  "assumptions": [],
+  "outOfScope": [
+    "Recurring bookings",
+    "Real user sign-in (SSO or per-user accounts)",
+    "Individual admin accounts or role management (single shared admin password only)",
+    "Emails of any kind, including cancellation links or notifications",
+    "Recovering ownership of bookings after browser data is cleared (admin cancels instead)"
+  ]
+}

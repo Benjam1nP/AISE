@@ -1,0 +1,78 @@
+{
+	"actors": [{ "id": "ACT-001", "name": "User", "description": "Person managing tasks." }],
+	"useCases": [
+		{
+			"id": "UC-001",
+			"name": "Add task",
+			"description": "The user adds a task with a title.",
+			"actorIds": ["ACT-001"],
+			"reqIds": ["REQ-001"]
+		}
+	],
+	"classes": [
+		{
+			"id": "DSN-001",
+			"name": "Task",
+			"kind": "class",
+			"description": "A single to-do item.",
+			"attributes": [
+				{ "name": "id", "type": "number" },
+				{ "name": "title", "type": "string" },
+				{ "name": "status", "type": "TaskStatus" }
+			],
+			"methods": [{ "name": "isDone", "params": [], "returnType": "boolean" }],
+			"relations": [],
+			"reqIds": ["REQ-001", "REQ-002"]
+		},
+		{
+			"id": "DSN-002",
+			"name": "TaskStatus",
+			"kind": "enum",
+			"description": "Where a task is in its life.",
+			"attributes": [],
+			"methods": [],
+			"values": ["Open", "Done"],
+			"relations": [],
+			"reqIds": ["REQ-002"]
+		},
+		{
+			"id": "DSN-003",
+			"name": "TaskService",
+			"kind": "class",
+			"description": "Creates and completes tasks.",
+			"attributes": [{ "name": "nextId", "type": "number" }],
+			"methods": [
+				{
+					"name": "addTask",
+					"params": [{ "name": "title", "type": "string" }],
+					"returnType": "Task"
+				},
+				{
+					"name": "completeTask",
+					"params": [{ "name": "task", "type": "Task" }],
+					"returnType": "Task"
+				}
+			],
+			"relations": [{ "kind": "dependency", "targetId": "DSN-001", "label": "creates" }],
+			"reqIds": ["REQ-001"]
+		}
+	],
+	"components": [
+		{
+			"id": "DSN-010",
+			"name": "Model",
+			"classIds": ["DSN-001", "DSN-002"],
+			"nodeId": "DSN-020",
+			"reqIds": ["REQ-001", "REQ-002"]
+		},
+		{
+			"id": "DSN-011",
+			"name": "Service",
+			"classIds": ["DSN-003"],
+			"nodeId": "DSN-020",
+			"reqIds": ["REQ-001"]
+		}
+	],
+	"nodes": [{ "id": "DSN-020", "name": "Server", "kind": "service", "reqIds": ["REQ-001"] }],
+	"sequences": []
+}

@@ -1,0 +1,22 @@
+{
+	"mcpServers": {
+		"aise": {
+			"command": "node",
+			"args": ["--import", "tsx", "src/lib/server/mcp/main.ts", "--project", "showcases/todo"]
+		},
+		"21st": {
+			"type": "http",
+			"url": "https://21st.dev/api/mcp",
+			"headersHelper": "node scripts/mcp-headers.mjs 21st"
+		},
+		"originkit": {
+			"type": "http",
+			"url": "https://mcp.originkit.dev/mcp",
+			"headersHelper": "node scripts/mcp-headers.mjs originkit"
+		},
+		"aria-icons": {
+			"type": "http",
+			"url": "https://icons.leularia.com/api/mcp"
+		}
+	}
+}

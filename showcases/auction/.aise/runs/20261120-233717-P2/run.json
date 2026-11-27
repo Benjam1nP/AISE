@@ -1,0 +1,34 @@
+{
+  "id": "20261120-233717-P2",
+  "phase": "P2",
+  "agent": "design",
+  "status": "done",
+  "startedAt": "2026-11-20T23:37:17.316Z",
+  "finishedAt": "2026-11-20T23:38:09.285Z",
+  "usage": {
+    "input": 708,
+    "output": 9543,
+    "cacheRead": 14201,
+    "cacheWrite": 11504
+  },
+  "costUsd": 0.12384360000000001,
+  "summary": "The design was saved and passed the consistency check with no issues, and no tool calls failed. Before approving, check the flagged problem: `UserRepository` (DSN-027) is an empty class duplicating `UserStore`, and the `ItemService` and `BidService` dependencies point at it. The agent expects those dependencies to move to `UserStore` and DSN-027 to be deleted, but it has not made that change, so you will need to decide whether to request it. The reply also notes that the broker is not modelled as a class, so the publisher-to-subscriber hand-off does not appear as a message in the sequences.",
+  "prevPhase": {
+    "status": "not_started"
+  },
+  "prevArtefactHash": null,
+  "postArtefactHash": "0e44444ac15a266e438b08d41e29b72226c71398d842b9787e487110ccb3bc7f",
+  "reqHashes": {
+    "REQ-001": "f8c70bf18f448cf36036473310249368b29af3548c6362f9e9b15e2e84e27c59",
+    "REQ-002": "1262b59c481c383acc492c14093d6f8d101fc492d98166b8d349c5b53bc1d92c",
+    "REQ-003": "153e24dcf38589cd84d9669b7740622edd3e3c0964fb1eef0c79dc4ab3d67042",
+    "REQ-004": "5b1c4d4005d65a6e466b46476fa897828981f6668e12a2a20479d30b198b687a",
+    "REQ-005": "90b696170dc13d4d08e292d266ff1cd48e429f2b5526d7ddd3be02a5b1c43f1f",
+    "REQ-006": "0331c2404eb5d011086e21ab09ad6ac741f0011e5f6467824fcc7fb990855dfb",
+    "REQ-007": "589c22d570bc2de03b10e78f83f97f2c185478efc6dbf271e7865232dd9a3747",
+    "REQ-008": "6bf9c5a68569ec28ce5244fe4a7e54a9bd865ce9bb769ee20886d56f3d7ec3d7",
+    "REQ-009": "aedd4cb1a2b573399d5b65739c3d171db599533590cf204a51c389a76a9f25d9",
+    "REQ-010": "671f8a54a33d23c034676468da33dfa93281f179748976c863a3db2c530721f6",
+    "REQ-011": "96426242e8b8a67da5bf31673c5ca7177baefc1ff415187834e15dbf344452fe"
+  }
+}

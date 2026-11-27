@@ -1,0 +1,14 @@
+{
+  "findings": [
+    {
+      "id": "20261124-095100-P5-1",
+      "runId": "20261124-095100-P5",
+      "test": "REQ-002 AC4: Any later bid is accepted only if it is at least 1 unit of the item currency higher than the current highest bid, otherwise it is rejected.",
+      "file": "test/UC-003.test.ts",
+      "reqId": "REQ-002",
+      "explanation": "After a first bid of 100 was accepted, a second bid of 100 (not at least 1 higher) resolved instead of rejecting. The test is consistent with the criterion, so the minimum bid check is wrong. Possible causes: the highest bid is not updated on the item after the first bid, or the comparison allows equal amounts.",
+      "proposedFix": "In BidService.placeBid, once an item has a highest bid, reject any amount below highestBidAmount + 1. Make sure an accepted bid sets item.highestBidAmount and highestBidderId and the item is saved with saveItem."
+    }
+  ],
+  "testFixes": []
+}

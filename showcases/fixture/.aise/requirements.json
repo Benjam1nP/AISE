@@ -1,0 +1,45 @@
+{
+	"requirements": [
+		{
+			"id": "REQ-001",
+			"title": "Add task",
+			"text": "The system shall let a user add a task with a title.",
+			"type": "functional",
+			"priority": "must",
+			"acceptanceCriteria": [
+				"A task added with a non-empty title appears in the task list with status open.",
+				"Adding a task with an empty title is rejected with an error message."
+			]
+		},
+		{
+			"id": "REQ-002",
+			"title": "List tasks",
+			"text": "The system shall show all tasks, newest first.",
+			"type": "functional",
+			"priority": "must",
+			"acceptanceCriteria": [
+				"The list shows every task with its title and status.",
+				"Tasks are ordered by creation time, newest first."
+			]
+		},
+		{
+			"id": "REQ-003",
+			"title": "Persist tasks",
+			"text": "The system shall keep tasks when the server restarts.",
+			"type": "non-functional",
+			"priority": "must",
+			"acceptanceCriteria": ["Tasks added before a restart are listed after the restart."]
+		},
+		{
+			"id": "REQ-004",
+			"title": "Complete task",
+			"text": "The system shall let a user mark a task as done.",
+			"type": "functional",
+			"priority": "should",
+			"acceptanceCriteria": ["A task marked as done is listed with status done."]
+		}
+	],
+	"openQuestions": [],
+	"assumptions": ["A single user; no login is needed."],
+	"outOfScope": ["Due dates and reminders.", "Sharing tasks between users."]
+}

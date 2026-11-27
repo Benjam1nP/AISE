@@ -1,0 +1,9 @@
+{
+	"extends": "$app/tsconfig",
+	"compilerOptions": {
+		"strict": true,
+		"types": ["$app/types", "node"]
+	},
+	"include": ["src", "test", "vite.config.ts", "eslint.config.js"],
+	"exclude": ["test/docker/fixtures", "test/fixtures/p4", "test/fixtures/p5"]
+}

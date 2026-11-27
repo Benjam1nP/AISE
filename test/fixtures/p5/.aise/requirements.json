@@ -1,0 +1,18 @@
+{
+	"requirements": [
+		{
+			"id": "REQ-001",
+			"title": "Add task",
+			"text": "The system shall let a user add a task with a title.",
+			"type": "functional",
+			"priority": "must",
+			"acceptanceCriteria": [
+				"A task added with a non-empty title appears in the task list with status open.",
+				"Adding a task with an empty title is rejected with an error message."
+			]
+		}
+	],
+	"openQuestions": [],
+	"assumptions": [],
+	"outOfScope": []
+}

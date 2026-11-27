@@ -1,0 +1,31 @@
+{
+  "at": "2026-11-24T14:23:32.933Z",
+  "codeHash": "913b96a730016a6cce5f531a876ff25cc5d5e89b800f17a916fdd3a0819150df",
+  "designHash": "d0db3fe88996b4f246fa4c4068fba626902f8b1a290f6c4d4bc0b3b0489241e3",
+  "typecheck": {
+    "ok": true,
+    "errors": [],
+    "timedOut": false
+  },
+  "drift": [],
+  "start": {
+    "ok": true,
+    "entries": [
+      {
+        "entry": "src/app/main.ts",
+        "portVar": "PORT",
+        "port": 8080,
+        "ok": true,
+        "log": ""
+      },
+      {
+        "entry": "src/app/live-update-server.ts",
+        "portVar": "LIVE_UPDATE_SERVER_PORT",
+        "port": 8081,
+        "ok": true,
+        "log": ""
+      }
+    ],
+    "timedOut": false
+  }
+}

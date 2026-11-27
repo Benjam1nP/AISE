@@ -1,0 +1,81 @@
+{
+	"numTotalTestSuites": 2,
+	"numPassedTestSuites": 0,
+	"numFailedTestSuites": 2,
+	"numPendingTestSuites": 0,
+	"numTotalTests": 4,
+	"numPassedTests": 2,
+	"numFailedTests": 1,
+	"numPendingTests": 1,
+	"numTodoTests": 0,
+	"snapshot": {
+		"added": 0,
+		"failure": false,
+		"filesAdded": 0,
+		"filesRemoved": 0,
+		"filesRemovedList": [],
+		"filesUnmatched": 0,
+		"filesUpdated": 0,
+		"matched": 0,
+		"total": 0,
+		"unchecked": 0,
+		"uncheckedKeysByFile": [],
+		"unmatched": 0,
+		"updated": 0,
+		"didUpdate": false
+	},
+	"startTime": 1795168554822,
+	"success": false,
+	"testResults": [
+		{
+			"assertionResults": [
+				{
+					"ancestorTitles": ["cart"],
+					"fullName": "cart adds",
+					"status": "passed",
+					"title": "adds",
+					"duration": 0.7317500000000052,
+					"failureMessages": [],
+					"meta": {},
+					"tags": []
+				},
+				{
+					"ancestorTitles": ["cart"],
+					"fullName": "cart fails on purpose",
+					"status": "failed",
+					"title": "fails on purpose",
+					"duration": 2.888083999999992,
+					"failureMessages": [
+						"AssertionError: expected +0 to be 1 // Object.is equality\n    at /opt/aise/app/test/cart.test.ts:13:30\n    at file:///opt/aise/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///opt/aise/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///opt/aise/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///opt/aise/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///opt/aise/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///opt/aise/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///opt/aise/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+					],
+					"meta": {},
+					"tags": []
+				},
+				{
+					"ancestorTitles": ["cart"],
+					"fullName": "cart is skipped",
+					"status": "skipped",
+					"title": "is skipped",
+					"failureMessages": [],
+					"meta": {},
+					"tags": []
+				},
+				{
+					"ancestorTitles": ["cart"],
+					"fullName": "cart serves health",
+					"status": "passed",
+					"title": "serves health",
+					"duration": 9.021166999999991,
+					"failureMessages": [],
+					"meta": {},
+					"tags": []
+				}
+			],
+			"startTime": 1795168554971,
+			"endTime": 1795168554984.0212,
+			"status": "failed",
+			"message": "",
+			"name": "/opt/aise/app/test/cart.test.ts"
+		}
+	]
+}

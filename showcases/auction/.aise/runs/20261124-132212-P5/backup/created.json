@@ -1,0 +1,9 @@
+[
+  "test/REQ-006.test.ts",
+  "test/UC-002.test.ts",
+  "test/UC-001.test.ts",
+  "test/UC-004.test.ts",
+  "test/UC-005.test.ts",
+  "test/UC-006.test.ts",
+  "test/UC-003.test.ts"
+]

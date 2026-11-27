@@ -1,0 +1,21 @@
+{
+  "id": "20261120-233448-P1",
+  "phase": "P1",
+  "agent": "requirements",
+  "status": "done",
+  "startedAt": "2026-11-20T23:34:48.967Z",
+  "finishedAt": "2026-11-20T23:35:02.530Z",
+  "usage": {
+    "input": 517,
+    "output": 1694,
+    "cacheRead": 3936,
+    "cacheWrite": 3247
+  },
+  "costUsd": 0.0265205,
+  "summary": "The agent read the requirements file and saved a first draft of six requirements for the room booking system, covering room availability, booking, rejecting overlaps (including simultaneous requests), cancelling your own bookings, admin room management, and running in the browser. It made no assumptions yet and left the out-of-scope list empty, pending your answers. Before approving P1, you should answer its five questions on sign-in and admin setup, room details, time slot rules, handling of bookings when a room is removed, and admin or edit permissions, since the draft cannot be finalised without them.",
+  "prevPhase": {
+    "status": "not_started"
+  },
+  "prevArtefactHash": null,
+  "postArtefactHash": "8515d33fd54f9941b380899c834f866275d884bb75ea264393e7ac1986404407"
+}

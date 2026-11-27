@@ -1,0 +1,24 @@
+{
+  "at": "2026-11-21T22:39:07.200Z",
+  "codeHash": "c5257dd20698a6490afe47f6b16446369c51846ed7f31296d08419712bd164a6",
+  "designHash": "27db4b03215a4a2f64b1ae9fa8eea81d1fb121806414df9b68cb08fde75bc248",
+  "typecheck": {
+    "ok": true,
+    "errors": [],
+    "timedOut": false
+  },
+  "drift": [],
+  "start": {
+    "ok": true,
+    "entries": [
+      {
+        "entry": "src/app/main.ts",
+        "portVar": "PORT",
+        "port": 8080,
+        "ok": true,
+        "log": ""
+      }
+    ],
+    "timedOut": false
+  }
+}

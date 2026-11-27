@@ -1,0 +1,29 @@
+{
+  "findings": [],
+  "testFixes": [
+    {
+      "runId": "20261124-132212-P5",
+      "test": "SEQ-002 scenario: List item",
+      "file": "test/UC-002.test.ts",
+      "reason": "GET /api/items/:id returns an ItemView (item nested), so title is read from body.item."
+    },
+    {
+      "runId": "20261124-132212-P5",
+      "test": "REQ-005 AC1: A bidder who selects CHF, EUR or USD sees item prices and bids converted with a rate obtained from Frankfurter.",
+      "file": "test/UC-006.test.ts",
+      "reason": "Fake item used a non-existent field highestBid; Item attribute is highestBidAmount. Fixed shared helper (also affects REQ-005 AC3, AC4, REQ-010 AC3, SEQ-006)."
+    },
+    {
+      "runId": "20261124-132212-P5",
+      "test": "SEQ-004 scenario: Watch item live",
+      "file": "test/UC-004.test.ts",
+      "reason": "Topic name 'bid' was guessed and is not in the design; events now come from the real BidEventPublisher (also REQ-007 AC1, AC2)."
+    },
+    {
+      "runId": "20261124-132212-P5",
+      "test": "REQ-010 AC3: When Frankfurter cannot be reached and no valid cached rate exists, prices are shown only in the item currency and bidding still works.",
+      "file": "test/UC-006.test.ts",
+      "reason": "The assertion that displayCurrency is null is not required by the criterion or design; the criterion only requires no converted prices. Removed it, kept the null converted prices checks."
+    }
+  ]
+}

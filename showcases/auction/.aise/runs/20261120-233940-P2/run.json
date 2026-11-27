@@ -1,0 +1,34 @@
+{
+  "id": "20261120-233940-P2",
+  "phase": "P2",
+  "agent": "design",
+  "status": "done",
+  "startedAt": "2026-11-20T23:39:40.201Z",
+  "finishedAt": "2026-11-20T23:41:45.310Z",
+  "usage": {
+    "input": 797,
+    "output": 25743,
+    "cacheRead": 58277,
+    "cacheWrite": 39699
+  },
+  "costUsd": 0.36106489999999997,
+  "summary": "The agent saved the P2 design after a first update_design call failed and a retry succeeded, and it reports that the consistency check passed with no issues. The main changes are the removal of the broker and database nodes, the new EventFeed and browser WebClient components, and a FrankfurterService component added so the deployment diagram can link to Frankfurter. Before approving, check that the Frankfurter link actually appears in the deployment diagram, since the agent asked you to confirm that and the tool log doesn't show it.",
+  "prevPhase": {
+    "status": "awaiting_approval"
+  },
+  "prevArtefactHash": "0e44444ac15a266e438b08d41e29b72226c71398d842b9787e487110ccb3bc7f",
+  "postArtefactHash": "d5bf3725ff5017ae9d7322e646610a9035c3f0078b08c49d74b16526bfdc774b",
+  "reqHashes": {
+    "REQ-001": "f8c70bf18f448cf36036473310249368b29af3548c6362f9e9b15e2e84e27c59",
+    "REQ-002": "1262b59c481c383acc492c14093d6f8d101fc492d98166b8d349c5b53bc1d92c",
+    "REQ-003": "153e24dcf38589cd84d9669b7740622edd3e3c0964fb1eef0c79dc4ab3d67042",
+    "REQ-004": "5b1c4d4005d65a6e466b46476fa897828981f6668e12a2a20479d30b198b687a",
+    "REQ-005": "90b696170dc13d4d08e292d266ff1cd48e429f2b5526d7ddd3be02a5b1c43f1f",
+    "REQ-006": "0331c2404eb5d011086e21ab09ad6ac741f0011e5f6467824fcc7fb990855dfb",
+    "REQ-007": "589c22d570bc2de03b10e78f83f97f2c185478efc6dbf271e7865232dd9a3747",
+    "REQ-008": "6bf9c5a68569ec28ce5244fe4a7e54a9bd865ce9bb769ee20886d56f3d7ec3d7",
+    "REQ-009": "aedd4cb1a2b573399d5b65739c3d171db599533590cf204a51c389a76a9f25d9",
+    "REQ-010": "671f8a54a33d23c034676468da33dfa93281f179748976c863a3db2c530721f6",
+    "REQ-011": "96426242e8b8a67da5bf31673c5ca7177baefc1ff415187834e15dbf344452fe"
+  }
+}

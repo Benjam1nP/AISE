@@ -1,0 +1,455 @@
+{
+  "at": "2026-11-24T14:23:40.420Z",
+  "codeHash": "913b96a730016a6cce5f531a876ff25cc5d5e89b800f17a916fdd3a0819150df",
+  "testHash": "d8a3f8fbbffb879f1806e4b537288aec193e9784b8d544e759ed3a59622d3e84",
+  "typecheck": {
+    "ok": true,
+    "errors": [],
+    "timedOut": false
+  },
+  "result": {
+    "ok": true,
+    "passed": 45,
+    "failed": 0,
+    "tests": [
+      {
+        "name": "DSN-024 AuctionCloser interval validation DSN-024: constructing with intervalMs 0 throws",
+        "title": "DSN-024: constructing with intervalMs 0 throws",
+        "file": "test/DSN-024.test.ts",
+        "status": "passed",
+        "line": 10
+      },
+      {
+        "name": "DSN-024 AuctionCloser interval validation DSN-024: constructing with intervalMs -1 throws",
+        "title": "DSN-024: constructing with intervalMs -1 throws",
+        "file": "test/DSN-024.test.ts",
+        "status": "passed",
+        "line": 14
+      },
+      {
+        "name": "DSN-024 AuctionCloser interval validation DSN-024: constructing with intervalMs 1.5 throws",
+        "title": "DSN-024: constructing with intervalMs 1.5 throws",
+        "file": "test/DSN-024.test.ts",
+        "status": "passed",
+        "line": 18
+      },
+      {
+        "name": "DSN-024 AuctionCloser interval validation DSN-024: constructing with intervalMs 1000 does not throw",
+        "title": "DSN-024: constructing with intervalMs 1000 does not throw",
+        "file": "test/DSN-024.test.ts",
+        "status": "passed",
+        "line": 22
+      },
+      {
+        "name": "DSN-029 ItemStore date storage DSN-029: items.endTime is stored as ISO 8601 TEXT",
+        "title": "DSN-029: items.endTime is stored as ISO 8601 TEXT",
+        "file": "test/DSN-029.test.ts",
+        "status": "passed",
+        "line": 39
+      },
+      {
+        "name": "DSN-029 ItemStore date storage DSN-029: bids.placedAt is stored as ISO 8601 TEXT",
+        "title": "DSN-029: bids.placedAt is stored as ISO 8601 TEXT",
+        "file": "test/DSN-029.test.ts",
+        "status": "passed",
+        "line": 50
+      },
+      {
+        "name": "DSN-029 ItemStore date storage DSN-029: an item read back has the same endTime",
+        "title": "DSN-029: an item read back has the same endTime",
+        "file": "test/DSN-029.test.ts",
+        "status": "passed",
+        "line": 61
+      },
+      {
+        "name": "REQ-006 Separate services REQ-006 AC1: manual: deployment topology (separate processes or deployments) is verified by inspecting the run configuration, not by an in-process test",
+        "title": "REQ-006 AC1: manual: deployment topology (separate processes or deployments) is verified by inspecting the run configuration, not by an in-process test",
+        "file": "test/REQ-006.test.ts",
+        "status": "todo",
+        "line": 4
+      },
+      {
+        "name": "REQ-006 Separate services REQ-006 AC2: manual: starting, stopping and redeploying each service independently requires operating the deployed services, which a unit or HTTP test cannot exercise",
+        "title": "REQ-006 AC2: manual: starting, stopping and redeploying each service independently requires operating the deployed services, which a unit or HTTP test cannot exercise",
+        "file": "test/REQ-006.test.ts",
+        "status": "todo",
+        "line": 6
+      },
+      {
+        "name": "UC-001 Register display name REQ-008 AC1: A user can enter a display name of 2 to 20 characters and use the system without a password.",
+        "title": "REQ-008 AC1: A user can enter a display name of 2 to 20 characters and use the system without a password.",
+        "file": "test/UC-001.test.ts",
+        "status": "passed",
+        "line": 19
+      },
+      {
+        "name": "UC-001 Register display name REQ-008 AC2: A display name shorter than 2 or longer than 20 characters is rejected.",
+        "title": "REQ-008 AC2: A display name shorter than 2 or longer than 20 characters is rejected.",
+        "file": "test/UC-001.test.ts",
+        "status": "passed",
+        "line": 28
+      },
+      {
+        "name": "UC-001 Register display name REQ-008 AC3: A display name already taken is rejected and the user must pick another.",
+        "title": "REQ-008 AC3: A display name already taken is rejected and the user must pick another.",
+        "file": "test/UC-001.test.ts",
+        "status": "passed",
+        "line": 34
+      },
+      {
+        "name": "UC-001 Register display name REQ-008 AC4: The server assigns and stores one user id per display name and the browser keeps the user id it received, so the user is recognised on later visits.",
+        "title": "REQ-008 AC4: The server assigns and stores one user id per display name and the browser keeps the user id it received, so the user is recognised on later visits.",
+        "file": "test/UC-001.test.ts",
+        "status": "passed",
+        "line": 42
+      },
+      {
+        "name": "UC-001 Register display name REQ-008 AC5: manual: listing items and placing bids spans the item and bid features, which are not part of this use case test file",
+        "title": "REQ-008 AC5: manual: listing items and placing bids spans the item and bid features, which are not part of this use case test file",
+        "file": "test/UC-001.test.ts",
+        "status": "todo",
+        "line": 54
+      },
+      {
+        "name": "UC-001 Register display name REQ-008 AC6: The system has no admin role.",
+        "title": "REQ-008 AC6: The system has no admin role.",
+        "file": "test/UC-001.test.ts",
+        "status": "passed",
+        "line": 56
+      },
+      {
+        "name": "UC-001 Register display name REQ-008 AC7: Leading and trailing spaces are removed from a display name before the length and uniqueness checks, so 'Bob ' is the same name as 'Bob'.",
+        "title": "REQ-008 AC7: Leading and trailing spaces are removed from a display name before the length and uniqueness checks, so 'Bob ' is the same name as 'Bob'.",
+        "file": "test/UC-001.test.ts",
+        "status": "passed",
+        "line": 63
+      },
+      {
+        "name": "UC-001 Register display name SEQ-001 scenario: Register display name",
+        "title": "SEQ-001 scenario: Register display name",
+        "file": "test/UC-001.test.ts",
+        "status": "passed",
+        "line": 70
+      },
+      {
+        "name": "UC-002 List item REQ-001 AC1: A seller can submit an item with a starting price, an end time and a currency (CHF, EUR or USD) and it then appears as an open auction.",
+        "title": "REQ-001 AC1: A seller can submit an item with a starting price, an end time and a currency (CHF, EUR or USD) and it then appears as an open auction.",
+        "file": "test/UC-002.test.ts",
+        "status": "passed",
+        "line": 13
+      },
+      {
+        "name": "UC-002 List item REQ-001 AC2: A listing without a starting price, end time or currency is rejected with an error message.",
+        "title": "REQ-001 AC2: A listing without a starting price, end time or currency is rejected with an error message.",
+        "file": "test/UC-002.test.ts",
+        "status": "passed",
+        "line": 33
+      },
+      {
+        "name": "UC-002 List item REQ-001 AC3: A listing with a currency other than CHF, EUR or USD is rejected.",
+        "title": "REQ-001 AC3: A listing with a currency other than CHF, EUR or USD is rejected.",
+        "file": "test/UC-002.test.ts",
+        "status": "passed",
+        "line": 45
+      },
+      {
+        "name": "UC-002 List item SEQ-002 scenario: List item",
+        "title": "SEQ-002 scenario: List item",
+        "file": "test/UC-002.test.ts",
+        "status": "passed",
+        "line": 59
+      },
+      {
+        "name": "UC-003 Place bid REQ-002 AC1: A bid on an item whose end time has not passed, from a user other than the seller, is stored in the item currency if it is valid.",
+        "title": "REQ-002 AC1: A bid on an item whose end time has not passed, from a user other than the seller, is stored in the item currency if it is valid.",
+        "file": "test/UC-003.test.ts",
+        "status": "passed",
+        "line": 58
+      },
+      {
+        "name": "UC-003 Place bid REQ-002 AC2: A bid on an item whose end time has passed is rejected.",
+        "title": "REQ-002 AC2: A bid on an item whose end time has passed is rejected.",
+        "file": "test/UC-003.test.ts",
+        "status": "passed",
+        "line": 68
+      },
+      {
+        "name": "UC-003 Place bid REQ-002 AC3: The first bid is accepted only if it is at least the starting price.",
+        "title": "REQ-002 AC3: The first bid is accepted only if it is at least the starting price.",
+        "file": "test/UC-003.test.ts",
+        "status": "passed",
+        "line": 74
+      },
+      {
+        "name": "UC-003 Place bid REQ-002 AC4: Any later bid is accepted only if it is at least 1 unit of the item currency higher than the current highest bid, otherwise it is rejected.",
+        "title": "REQ-002 AC4: Any later bid is accepted only if it is at least 1 unit of the item currency higher than the current highest bid, otherwise it is rejected.",
+        "file": "test/UC-003.test.ts",
+        "status": "passed",
+        "line": 81
+      },
+      {
+        "name": "UC-003 Place bid REQ-002 AC5: A bid by the item's seller on their own item is rejected.",
+        "title": "REQ-002 AC5: A bid by the item's seller on their own item is rejected.",
+        "file": "test/UC-003.test.ts",
+        "status": "passed",
+        "line": 89
+      },
+      {
+        "name": "UC-003 Place bid REQ-009 AC1: A valid bid placed less than or exactly 2 minutes before the end time moves the end time 2 minutes later.",
+        "title": "REQ-009 AC1: A valid bid placed less than or exactly 2 minutes before the end time moves the end time 2 minutes later.",
+        "file": "test/UC-003.test.ts",
+        "status": "passed",
+        "line": 94
+      },
+      {
+        "name": "UC-003 Place bid REQ-009 AC2: A valid bid placed more than 2 minutes before the end time does not change the end time.",
+        "title": "REQ-009 AC2: A valid bid placed more than 2 minutes before the end time does not change the end time.",
+        "file": "test/UC-003.test.ts",
+        "status": "passed",
+        "line": 103
+      },
+      {
+        "name": "UC-003 Place bid REQ-009 AC3: manual: watching browsers rendering the new end time needs a real browser session.",
+        "title": "REQ-009 AC3: manual: watching browsers rendering the new end time needs a real browser session.",
+        "file": "test/UC-003.test.ts",
+        "status": "todo",
+        "line": 112
+      },
+      {
+        "name": "UC-003 Place bid REQ-003 AC1: When a bid is accepted, every client watching the item shows the new bid without a page reload.",
+        "title": "REQ-003 AC1: When a bid is accepted, every client watching the item shows the new bid without a page reload.",
+        "file": "test/UC-003.test.ts",
+        "status": "passed",
+        "line": 114
+      },
+      {
+        "name": "UC-003 Place bid REQ-003 AC2: A client watching a different item does not receive that bid.",
+        "title": "REQ-003 AC2: A client watching a different item does not receive that bid.",
+        "file": "test/UC-003.test.ts",
+        "status": "passed",
+        "line": 127
+      },
+      {
+        "name": "UC-003 Place bid REQ-003 AC3: manual: refreshing the open items list in a browser needs a real page session.",
+        "title": "REQ-003 AC3: manual: refreshing the open items list in a browser needs a real page session.",
+        "file": "test/UC-003.test.ts",
+        "status": "todo",
+        "line": 140
+      },
+      {
+        "name": "UC-003 Place bid REQ-003 AC4: manual: retry of the live update configuration load needs a browser with a flaky network.",
+        "title": "REQ-003 AC4: manual: retry of the live update configuration load needs a browser with a flaky network.",
+        "file": "test/UC-003.test.ts",
+        "status": "todo",
+        "line": 142
+      },
+      {
+        "name": "UC-003 Place bid REQ-011 AC1: With 200 clients watching one item and a few bids per second, each accepted bid appears on every client within 1 second.",
+        "title": "REQ-011 AC1: With 200 clients watching one item and a few bids per second, each accepted bid appears on every client within 1 second.",
+        "file": "test/UC-003.test.ts",
+        "status": "passed",
+        "line": 144
+      },
+      {
+        "name": "UC-003 Place bid REQ-011 AC2: manual: confirming no accepted bid is lost under sustained load needs a live load test environment.",
+        "title": "REQ-011 AC2: manual: confirming no accepted bid is lost under sustained load needs a live load test environment.",
+        "file": "test/UC-003.test.ts",
+        "status": "todo",
+        "line": 159
+      },
+      {
+        "name": "UC-003 Place bid SEQ-003 scenario: Place bid",
+        "title": "SEQ-003 scenario: Place bid",
+        "file": "test/UC-003.test.ts",
+        "status": "passed",
+        "line": 161
+      },
+      {
+        "name": "UC-004 Watch item live REQ-007 AC1: With two or more live update server instances running, a client connected to any instance receives every bid for the item it watches.",
+        "title": "REQ-007 AC1: With two or more live update server instances running, a client connected to any instance receives every bid for the item it watches.",
+        "file": "test/UC-004.test.ts",
+        "status": "passed",
+        "line": 58
+      },
+      {
+        "name": "UC-004 Watch item live REQ-007 AC2: Adding an instance requires no code change.",
+        "title": "REQ-007 AC2: Adding an instance requires no code change.",
+        "file": "test/UC-004.test.ts",
+        "status": "passed",
+        "line": 71
+      },
+      {
+        "name": "UC-004 Watch item live SEQ-004 scenario: Watch item live",
+        "title": "SEQ-004 scenario: Watch item live",
+        "file": "test/UC-004.test.ts",
+        "status": "passed",
+        "line": 82
+      },
+      {
+        "name": "UC-005 Close auction REQ-004 AC1: At the end time the item no longer accepts bids.",
+        "title": "REQ-004 AC1: At the end time the item no longer accepts bids.",
+        "file": "test/UC-005.test.ts",
+        "status": "passed",
+        "line": 54
+      },
+      {
+        "name": "UC-005 Close auction REQ-004 AC2: The bidder with the highest bid at the end time is recorded as the winner and the winning user sees on the item page that they won.",
+        "title": "REQ-004 AC2: The bidder with the highest bid at the end time is recorded as the winner and the winning user sees on the item page that they won.",
+        "file": "test/UC-005.test.ts",
+        "status": "passed",
+        "line": 71
+      },
+      {
+        "name": "UC-005 Close auction REQ-004 AC3: Watchers of the item see the closed state and the winner.",
+        "title": "REQ-004 AC3: Watchers of the item see the closed state and the winner.",
+        "file": "test/UC-005.test.ts",
+        "status": "passed",
+        "line": 85
+      },
+      {
+        "name": "UC-005 Close auction REQ-004 AC4: An auction that ends with no bids is shown as unsold and has no winner.",
+        "title": "REQ-004 AC4: An auction that ends with no bids is shown as unsold and has no winner.",
+        "file": "test/UC-005.test.ts",
+        "status": "passed",
+        "line": 100
+      },
+      {
+        "name": "UC-005 Close auction SEQ-005 scenario: Close auction",
+        "title": "SEQ-005 scenario: Close auction",
+        "file": "test/UC-005.test.ts",
+        "status": "passed",
+        "line": 112
+      },
+      {
+        "name": "UC-006 View prices in display currency REQ-005 AC1: A bidder who selects CHF, EUR or USD sees item prices and bids converted with a rate obtained from Frankfurter.",
+        "title": "REQ-005 AC1: A bidder who selects CHF, EUR or USD sees item prices and bids converted with a rate obtained from Frankfurter.",
+        "file": "test/UC-006.test.ts",
+        "status": "passed",
+        "line": 46
+      },
+      {
+        "name": "UC-006 View prices in display currency REQ-005 AC2: Only CHF, EUR and USD are offered as display currencies.",
+        "title": "REQ-005 AC2: Only CHF, EUR and USD are offered as display currencies.",
+        "file": "test/UC-006.test.ts",
+        "status": "passed",
+        "line": 55
+      },
+      {
+        "name": "UC-006 View prices in display currency REQ-005 AC3: Converted prices are shown with the currency code.",
+        "title": "REQ-005 AC3: Converted prices are shown with the currency code.",
+        "file": "test/UC-006.test.ts",
+        "status": "passed",
+        "line": 60
+      },
+      {
+        "name": "UC-006 View prices in display currency REQ-005 AC4: Conversion is for display only: stored bids and bid validation use the item currency.",
+        "title": "REQ-005 AC4: Conversion is for display only: stored bids and bid validation use the item currency.",
+        "file": "test/UC-006.test.ts",
+        "status": "passed",
+        "line": 67
+      },
+      {
+        "name": "UC-006 View prices in display currency REQ-010 AC1: Within 1 hour of a successful fetch, no further request is made to Frankfurter for the same rates.",
+        "title": "REQ-010 AC1: Within 1 hour of a successful fetch, no further request is made to Frankfurter for the same rates.",
+        "file": "test/UC-006.test.ts",
+        "status": "passed",
+        "line": 74
+      },
+      {
+        "name": "UC-006 View prices in display currency REQ-010 AC2: After the cache is older than 1 hour, the next conversion fetches fresh rates.",
+        "title": "REQ-010 AC2: After the cache is older than 1 hour, the next conversion fetches fresh rates.",
+        "file": "test/UC-006.test.ts",
+        "status": "passed",
+        "line": 82
+      },
+      {
+        "name": "UC-006 View prices in display currency REQ-010 AC3: When Frankfurter cannot be reached and no valid cached rate exists, prices are shown only in the item currency and bidding still works.",
+        "title": "REQ-010 AC3: When Frankfurter cannot be reached and no valid cached rate exists, prices are shown only in the item currency and bidding still works.",
+        "file": "test/UC-006.test.ts",
+        "status": "passed",
+        "line": 90
+      },
+      {
+        "name": "UC-006 View prices in display currency SEQ-006 scenario: View prices in display currency",
+        "title": "SEQ-006 scenario: View prices in display currency",
+        "file": "test/UC-006.test.ts",
+        "status": "passed",
+        "line": 100
+      }
+    ],
+    "timedOut": false,
+    "logTail": "JSON report written to /opt/aise/out/report.json\n(node:21) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:29) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:52) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:60) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:72) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  "findings": [
+    {
+      "id": "20261122-131901-P5-1",
+      "runId": "20261122-131901-P5",
+      "test": "REQ-002 AC4: Any later bid is accepted only if it is at least 1 unit of the item currency higher than the current highest bid, otherwise it is rejected.",
+      "file": "test/UC-003.test.ts",
+      "reqId": "REQ-002",
+      "explanation": "After a first bid of 100 was accepted, a second bid of 100 from another bidder was accepted. The minimum bid rule for later bids (highest + 1) is not enforced, or the item's highest bid is not updated and saved via saveItem after an accepted bid (per SEQ-003).",
+      "proposedFix": "In BidService.placeBid, set item.highestBidAmount and highestBidderId after saveBid and call itemStore.saveItem(item). Make Item.minimumBid() return highestBidAmount + 1 when a bid exists, else startingPrice, and reject amounts below it.",
+      "resolvedAt": "2026-11-22T13:27:40.116Z"
+    },
+    {
+      "id": "20261124-095100-P5-1",
+      "runId": "20261124-095100-P5",
+      "test": "REQ-002 AC4: Any later bid is accepted only if it is at least 1 unit of the item currency higher than the current highest bid, otherwise it is rejected.",
+      "file": "test/UC-003.test.ts",
+      "reqId": "REQ-002",
+      "explanation": "After a first bid of 100 was accepted, a second bid of 100 (not at least 1 higher) resolved instead of rejecting. The test is consistent with the criterion, so the minimum bid check is wrong. Possible causes: the highest bid is not updated on the item after the first bid, or the comparison allows equal amounts.",
+      "proposedFix": "In BidService.placeBid, once an item has a highest bid, reject any amount below highestBidAmount + 1. Make sure an accepted bid sets item.highestBidAmount and highestBidderId and the item is saved with saveItem.",
+      "resolvedAt": "2026-11-24T09:51:50.149Z"
+    }
+  ],
+  "testFixes": [
+    {
+      "runId": "20261122-131901-P5",
+      "test": "SEQ-005 scenario: Close auction",
+      "file": "test/UC-005.test.ts",
+      "reason": "AuctionCloser.tick closes auctions due at the current time; the item had an end time in 2030, so it was not due. Item now ends in the past."
+    },
+    {
+      "runId": "20261122-131901-P5",
+      "test": "SEQ-004 scenario: Watch item live",
+      "file": "test/UC-004.test.ts",
+      "reason": "The fake socket lacked readyState, which every WebSocket in the Map<string, WebSocket> API has; added an open readyState."
+    },
+    {
+      "runId": "20261122-131901-P5",
+      "test": "REQ-005 AC1: A bidder who selects CHF, EUR or USD sees item prices and bids converted with a rate obtained from Frankfurter.",
+      "file": "test/UC-006.test.ts",
+      "reason": "The fake item did not follow the Item shape (highestBid instead of highestBidAmount); fixed the shared fixture, which affects all UC-006 tests that failed with the amount error."
+    },
+    {
+      "runId": "20261122-131901-P5",
+      "test": "SEQ-006 scenario: View prices in display currency",
+      "file": "test/UC-006.test.ts",
+      "reason": "Display currency CHF equals the item currency CHF, so no rates need fetching; the scenario now uses EUR so a conversion and fetch is required."
+    },
+    {
+      "runId": "20261124-132212-P5",
+      "test": "SEQ-002 scenario: List item",
+      "file": "test/UC-002.test.ts",
+      "reason": "GET /api/items/:id returns an ItemView (item nested), so title is read from body.item."
+    },
+    {
+      "runId": "20261124-132212-P5",
+      "test": "REQ-005 AC1: A bidder who selects CHF, EUR or USD sees item prices and bids converted with a rate obtained from Frankfurter.",
+      "file": "test/UC-006.test.ts",
+      "reason": "Fake item used a non-existent field highestBid; Item attribute is highestBidAmount. Fixed shared helper (also affects REQ-005 AC3, AC4, REQ-010 AC3, SEQ-006)."
+    },
+    {
+      "runId": "20261124-132212-P5",
+      "test": "SEQ-004 scenario: Watch item live",
+      "file": "test/UC-004.test.ts",
+      "reason": "Topic name 'bid' was guessed and is not in the design; events now come from the real BidEventPublisher (also REQ-007 AC1, AC2)."
+    },
+    {
+      "runId": "20261124-132212-P5",
+      "test": "REQ-010 AC3: When Frankfurter cannot be reached and no valid cached rate exists, prices are shown only in the item currency and bidding still works.",
+      "file": "test/UC-006.test.ts",
+      "reason": "The assertion that displayCurrency is null is not required by the criterion or design; the criterion only requires no converted prices. Removed it, kept the null converted prices checks."
+    }
+  ]
+}

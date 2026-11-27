@@ -1,0 +1,21 @@
+{
+  "id": "20261120-233519-P1",
+  "phase": "P1",
+  "agent": "requirements",
+  "status": "done",
+  "startedAt": "2026-11-20T23:35:19.365Z",
+  "finishedAt": "2026-11-20T23:35:45.012Z",
+  "usage": {
+    "input": 707,
+    "output": 3760,
+    "cacheRead": 8339,
+    "cacheWrite": 5083
+  },
+  "costUsd": 0.0490233,
+  "summary": "The agent read and then rewrote the requirements document in phase P1, saving a version with 12 requirements that covers room details, the overlap rule, time slot rules, browser-stored name and email, server-enforced admin access, self-service rescheduling, admin cancellation and room deactivation, with recurring bookings, real sign-in and admin roles out of scope. Both tool calls succeeded, and no assumptions have been recorded yet. Before approving, decide the four open questions it raised: whether losing browser data as the only ownership check is acceptable, the time zone and whether a booking may end at exactly 20:00, what happens to future bookings when a room is deactivated, and whether past bookings can be changed or cancelled.",
+  "prevPhase": {
+    "status": "awaiting_approval"
+  },
+  "prevArtefactHash": "8515d33fd54f9941b380899c834f866275d884bb75ea264393e7ac1986404407",
+  "postArtefactHash": "e8967d471076adb57c37a1375b17ff871ce32e47b8806ec2c7623a6719c1b55e"
+}

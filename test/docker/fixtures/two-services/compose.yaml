@@ -1,0 +1,9 @@
+services:
+  web:
+    build: .
+    ports:
+      - '127.0.0.1:3917:3000'
+  api:
+    build: .
+    ports:
+      - '127.0.0.1:3918:3000'

@@ -1,0 +1,39 @@
+{
+  "findings": [
+    {
+      "id": "20261122-131901-P5-1",
+      "runId": "20261122-131901-P5",
+      "test": "REQ-002 AC4: Any later bid is accepted only if it is at least 1 unit of the item currency higher than the current highest bid, otherwise it is rejected.",
+      "file": "test/UC-003.test.ts",
+      "reqId": "REQ-002",
+      "explanation": "After a first bid of 100 was accepted, a second bid of 100 from another bidder was accepted. The minimum bid rule for later bids (highest + 1) is not enforced, or the item's highest bid is not updated and saved via saveItem after an accepted bid (per SEQ-003).",
+      "proposedFix": "In BidService.placeBid, set item.highestBidAmount and highestBidderId after saveBid and call itemStore.saveItem(item). Make Item.minimumBid() return highestBidAmount + 1 when a bid exists, else startingPrice, and reject amounts below it."
+    }
+  ],
+  "testFixes": [
+    {
+      "runId": "20261122-131901-P5",
+      "test": "SEQ-005 scenario: Close auction",
+      "file": "test/UC-005.test.ts",
+      "reason": "AuctionCloser.tick closes auctions due at the current time; the item had an end time in 2030, so it was not due. Item now ends in the past."
+    },
+    {
+      "runId": "20261122-131901-P5",
+      "test": "SEQ-004 scenario: Watch item live",
+      "file": "test/UC-004.test.ts",
+      "reason": "The fake socket lacked readyState, which every WebSocket in the Map<string, WebSocket> API has; added an open readyState."
+    },
+    {
+      "runId": "20261122-131901-P5",
+      "test": "REQ-005 AC1: A bidder who selects CHF, EUR or USD sees item prices and bids converted with a rate obtained from Frankfurter.",
+      "file": "test/UC-006.test.ts",
+      "reason": "The fake item did not follow the Item shape (highestBid instead of highestBidAmount); fixed the shared fixture, which affects all UC-006 tests that failed with the amount error."
+    },
+    {
+      "runId": "20261122-131901-P5",
+      "test": "SEQ-006 scenario: View prices in display currency",
+      "file": "test/UC-006.test.ts",
+      "reason": "Display currency CHF equals the item currency CHF, so no rates need fetching; the scenario now uses EUR so a conversion and fetch is required."
+    }
+  ]
+}

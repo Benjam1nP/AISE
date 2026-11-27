@@ -1,0 +1,21 @@
+{
+  "id": "20261120-233519-P1",
+  "phase": "P1",
+  "agent": "requirements",
+  "status": "done",
+  "startedAt": "2026-11-20T23:35:19.345Z",
+  "finishedAt": "2026-11-20T23:35:38.268Z",
+  "usage": {
+    "input": 652,
+    "output": 2532,
+    "cacheRead": 5812,
+    "cacheWrite": 2168
+  },
+  "costUsd": 0.0295016,
+  "summary": "The agent read the requirements and saved a first draft of 7 requirements (REQ-001 to REQ-007) covering listing, bidding, live updates, auction closing, currency display, and a split into separate API and live-update services, with no assumptions or out-of-scope items recorded yet. No tool calls failed. Before approving P1, decide the open questions it raised: account roles and whether sellers can bid, bid rules (minimum increment, late-bid extension), the base currency and whether conversion is display-only, the fallback when the exchange rate API is down, and the scale, latency, no-bid, payment and notification scope.",
+  "prevPhase": {
+    "status": "not_started"
+  },
+  "prevArtefactHash": null,
+  "postArtefactHash": "185129def715c36c2c37c09ff6fafcb84a46b4cc2af5c2fef30c20a2d058aa28"
+}

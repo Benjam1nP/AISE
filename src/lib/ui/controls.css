@@ -1,0 +1,45 @@
+/* Shared look of Input, Textarea and Select. Imported by those components. */
+
+.aise-control {
+	display: block;
+	width: 100%;
+	min-height: var(--hit-area);
+	padding: var(--space-2) var(--control-pad-end, var(--space-3)) var(--space-2) var(--space-3);
+	border: 1px solid var(--color-border-strong);
+	border-radius: var(--radius-md);
+	background: var(--color-surface);
+	color: var(--color-text);
+	font-size: var(--text-base);
+	line-height: var(--leading-body);
+	transition:
+		border-color var(--duration-100) var(--ease-out),
+		background-color var(--duration-100) var(--ease-out);
+}
+
+.aise-control::placeholder {
+	color: var(--color-text-muted);
+}
+
+.aise-control:hover:not(:disabled) {
+	border-color: var(--color-text-muted);
+}
+
+.aise-control:focus-visible {
+	border-color: var(--color-focus);
+}
+
+.aise-control[aria-invalid='true'] {
+	border-color: var(--color-error);
+}
+
+.aise-control:disabled {
+	border-color: var(--color-border);
+	background: var(--color-surface-2);
+	color: var(--color-text-muted);
+	cursor: not-allowed;
+}
+
+/* Loading blocks edits without disabling, so focus stays where it is. */
+.aise-control[aria-busy='true'] {
+	cursor: progress;
+}

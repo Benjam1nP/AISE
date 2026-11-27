@@ -1,0 +1,35 @@
+{
+  "id": "20261120-233812-P2",
+  "phase": "P2",
+  "agent": "design",
+  "status": "done",
+  "startedAt": "2026-11-20T23:38:12.670Z",
+  "finishedAt": "2026-11-20T23:39:04.909Z",
+  "usage": {
+    "input": 607,
+    "output": 10918,
+    "cacheRead": 26834,
+    "cacheWrite": 25809
+  },
+  "costUsd": 0.1745713,
+  "summary": "The agent updated the P2 design with three changes: new listing methods and an admin-only all-rooms endpoint across controller, service and repository, with matching WebClient actions and use cases UC-009 to UC-011; removal of the Database node (DSN-022) with persistence moved to the Application Server; and Room and Booking moved into a new Domain Model component, DSN-023. All three tool calls succeeded and the design saved with no consistency issues. Before approving, check the two assumptions the agent flagged: that listings exclude cancelled bookings, and that \"day\" means a calendar day in Europe/Zurich.",
+  "prevPhase": {
+    "status": "awaiting_approval"
+  },
+  "prevArtefactHash": "bab45ba83c01d9b735f8dff525e88b72c4d6173d0e8ca219823a3d59fccd6d6c",
+  "postArtefactHash": "31d92afa1eb5649071ca81c23615d74f1774ef38154aa05d304c5bbf416f5145",
+  "reqHashes": {
+    "REQ-001": "113bf2db35926d443685dd6ea6d1920f493bd2a3d45edac281f1e75ed18d66af",
+    "REQ-002": "12092d3f3326a4160973228725ebffba938223554b4e469f240cb3c1819bb939",
+    "REQ-003": "7a545a31c821f1c4553da55d1baf0b5bdef6776c52c12c14e7c142c0fb25adca",
+    "REQ-004": "29b56b844415476a04fa8bf9396de7e9184d8992541cba6af261158e5cee509e",
+    "REQ-005": "f002920b3ecaddb8ce26bf20b5d915e889da14281c1bf595fedc90e7adcaf448",
+    "REQ-006": "e95b61344b95071c9364c3661a943f77fa34e6b73558cd1dc60488f3817a8591",
+    "REQ-007": "e567e4008b5b63bbf8a277733a0ebeb4b6c047b21753c577d40b01705a88964d",
+    "REQ-008": "e8e9eed58c5b43700ddedcb6b674f1be068d6e6f28226056922c1f8e81014c0b",
+    "REQ-009": "9565041d74b8189506d756bc8243cf7cd9f31b500dcba64d87bcfa2932dbf99a",
+    "REQ-010": "e58f7c64b87308e3927d18ade2e59ad30c67dad31eed941304e0a78cf9a49402",
+    "REQ-011": "b7316acbcf9ca3eadab7a1b2c359cb0d7ee0d659c53e92cd1aab87837f054772",
+    "REQ-012": "8a02bb9f1b5a35b7dab8ac154a9138bdea8f0ed6503c7b3246cc7a9db8562d7b"
+  }
+}

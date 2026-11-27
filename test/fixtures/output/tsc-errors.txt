@@ -1,0 +1,6 @@
+src/cart.ts(15,37): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+src/cart.ts(16,53): error TS2741: Property 'name' is missing in type '{ id: number; }' but required in type 'Item'.
+src/cart.ts(17,57): error TS2353: Object literal may only specify known properties, and 'label' does not exist in type 'Item'.
+src/cart.ts(18,14): error TS2322: Type '(a: string) => string' is not assignable to type '(a: number) => string'.
+  Types of parameters 'a' and 'a' are incompatible.
+    Type 'number' is not assignable to type 'string'.

@@ -1,0 +1,53 @@
+{
+  "id": "20261124-132033-P4",
+  "phase": "P4",
+  "agent": "code",
+  "status": "done",
+  "startedAt": "2026-11-24T13:20:33.919Z",
+  "finishedAt": "2026-11-24T13:22:12.761Z",
+  "usage": {
+    "input": 1104,
+    "output": 38236,
+    "cacheRead": 391833,
+    "cacheWrite": 116461
+  },
+  "costUsd": 0.25092909500000005,
+  "summary": "The agent wired the API server, `main.ts`, the live update server and the page in `src/app/` and `public/index.html`, and reports typecheck, drift and `start_app` as clean. One bash call failed, and the summary does not say what it was for or whether it matters, so check that before approving. The developer should also confirm the two values the agent picked itself: the 5000 ms closer interval (the design gives none) and the 1-hour exchange-rate TTL, which comes from the design. Finally, review the fix to `EventFeedClient.onEvent`, which now accepts `item:` topics because the publishers send them and the original filter would have dropped every live event.",
+  "prevPhase": {
+    "status": "not_started"
+  },
+  "prevArtefactHash": null,
+  "postArtefactHash": "b3c22681efada183ea53439d4f0ab77e60a1612aafb793e8186e9f64dfa9c367",
+  "designHashes": {
+    "DSN-012": "dd673261e1ec4a19b85a56a9c87b5865160a4904ced23b50dabb07f1e58bda20",
+    "DSN-013": "a476ce378845ad5ce352eb2cd7d86c07607c45988001266743551ab8bfadd030",
+    "DSN-014": "5539642379fcb403c2bb1eed9febfb51009694f1eda2327a7dcac0e5d457d537",
+    "DSN-015": "b8a013fc1ca4f5980dd507a04e67d559f192f3a746856814c51b20b3cb8e7f39",
+    "DSN-016": "0c127350e08fa5c60b007a227f3a5499a03e1e38f62a03d54ad1aa59507df37a",
+    "DSN-017": "4bb9de70cbef1010774ae62c87b787aca3ff44391241d3e053c789121105228e",
+    "DSN-018": "e1619892537daa9af0c8a0b0ad2c870395f6b53933e97eb6a4cca377f86dde65",
+    "DSN-019": "d0a4c52af4001a60edf3060fb5207e24910bbe017c37cbe0e53e5fc6ce3424c1",
+    "DSN-020": "3458afc6abea224730833efd56aa4dded7942ca05c142230b55a74fc97ee5418",
+    "DSN-021": "127dc722377f52e878c81ce80c984cbc51562d3bfdd2384795072bb78dc59183",
+    "DSN-022": "c4a0a5c3f968e88152fbe926f73b0d147d9b497e795e6ce6ea7ab00adaa28edc",
+    "DSN-023": "fc3c866d2dd6d1659ddef2f8e92792ec3878c14ef2e062a43617666d417e3e9c",
+    "DSN-024": "2b2e1d11ba3e112875e5c035bcf2e15b03a5a40221669b1d8ed0f7ad93eaf2dc",
+    "DSN-025": "7ab6eb8085b0ba5c926a041ad21005dc38925438ffcdf9bb87453a073e952c22",
+    "DSN-026": "74ae0c9de1a92aa3a3f8530829e68c6a21a516801d43777df0b007fdfdf0603c",
+    "DSN-028": "0d3b6de6110320cb89f629d0480a46cf5f277d6a3140f468fb2615b87d5828ba",
+    "DSN-029": "1ec32292d60f3ca5d490156de551d3c6bd447ecfb753017fa404c47ee12fd8d1",
+    "DSN-030": "a2bc3b1c78c80e6529c816d3854323c6505b7f58f8c413369ae1cfc04468d725",
+    "DSN-031": "d1ffaaa4c33bbdc5786012e5d365d9f6879721786bb2828505207e83a4c70d1e",
+    "DSN-032": "ea061f76318005bd01c2919f9f8efa19831e3f8e8b1d4351f2c66ed5624be794",
+    "DSN-033": "8a2381486c5f7bca024473800455aff44eccc600809b7d4248153b37f4cef850",
+    "DSN-034": "f70de426bbe694f2ff4f40fd3d71836c66ebbd7c51757241182db4d9fdec79ff",
+    "DSN-007": "3bac754d29f61e80e7dd77f59807ecc158cbce4e612eb4f9a7c3a3efbe0f5e79",
+    "DSN-008": "b29612629206e3eb711763cd490a9760c1560da9d3d851ece0dfaf5ff40264b8",
+    "DSN-009": "2867996f11852a954f15b756af8ceb1340c2c44218607c823c92a568dd3bafe7",
+    "DSN-042": "acffdbe064ca94e1c452d3bb8e93c0f85c4977a6ff640305c5963cb0c7ad2879",
+    "DSN-001": "97477ccea6495800e6ff8b15477a6d6e184f3527228ac3130c2629ed67c295e1",
+    "DSN-002": "cbebb181f3c6183e5716b5e77720223e67776f9bcdb4867ac26a104601fc45ac",
+    "DSN-005": "cebf794828c3188c424bb42e98f29aa99540c0e85c16629c1fd6000ab615c8fa",
+    "DSN-006": "7d93e605520eaf08b9986a533e1b3a8dfba70881c47883209c4b8e46f7b14f29"
+  }
+}

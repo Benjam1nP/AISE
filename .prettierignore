@@ -1,0 +1,14 @@
+docs/
+showcases/
+.superpowers/
+.agents/
+.venv/
+.claude/
+package-lock.json
+build/
+.svelte-kit/
+
+# gitleaks report in CI
+results.sarif
+skills-lock.json
+runner/package-lock.json

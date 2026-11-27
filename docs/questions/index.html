@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Project questions</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+	<style>
+		:root {
+			--bg: oklch(96.6% 0.004 265);
+			--surface: oklch(99.6% 0.002 265);
+			--ink: oklch(23% 0.02 265);
+			--muted: oklch(46% 0.02 265);
+			--faint: oklch(54% 0.015 265);
+			--rule: oklch(89.5% 0.008 265);
+			--rule-strong: oklch(81% 0.012 265);
+			--accent: oklch(50% 0.14 38);
+			--accent-wash: oklch(95% 0.03 45);
+			--agreed: oklch(47% 0.1 160);
+			--agreed-wash: oklch(95% 0.03 160);
+			--discuss: oklch(50% 0.12 75);
+			--discuss-wash: oklch(95.5% 0.045 85);
+			--sans: 'Hanken Grotesk', system-ui, sans-serif;
+			--serif: 'Newsreader', Georgia, serif;
+			--mono: 'IBM Plex Mono', ui-monospace, monospace;
+			--ease: cubic-bezier(0.16, 1, 0.3, 1);
+			color-scheme: light;
+		}
+		*, *::before, *::after { box-sizing: border-box; }
+		html { scrollbar-color: var(--rule-strong) transparent; scroll-padding-top: 24px; }
+		body { margin: 0; background: var(--bg); color: var(--ink); font: 400 15px/1.55 var(--sans); caret-color: var(--accent); }
+		::selection { background: oklch(88% 0.06 45); color: var(--ink); }
+		:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+		a { color: var(--ink); text-underline-offset: 3px; text-decoration-color: var(--rule-strong); }
+		a:hover { text-decoration-color: var(--accent); }
+		code { font: 400 0.86em var(--mono); background: oklch(93.5% 0.006 265); padding: 1px 4px; border-radius: 3px; }
+		button { font: inherit; color: inherit; cursor: pointer; }
+		.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+		.layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); max-width: 1240px; margin: 0 auto; }
+
+		/* Sidebar */
+		.side { position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 40px 28px 32px 32px; border-right: 1px solid var(--rule); display: flex; flex-direction: column; gap: 28px; }
+		.side h1 { font: 500 32px/1.1 var(--serif); letter-spacing: -0.02em; margin: 0; }
+		.progress { font-variant-numeric: tabular-nums; color: var(--muted); margin: 6px 0 0; }
+		.progress strong { color: var(--ink); font-weight: 600; }
+		.bar { height: 3px; background: var(--rule); border-radius: 2px; margin-top: 10px; overflow: hidden; }
+		.bar span { display: block; height: 100%; background: var(--agreed); transform-origin: left; transition: transform 600ms var(--ease); }
+
+		.name label { display: block; font-weight: 600; font-size: 12px; margin-bottom: 6px; }
+		.name input { width: 100%; font: inherit; padding: 7px 10px; border: 1px solid var(--rule-strong); border-radius: 6px; background: var(--surface); color: var(--ink); }
+		.name input::placeholder { color: var(--muted); }
+		.name p { margin: 6px 0 0; font-size: 12px; color: var(--muted); }
+
+		.filters { display: flex; flex-wrap: wrap; gap: 6px; }
+		.filters button { border: 1px solid var(--rule-strong); background: transparent; border-radius: 999px; padding: 4px 11px; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; transition: background-color 150ms, color 150ms, border-color 150ms; }
+		.filters button:hover { color: var(--ink); border-color: var(--faint); }
+		.filters button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+
+		.toc { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+		.toc a { display: grid; grid-template-columns: 20px 1fr auto; gap: 8px; padding: 6px 8px; margin: 0 -8px; border-radius: 6px; text-decoration: none; color: var(--muted); font-size: 15px; }
+		.toc a:hover { background: oklch(93.5% 0.006 265); color: var(--ink); }
+		.toc .n { font: 400 12px/1.9 var(--mono); color: var(--faint); }
+		.toc .count { font-size: 12px; font-variant-numeric: tabular-nums; color: var(--faint); }
+		.toc .done .count { color: var(--agreed); font-weight: 600; }
+		.side-foot { margin-top: auto; font-size: 12px; color: var(--muted); }
+		.side-foot p { margin: 0 0 4px; }
+
+		/* Main */
+		main { padding: 40px 48px 120px; min-width: 0; }
+		.intro { max-width: 68ch; color: var(--muted); margin: 0 0 8px; }
+		.banner { max-width: 72ch; padding: 12px 16px; border-radius: 8px; background: var(--accent-wash); color: oklch(38% 0.12 38); margin: 16px 0; }
+		.banner[hidden] { display: none; }
+		section { max-width: 760px; }
+		section h2 { font: 500 26px/1.2 var(--serif); letter-spacing: -0.015em; margin: 56px 0 6px; }
+		section > .section-intro { color: var(--muted); max-width: 68ch; margin: 0 0 8px; }
+		.empty { color: var(--muted); padding: 40px 0; }
+
+		.q { padding: 28px 0 24px; border-top: 1px solid var(--rule); }
+		section h2 + .q, section .section-intro + .q { margin-top: 12px; }
+		.q-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+		.q-id { font: 500 12px var(--mono); color: var(--faint); font-variant-numeric: tabular-nums; }
+		.q-lead { font: 600 15px/1.3 var(--sans); margin: 0; }
+		.tag { font-size: 12px; font-weight: 600; color: var(--accent); background: var(--accent-wash); padding: 1px 8px; border-radius: 999px; }
+		.q-text { font: 400 20px/1.5 var(--serif); margin: 0 0 14px; max-width: 64ch; text-wrap: pretty; }
+
+		.proposal { display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; align-items: start; background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 14px; margin-bottom: 12px; }
+		.proposal-label { grid-column: 1; font-size: 12px; font-weight: 600; color: var(--muted); }
+		.proposal p { grid-column: 1; margin: 0; font-size: 15px; color: var(--ink); }
+		.proposal button { grid-column: 2; grid-row: 1 / span 2; align-self: center; border: 1px solid var(--rule-strong); background: transparent; border-radius: 6px; padding: 6px 12px; font-size: 12px; font-weight: 600; white-space: nowrap; transition: background-color 150ms, border-color 150ms; }
+		.proposal button:hover { background: var(--agreed-wash); border-color: var(--agreed); color: var(--agreed); }
+
+		.q textarea { display: block; width: 100%; min-height: 76px; resize: vertical; field-sizing: content; max-height: 420px; font: 400 15px/1.55 var(--sans); color: var(--ink); background: var(--surface); border: 1px solid var(--rule-strong); border-radius: 8px; padding: 10px 12px; transition: border-color 150ms, box-shadow 200ms var(--ease); }
+		.q textarea::placeholder { color: var(--muted); }
+		.q textarea:hover { border-color: var(--faint); }
+		.q textarea:focus { outline: none; border-color: var(--ink); box-shadow: 0 1px 2px oklch(23% 0.02 265 / 0.06), 0 4px 14px oklch(23% 0.02 265 / 0.06); }
+
+		.q-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 10px; flex-wrap: wrap; }
+		.status { display: inline-flex; border: 1px solid var(--rule-strong); border-radius: 7px; padding: 2px; gap: 2px; }
+		.status button { border: 0; background: transparent; border-radius: 5px; padding: 3px 10px; font-size: 12px; color: var(--muted); transition: background-color 150ms, color 150ms; }
+		.status button:hover { color: var(--ink); }
+		.status button[aria-checked="true"][data-status="open"] { background: oklch(93% 0.006 265); color: var(--ink); }
+		.status button[aria-checked="true"][data-status="agreed"] { background: var(--agreed-wash); color: var(--agreed); font-weight: 600; }
+		.status button[aria-checked="true"][data-status="discuss"] { background: var(--discuss-wash); color: var(--discuss); font-weight: 600; }
+		.saved { font-size: 12px; color: var(--faint); font-variant-numeric: tabular-nums; transition: color 300ms; }
+		.saved.error { color: var(--accent); }
+		.saved button { border: 0; background: none; padding: 0; color: var(--accent); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+
+		.q[data-status="agreed"] .q-id { color: var(--agreed); }
+		.q[data-status="discuss"] .q-id { color: var(--discuss); }
+
+		@media (max-width: 880px) {
+			.layout { grid-template-columns: 1fr; }
+			.side { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 28px 20px; gap: 20px; }
+			.toc { display: none; }
+			.side-foot { display: none; }
+			main { padding: 8px 20px 80px; }
+			.q-text { font-size: 18px; }
+			.proposal { grid-template-columns: 1fr; }
+			.proposal button { grid-column: 1; grid-row: auto; justify-self: start; margin-top: 8px; }
+		}
+		@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+	</style>
+</head>
+<body>
+	<div class="layout">
+		<aside class="side">
+			<div>
+				<h1>Project questions</h1>
+				<p class="progress" id="progress">Loading</p>
+				<div class="bar" aria-hidden="true"><span id="bar" style="transform: scaleX(0)"></span></div>
+			</div>
+			<div class="name">
+				<label for="name">Answering as</label>
+				<input id="name" autocomplete="given-name" placeholder="Your first name">
+				<p>Shown next to each answer so your partner knows who wrote it.</p>
+			</div>
+			<div class="filters" role="group" aria-label="Filter questions" id="filters"></div>
+			<nav aria-label="Sections"><ol class="toc" id="toc"></ol></nav>
+			<div class="side-foot">
+				<p><a href="/overview" target="_blank" rel="noopener">Open the project overview</a></p>
+				<p><kbd>⌘</kbd> + <kbd>Enter</kbd> jumps to the next question.</p>
+			</div>
+		</aside>
+		<main>
+			<p class="intro">Answer together, or each on your own machine. Every change saves to <code>docs/questions/answers.json</code>; commit it to share. If a proposal is fine, use it and move on. Start with the three questions marked <strong>blocks design</strong>; the filter on the left finds them.</p>
+			<div class="banner" id="banner" role="alert" hidden></div>
+			<div id="sections"></div>
+		</main>
+	</div>
+
+	<script type="module">
+		const FILTERS = [
+			{ id: 'all', label: 'All', test: () => true },
+			{ id: 'blocks', label: 'Blocks design', test: (q) => q.blocksDesign },
+			{ id: 'todo', label: 'Unanswered', test: (q) => !isAnswered(q.id) },
+			{ id: 'discuss', label: 'To discuss', test: (q) => answerOf(q.id).status === 'discuss' }
+		];
+		const STATUSES = [['open', 'Open'], ['agreed', 'Agreed'], ['discuss', 'Discuss']];
+
+		let sections = [];
+		let answers = {};
+		let filter = 'all';
+		const timers = new Map();
+		const $ = (sel) => document.querySelector(sel);
+
+		const nameInput = $('#name');
+		nameInput.value = localStorage.getItem('pq-name') ?? '';
+		nameInput.addEventListener('input', () => localStorage.setItem('pq-name', nameInput.value.trim()));
+
+		const escapeHtml = (s) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+		const inline = (s) => escapeHtml(s)
+			.replace(/`([^`]+)`/g, '<code>$1</code>')
+			.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+			.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, href) => {
+				if (href.endsWith('project-overview.html')) href = '/overview';
+				else if (/^[a-z][\w+.-]*:/i.test(href) && !/^https?:/i.test(href)) return text;
+				return `<a href="${href}" target="_blank" rel="noopener">${text}</a>`;
+			});
+
+		const answerOf = (id) => answers[id] ?? { answer: '', status: 'open', by: '' };
+		const isAnswered = (id) => answerOf(id).answer.trim() !== '' || answerOf(id).status === 'agreed';
+		const allQuestions = () => sections.flatMap((s) => s.questions);
+		const domId = (id) => id.replace('.', '-');
+
+		function savedText(a) {
+			if (!a.updatedAt) return '';
+			const time = new Date(a.updatedAt).toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+			return `Saved ${time}${a.by ? ` by ${escapeHtml(a.by)}` : ''}`;
+		}
+
+		function renderSidebar() {
+			const qs = allQuestions();
+			const done = qs.filter((q) => isAnswered(q.id)).length;
+			$('#progress').innerHTML = `<strong>${done}</strong> of ${qs.length} answered`;
+			$('#bar').style.transform = `scaleX(${qs.length ? done / qs.length : 0})`;
+
+			$('#filters').innerHTML = FILTERS.map((f) => {
+				const n = qs.filter(f.test).length;
+				return `<button type="button" data-filter="${f.id}" aria-pressed="${f.id === filter}">${f.label} <span>${n}</span></button>`;
+			}).join('');
+
+			$('#toc').innerHTML = sections.map((s) => {
+				const n = s.questions.filter((q) => isAnswered(q.id)).length;
+				const cls = n === s.questions.length ? 'done' : '';
+				return `<li class="${cls}"><a href="#s-${s.id}"><span class="n">${s.id}</span><span>${escapeHtml(s.title)}</span><span class="count">${n}/${s.questions.length}</span></a></li>`;
+			}).join('');
+		}
+
+		function renderQuestion(q) {
+			const a = answerOf(q.id);
+			const d = domId(q.id);
+			const status = STATUSES.map(([value, label]) =>
+				`<button type="button" role="radio" data-status="${value}" aria-checked="${a.status === value}">${label}</button>`).join('');
+			return `
+				<article class="q" id="q-${d}" data-id="${q.id}" data-status="${a.status}">
+					<div class="q-head">
+						<span class="q-id">${q.id}</span>
+						${q.lead ? `<h3 class="q-lead">${inline(q.lead)}</h3>` : ''}
+						${q.blocksDesign ? '<span class="tag">Blocks design</span>' : ''}
+					</div>
+					<p class="q-text">${inline(q.text)}</p>
+					${q.proposal ? `
+						<div class="proposal">
+							<span class="proposal-label">Current proposal</span>
+							<p>${inline(q.proposal.charAt(0).toUpperCase() + q.proposal.slice(1))}</p>
+							<button type="button" data-action="accept">Use proposal</button>
+						</div>` : ''}
+					<label class="visually-hidden" for="a-${d}">Answer to question ${q.id}</label>
+					<textarea id="a-${d}" placeholder="${q.proposal ? 'Your answer, or changes to the proposal' : 'Your answer'}">${escapeHtml(a.answer)}</textarea>
+					<div class="q-foot">
+						<div class="status" role="radiogroup" aria-label="Status of ${q.id}">${status}</div>
+						<span class="saved" aria-live="polite">${savedText(a)}</span>
+					</div>
+				</article>`;
+		}
+
+		function renderMain() {
+			const test = FILTERS.find((f) => f.id === filter).test;
+			const html = sections.map((s) => {
+				const qs = s.questions.filter(test);
+				if (!qs.length) return '';
+				return `<section id="s-${s.id}" aria-labelledby="h-${s.id}">
+					<h2 id="h-${s.id}">${s.id}. ${escapeHtml(s.title)}</h2>
+					${s.intro && filter === 'all' ? `<p class="section-intro">${inline(s.intro)}</p>` : ''}
+					${qs.map(renderQuestion).join('')}
+				</section>`;
+			}).join('');
+			$('#sections').innerHTML = html || '<p class="empty">No questions match this filter. Pick another one on the left.</p>';
+		}
+
+		async function save(id) {
+			const el = document.getElementById(`q-${domId(id)}`);
+			const savedEl = el?.querySelector('.saved');
+			const entry = answerOf(id);
+			if (savedEl) { savedEl.classList.remove('error'); savedEl.textContent = 'Saving'; }
+			try {
+				const res = await fetch(`/api/answers/${id}`, {
+					method: 'PUT',
+					headers: { 'content-type': 'application/json' },
+					body: JSON.stringify({ answer: entry.answer, status: entry.status, by: nameInput.value.trim() })
+				});
+				if (!res.ok) throw new Error((await res.json()).error ?? res.statusText);
+				// Keep anything typed while the request was in flight.
+				const { answer, status } = answerOf(id);
+				answers[id] = { ...(await res.json()), answer, status };
+				if (savedEl) savedEl.innerHTML = savedText(answers[id]);
+				renderSidebar();
+			} catch (err) {
+				if (savedEl) {
+					savedEl.classList.add('error');
+					savedEl.innerHTML = `Not saved: ${escapeHtml(err.message === 'Failed to fetch' ? 'the server is not running' : err.message)}. <button type="button" data-action="retry">Retry</button>`;
+				}
+			}
+		}
+
+		function update(id, patch, { delay = 0 } = {}) {
+			answers[id] = { ...answerOf(id), ...patch };
+			const el = document.getElementById(`q-${domId(id)}`);
+			if (el) el.dataset.status = answers[id].status;
+			clearTimeout(timers.get(id));
+			timers.set(id, setTimeout(() => { timers.delete(id); save(id); }, delay));
+		}
+
+		document.addEventListener('click', (e) => {
+			const f = e.target.closest('[data-filter]');
+			if (f) { filter = f.dataset.filter; renderSidebar(); renderMain(); window.scrollTo({ top: 0 }); return; }
+
+			const q = e.target.closest('.q');
+			if (!q) return;
+			const id = q.dataset.id;
+			const statusBtn = e.target.closest('[data-status]');
+			if (statusBtn && statusBtn.closest('.status')) {
+				q.querySelectorAll('.status button').forEach((b) => b.setAttribute('aria-checked', String(b === statusBtn)));
+				update(id, { status: statusBtn.dataset.status });
+				return;
+			}
+			const action = e.target.closest('[data-action]')?.dataset.action;
+			if (action === 'accept') {
+				const ta = q.querySelector('textarea');
+				if (!ta.value.trim()) ta.value = 'OK, as proposed.';
+				q.querySelectorAll('.status button').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.status === 'agreed')));
+				update(id, { answer: ta.value, status: 'agreed' });
+			} else if (action === 'retry') {
+				save(id);
+			}
+		});
+
+		document.addEventListener('input', (e) => {
+			if (e.target.matches('.q textarea')) update(e.target.closest('.q').dataset.id, { answer: e.target.value }, { delay: 700 });
+		});
+
+		document.addEventListener('keydown', (e) => {
+			if (!(e.key === 'Enter' && (e.metaKey || e.ctrlKey) && e.target.matches('.q textarea'))) return;
+			e.preventDefault();
+			const all = [...document.querySelectorAll('.q textarea')];
+			const next = all[all.indexOf(e.target) + 1];
+			if (next) { next.focus(); next.closest('.q').scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+		});
+
+		// Flush pending saves if the tab closes mid debounce.
+		window.addEventListener('beforeunload', () => {
+			for (const [id, t] of timers) {
+				clearTimeout(t);
+				const a = answerOf(id);
+				fetch(`/api/answers/${id}`, { method: 'PUT', keepalive: true, headers: { 'content-type': 'application/json' }, body: JSON.stringify({ answer: a.answer, status: a.status, by: nameInput.value.trim() }) });
+			}
+		});
+
+		try {
+			const res = await fetch('/api/data');
+			if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? res.statusText);
+			({ sections, answers } = await res.json());
+			renderSidebar();
+			renderMain();
+			if (location.hash) document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView();
+		} catch (err) {
+			$('#progress').textContent = 'Not loaded';
+			const banner = $('#banner');
+			banner.hidden = false;
+			banner.innerHTML = 'Could not load the questions${err.message === 'Failed to fetch' ? '' : `: ${escapeHtml(err.message)}`}. Start the server with <code>node docs/questions/server.mjs</code> and open <a href="http://localhost:4321">localhost:4321</a>.';
+		}
+	</script>
+</body>
+</html>

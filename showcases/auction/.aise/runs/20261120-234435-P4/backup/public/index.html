@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Auctions</title>
+<style>
+body{font-family:sans-serif;max-width:640px;margin:2em auto;padding:0 1em}
+section{border:1px solid #ccc;padding:1em;margin-bottom:1em;border-radius:6px}
+input,select,button{margin:2px 0;padding:4px}
+#msg{color:#b00}
+li{cursor:pointer;margin:4px 0}
+</style>
+</head>
+<body>
+<h1>Auctions</h1>
+<p id="msg"></p>
+<section>
+  <h2>Display name</h2>
+  <div id="who"></div>
+  <input id="name" placeholder="2-20 characters">
+  <button id="register">Register</button>
+</section>
+<section>
+  <h2>List item</h2>
+  <input id="title" placeholder="Title"><br>
+  <input id="price" type="number" min="0" step="0.01" placeholder="Starting price"><br>
+  <select id="cur"><option>CHF</option><option>EUR</option><option>USD</option></select><br>
+  <input id="end" type="datetime-local"><br>
+  <button id="list">List item</button>
+</section>
+<section>
+  <h2>Open items</h2>
+  <ul id="items"></ul>
+</section>
+<section id="detail" hidden>
+  <h2 id="dtitle"></h2>
+  <p id="dinfo"></p>
+  <select id="dcur"><option value="">item currency</option><option>CHF</option><option>EUR</option><option>USD</option></select>
+  <br>
+  <input id="amount" type="number" min="0" step="0.01" placeholder="Your bid">
+  <button id="bid">Place bid</button>
+</section>
+<script>
+const $ = (id) => document.getElementById(id);
+let user = JSON.parse(localStorage.getItem('user') || 'null');
+let current = null;
+let timer = null;
+function msg(t) { $('msg').textContent = t || ''; }
+async function api(method, url, body) {
+  const res = await fetch(url, {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
+}
+function showUser() { $('who').textContent = user ? 'Signed in as ' + user.displayName : 'Not registered'; }
+async function loadItems() {
+  const items = await api('GET', '/api/items');
+  const ul = $('items');
+  ul.textContent = '';
+  for (const it of items) {
+    const li = document.createElement('li');
+    li.textContent = it.title + ' - from ' + it.startingPrice + ' ' + it.currency +
+      ' (ends ' + new Date(it.endTime).toLocaleString() + ')';
+    li.onclick = () => openItem(it.id);
+    ul.appendChild(li);
+  }
+}
+async function refresh() {
+  if (!current) return;
+  const cur = $('dcur').value;
+  const v = await api('GET', '/api/items/' + encodeURIComponent(current) + (cur ? '?displayCurrency=' + cur : ''));
+  const it = v.item;
+  $('dtitle').textContent = it.title + ' [' + it.status + ']';
+  let t = 'Start ' + it.startingPrice + ' ' + it.currency + '; highest ' +
+    (it.highestBidAmount === null ? 'none' : it.highestBidAmount + ' ' + it.currency) +
+    '; ends ' + new Date(it.endTime).toLocaleString();
+  if (v.displayCurrency) {
+    t += ' | in ' + v.displayCurrency + ': start ' + (v.convertedStartingPrice === null ? 'n/a' : v.convertedStartingPrice.toFixed(2)) +
+      ', highest ' + (v.convertedHighestBid === null ? 'n/a' : v.convertedHighestBid.toFixed(2));
+  }
+  if (it.winnerId) t += ' | winner ' + it.winnerId;
+  $('dinfo').textContent = t;
+}
+async function openItem(id) {
+  current = id;
+  $('detail').hidden = false;
+  clearInterval(timer);
+  timer = setInterval(() => refresh().catch(() => {}), 3000);
+  try { await refresh(); } catch (e) { msg(e.message); }
+}
+$('register').onclick = async () => {
+  try {
+    user = await api('POST', '/api/users', { displayName: $('name').value });
+    localStorage.setItem('user', JSON.stringify(user));
+    showUser(); msg('');
+  } catch (e) { msg(e.message); }
+};
+$('list').onclick = async () => {
+  try {
+    if (!user) throw new Error('Register first');
+    await api('POST', '/api/items', {
+      userId: user.id, title: $('title').value, startingPrice: Number($('price').value),
+      endTime: new Date($('end').value).toISOString(), currency: $('cur').value,
+    });
+    msg(''); await loadItems();
+  } catch (e) { msg(e.message); }
+};
+$('bid').onclick = async () => {
+  try {
+    if (!user) throw new Error('Register first');
+    await api('POST', '/api/items/' + encodeURIComponent(current) + '/bids', { userId: user.id, amount: Number($('amount').value) });
+    msg(''); await refresh();
+  } catch (e) { msg(e.message); }
+};
+$('dcur').onchange = () => refresh().catch((e) => msg(e.message));
+showUser();
+loadItems().catch((e) => msg(e.message));
+</script>
+</body>
+</html>

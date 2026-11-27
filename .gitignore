@@ -1,0 +1,29 @@
+.venv/
+__pycache__/
+scripts/*.py
+*:Zone.Identifier
+*:mshield
+.DS_Store
+
+.superpowers/
+
+.env
+node_modules/
+.svelte-kit/
+build/
+
+# local, untracked material
+private/
+results.sarif
+
+# agent worktrees
+.claude/worktrees/
+
+# Scratch projects: only the showcase deliverables and the test fixture are tracked.
+/showcases/*
+!/showcases/todo/
+!/showcases/booking/
+!/showcases/auction/
+!/showcases/fixture/
+# runtime SQLite files of a showcase run
+/showcases/*/data/

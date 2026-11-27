@@ -1,0 +1,45 @@
+{
+  "id": "20261120-233918-P4",
+  "phase": "P4",
+  "agent": "code",
+  "status": "done",
+  "startedAt": "2026-11-20T23:39:18.636Z",
+  "finishedAt": "2026-11-20T23:40:38.991Z",
+  "usage": {
+    "input": 895,
+    "output": 29637,
+    "cacheRead": 189868,
+    "cacheWrite": 95577
+  },
+  "costUsd": 0.213243425,
+  "summary": "The agent wrote `src/app/app.ts`, `src/app/main.ts` and `public/index.html`, and typecheck and drift detection both passed. It also fixed a bug in `RoomService.addRoom` that made every room creation fail. Before approving, decide whether an in-memory database is acceptable for this phase, since data is lost on restart and the design has no database node yet. Also make sure `ADMIN_PASSWORD` is set, because admin login rejects everything otherwise, and note that the server was never started and no routes were called, so the behaviour is untested.",
+  "prevPhase": {
+    "status": "not_started"
+  },
+  "prevArtefactHash": null,
+  "postArtefactHash": "1cb82bf26f414e3fd9ddeee280e00bcc1cfe030ae8817c829b278b1486760a9e",
+  "designHashes": {
+    "DSN-001": "9d68858d53ec4e31baf8838437c26d071f61b96b60e853118751b552f2a1a490",
+    "DSN-002": "689b639964181c723ada32b8bfc23d086ffac13bf8073b079e7e1cc275c2039a",
+    "DSN-003": "cccb6696397dbc1576d75ef31a65fccbd0f017ea4d06856ead14f12a90ea8790",
+    "DSN-004": "805df9206432945ab63bedb1d9b0db21524beaace3ad846337f57f744f95dc60",
+    "DSN-005": "69bffd9fc6ab2cd39a9c507a849344b6206f01c917cada94bd3ab07028a5a95a",
+    "DSN-006": "53a3ed060dc203e77680ee2b609bff1bf321e44bbf1eec300c0f60f6e76b6903",
+    "DSN-007": "99798b23bd8ef981e07732157b5e349d323622e8ef8036a165bc8f3ef34d62a2",
+    "DSN-008": "3b343ef1f2a3a08bc8db020a7761424e2c5818b628070962e15f8cbe3153084c",
+    "DSN-009": "6412f67873ea033d50b12067904c330822ecc4547e265fab90bdd5d60983d6b7",
+    "DSN-010": "49f71217d134c90bffa8d64fed6f116bf0db4add4d8b36fd86d05e108fde7d7c",
+    "DSN-011": "e07607634f7d8f9ce40d3a04ee4b500399ebb81f90931461789c457a4aa3cc30",
+    "DSN-012": "11acbaf4ced54846f483c54085e95d4df147dad3fdae0eea367673d3f7028b28",
+    "DSN-013": "2d80616f2d5151817bcea9c725e5a9151e0759e775d65c47e859a859483db4a9",
+    "DSN-014": "649369fe8a3093a174efa7f732bfa4d518db58a8eaec6b351ca22d597bf1ba10",
+    "DSN-015": "204e9fd8eec5249e5a66b854d426c34d31aa4f12b1cf7dea4046f9daf0b064c5",
+    "DSN-016": "07ec92d172470ed51215f21ec50fc6ddfc0564473670de3163890ce8df72a51a",
+    "DSN-017": "2228edd37143d63140b113504b691ae90236c971372304142ef7df76e9160567",
+    "DSN-018": "2d6ee88d6fa9dd542ffcfc5fa1833bc87d5cebf59783e5f4a27f6230ac5f4215",
+    "DSN-019": "6025084e1053010a4b98f97b6c7f21f1cb011b1b828c7537d848b06383d1f386",
+    "DSN-023": "d4cc995e09086a056b4acbf61b6f8e0d5b6033c0f091f1ffd7b2945576e2a179",
+    "DSN-020": "2cf5243e0c421c7862e31d9370119427f0d21c6650fe616df3c5f6fb8e67f251",
+    "DSN-021": "79f9bbfe5777c241646b6764c0cf96c0242742411b129a4300c095f670aabc21"
+  }
+}

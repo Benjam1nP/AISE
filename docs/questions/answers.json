@@ -1,0 +1,140 @@
+{
+	"1.1": {
+		"answer": "No clear split - will emerge naturally. ",
+		"status": "agreed",
+		"by": "Arthur and Benjamin",
+		"updatedAt": "2026-11-04T12:56:16.944Z"
+	},
+	"1.2": {
+		"answer": "Github issues + whatsapp for communication. ",
+		"status": "agreed",
+		"by": "Arthur and Benjamin",
+		"updatedAt": "2026-11-04T12:56:18.152Z"
+	},
+	"1.3": {
+		"answer": "Proposal works - we both use claude code, mainly with opus 5.5 as the model\n",
+		"status": "open",
+		"by": "Arthur and Benjamin",
+		"updatedAt": "2026-11-04T12:56:47.417Z"
+	},
+	"1.4": {
+		"answer": "Branch per issue, PRs, not nessecarily reviewd by the other person, squash merge. ",
+		"status": "open",
+		"by": "Arthur and Benjamin",
+		"updatedAt": "2026-11-04T12:57:06.318Z"
+	},
+	"2.1": {
+		"answer": "OK, as proposed.",
+		"status": "agreed",
+		"by": "Arthur and Benjamin",
+		"updatedAt": "2026-11-04T12:57:21.565Z"
+	},
+	"2.2": {
+		"answer": "If these things truly don't cost us credits then we'll leave it",
+		"status": "open",
+		"by": "Arthur and Benjamin",
+		"updatedAt": "2026-11-04T12:57:57.019Z"
+	},
+	"2.3": {
+		"answer": "OK, as proposed.",
+		"status": "agreed",
+		"by": "Arthur and Benjamin",
+		"updatedAt": "2026-11-04T12:58:04.500Z"
+	},
+	"3.1": {
+		"answer": "Requirements must be very clear first. The developer starts in a chat window and describes what they want. The agent keeps asking what is still unclear, not specific enough, or missing, until the requirements are complete. Only then does the rest of the work start (design, then code, tests and deployment, each with its own approval gate).",
+		"status": "agreed",
+		"by": "Arthur",
+		"updatedAt": "2026-11-04T13:43:34.008Z"
+	},
+	"3.2": {
+		"answer": "OK, as proposed.",
+		"status": "agreed",
+		"by": "Arthur and Benjamin",
+		"updatedAt": "2026-11-04T13:01:40.559Z"
+	},
+	"3.3": {
+		"answer": "OK, as proposed.",
+		"status": "agreed",
+		"by": "Arthur and Benjamin",
+		"updatedAt": "2026-11-04T13:01:50.685Z"
+	},
+	"3.4": {
+		"answer": "OK, as proposed.",
+		"status": "agreed",
+		"by": "Arthur and Benjamin",
+		"updatedAt": "2026-11-04T13:02:00.840Z"
+	},
+	"3.5": {
+		"answer": "A clear error message and how they could fix it, good UI/UX",
+		"status": "open",
+		"by": "Arthur and Benjamin",
+		"updatedAt": "2026-11-04T13:02:23.301Z"
+	},
+	"4.1": {
+		"answer": "OK, as proposed.",
+		"status": "agreed",
+		"by": "Arthur and Benjamin",
+		"updatedAt": "2026-11-04T13:02:46.187Z"
+	},
+	"4.2": {
+		"answer": "OK, as proposed.",
+		"status": "agreed",
+		"by": "Arthur and Benjamin",
+		"updatedAt": "2026-11-04T13:02:54.613Z"
+	},
+	"4.6": {
+		"answer": "CI on main, and full test suite must pass ",
+		"status": "open",
+		"by": "Arthur and Benjamin",
+		"updatedAt": "2026-11-04T13:03:53.681Z"
+	},
+	"6.2": {
+		"answer": "OK, as proposed.",
+		"status": "agreed",
+		"by": "Arthur and Benjamin",
+		"updatedAt": "2026-11-04T13:04:30.059Z"
+	},
+	"6.3": {
+		"answer": "OK, as proposed.",
+		"status": "agreed",
+		"by": "Arthur and Benjamin",
+		"updatedAt": "2026-11-04T13:04:36.889Z"
+	},
+	"6.4": {
+		"answer": "yes",
+		"status": "open",
+		"by": "Arthur and Benjamin",
+		"updatedAt": "2026-11-04T13:04:46.049Z"
+	},
+	"7.1": {
+		"answer": "Yes: to-do app and booking system from the requirements examples, real time auction platform as the larger one (multiple services, real time, external API).",
+		"status": "agreed",
+		"by": "Arthur",
+		"updatedAt": "2026-11-04T13:10:29.887Z"
+	},
+	"8.2": {
+		"answer": "Recorded run, maybe if we have time in the end we can build the command code fallback",
+		"status": "open",
+		"by": "Arthur and Benjamin",
+		"updatedAt": "2026-11-04T13:05:44.392Z"
+	},
+	"8.3": {
+		"answer": "OK, as proposed.",
+		"status": "agreed",
+		"by": "Arthur and Benjamin",
+		"updatedAt": "2026-11-04T13:05:49.913Z"
+	},
+	"9.1": {
+		"answer": "OK, as proposed. Also add a universal PRODUCT.md, a PRD.md, ARCHITECTURE.md and CHANGELOG.md",
+		"status": "agreed",
+		"by": "Arthur and Benjamin",
+		"updatedAt": "2026-11-04T13:06:17.480Z"
+	},
+	"9.2": {
+		"answer": "",
+		"status": "open",
+		"by": "Arthur and Benjamin",
+		"updatedAt": "2026-11-04T13:06:25.083Z"
+	}
+}

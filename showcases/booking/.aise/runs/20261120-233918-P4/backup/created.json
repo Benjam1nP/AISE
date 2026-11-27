@@ -1,0 +1,22 @@
+[
+  "package.json",
+  "tsconfig.json",
+  "src/domain-model/Room.ts",
+  "src/api-layer/BookingController.ts",
+  "src/api-layer/AdminController.ts",
+  "src/api-layer/RoomController.ts",
+  "src/domain-model/Booking.ts",
+  "src/domain-services/AvailabilityService.ts",
+  "src/domain-services/RoomService.ts",
+  "src/domain-services/AdminAuthService.ts",
+  "src/domain-services/TimeSlotPolicy.ts",
+  "src/persistence/RoomRepository.ts",
+  "src/api-layer/AdminGuard.ts",
+  "src/web-frontend/IdentityStore.ts",
+  "src/persistence/BookingRepository.ts",
+  "src/domain-services/BookingService.ts",
+  "src/web-frontend/WebClient.ts",
+  "src/app/app.ts",
+  "src/app/main.ts",
+  "public/index.html"
+]

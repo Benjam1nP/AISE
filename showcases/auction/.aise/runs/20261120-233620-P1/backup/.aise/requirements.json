@@ -1,0 +1,123 @@
+{
+  "requirements": [
+    {
+      "id": "REQ-001",
+      "title": "Seller lists item",
+      "text": "The system shall allow a seller to list an item with a starting price and an end time.",
+      "type": "functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "A seller can submit an item with a starting price and an end time and it then appears as an open auction.",
+        "A listing without a starting price or without an end time is rejected with an error message."
+      ]
+    },
+    {
+      "id": "REQ-002",
+      "title": "Place bid",
+      "text": "The system shall allow a bidder to place a bid on an open auction item.",
+      "type": "functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "A bidder can submit a bid on an item whose end time has not passed and the bid is stored.",
+        "A bid on an item whose end time has passed is rejected."
+      ]
+    },
+    {
+      "id": "REQ-003",
+      "title": "Live bid updates",
+      "text": "The system shall push each new bid to all clients currently watching that item without the client reloading the page.",
+      "type": "functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "When a bid is accepted, every client watching the item shows the new bid without a page reload.",
+        "A client watching a different item does not receive that bid."
+      ]
+    },
+    {
+      "id": "REQ-004",
+      "title": "Auction close and winner",
+      "text": "The system shall close an auction when its end time is reached and declare the highest bidder the winner.",
+      "type": "functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "At the end time the item no longer accepts bids.",
+        "The bidder with the highest bid at the end time is recorded as the winner and this is shown to watchers."
+      ]
+    },
+    {
+      "id": "REQ-005",
+      "title": "Prices in bidder currency",
+      "text": "The system shall display prices to a bidder in the bidder's chosen currency, converted using exchange rates obtained from a public exchange rate API.",
+      "type": "functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "A bidder who selects a currency sees item prices and bids converted with the latest rate obtained from the exchange rate API.",
+        "Converted prices are shown with the currency code."
+      ]
+    },
+    {
+      "id": "REQ-006",
+      "title": "Separate services",
+      "text": "The system shall be built as separately deployable services, including at least an API server and a separate live update server.",
+      "type": "non-functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "The API server and the live update server run as separate processes or deployments.",
+        "Either service can be started, stopped and deployed without redeploying the other."
+      ]
+    },
+    {
+      "id": "REQ-007",
+      "title": "Horizontal scalability",
+      "text": "The system shall allow the API server and the live update server to be scaled independently by running multiple instances.",
+      "type": "non-functional",
+      "priority": "should",
+      "acceptanceCriteria": [
+        "With two or more live update server instances running, a client connected to any instance receives every bid for the item it watches.",
+        "Adding an instance requires no code change."
+      ]
+    }
+  ],
+  "openQuestions": [
+    {
+      "id": "Q-001",
+      "text": "Do users need accounts and login, and what roles exist (seller, bidder, admin)? Can a seller bid on their own item?",
+      "reqIds": [
+        "REQ-001",
+        "REQ-002"
+      ]
+    },
+    {
+      "id": "Q-002",
+      "text": "What are the bid rules: must a bid exceed the current highest bid, is there a minimum increment, and should a late bid extend the end time?",
+      "reqIds": [
+        "REQ-002",
+        "REQ-004"
+      ]
+    },
+    {
+      "id": "Q-003",
+      "text": "In which currency are starting prices and bids entered and stored (seller's currency, one fixed base currency, or the bidder's)? Is the conversion for display only?",
+      "reqIds": [
+        "REQ-005"
+      ]
+    },
+    {
+      "id": "Q-004",
+      "text": "What happens if the exchange rate API is unavailable, and is there a preferred API or a limit on how old a cached rate may be?",
+      "reqIds": [
+        "REQ-005"
+      ]
+    },
+    {
+      "id": "Q-005",
+      "text": "What are the scale and latency targets (concurrent watchers, bids per second, maximum delay for a live update)? Also, what happens when an auction ends with no bids, and are payment and winner notification in scope?",
+      "reqIds": [
+        "REQ-004",
+        "REQ-007"
+      ]
+    }
+  ],
+  "assumptions": [],
+  "outOfScope": []
+}

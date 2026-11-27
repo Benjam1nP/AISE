@@ -1,0 +1,48 @@
+{
+  "id": "20261122-131901-P5",
+  "phase": "P5",
+  "agent": "test",
+  "status": "done",
+  "startedAt": "2026-11-22T13:19:01.121Z",
+  "finishedAt": "2026-11-22T13:21:46.147Z",
+  "usage": {
+    "input": 955,
+    "output": 33948,
+    "cacheRead": 246775,
+    "cacheWrite": 102153
+  },
+  "costUsd": 0.288654645,
+  "summary": "Phase P5 (testing): the agent fixed four test problems (a shared fixture shape, an unrealistic currency in the SEQ-006 scenario, a fake socket missing readyState, and a scenario whose end time had already passed) and logged a code bug in REQ-002 AC4, where a bid equal to the current highest was accepted. Before approving, check that run_tests has been re-run after the final SEQ-006 edit, since the last run reported 2 failures and the agent did not confirm the fix. The REQ-002 AC4 bug still needs a fix in BidService.placeBid, and that fix should be verified with a test run.",
+  "prevPhase": {
+    "status": "not_started"
+  },
+  "prevArtefactHash": "fb6c19b5e6f44fe5e92c50f070166113c2608c812fe4d6d6494c2a37713a52cc",
+  "postArtefactHash": "579323b8fcd084640349d3246d80ce57a6a3d9d611378a3e0625e6087049094a",
+  "reqHashes": {
+    "REQ-001": "f8c70bf18f448cf36036473310249368b29af3548c6362f9e9b15e2e84e27c59",
+    "REQ-002": "1262b59c481c383acc492c14093d6f8d101fc492d98166b8d349c5b53bc1d92c",
+    "REQ-003": "153e24dcf38589cd84d9669b7740622edd3e3c0964fb1eef0c79dc4ab3d67042",
+    "REQ-004": "5b1c4d4005d65a6e466b46476fa897828981f6668e12a2a20479d30b198b687a",
+    "REQ-005": "90b696170dc13d4d08e292d266ff1cd48e429f2b5526d7ddd3be02a5b1c43f1f",
+    "REQ-006": "0331c2404eb5d011086e21ab09ad6ac741f0011e5f6467824fcc7fb990855dfb",
+    "REQ-007": "589c22d570bc2de03b10e78f83f97f2c185478efc6dbf271e7865232dd9a3747",
+    "REQ-008": "6bf9c5a68569ec28ce5244fe4a7e54a9bd865ce9bb769ee20886d56f3d7ec3d7",
+    "REQ-009": "aedd4cb1a2b573399d5b65739c3d171db599533590cf204a51c389a76a9f25d9",
+    "REQ-010": "671f8a54a33d23c034676468da33dfa93281f179748976c863a3db2c530721f6",
+    "REQ-011": "96426242e8b8a67da5bf31673c5ca7177baefc1ff415187834e15dbf344452fe"
+  },
+  "useCaseHashes": {
+    "UC-001": "790411ca3e320c8eb8a88d99334e576f583f8c8f26a8ee3848e232d62f84f439",
+    "UC-002": "f511cb80c43611ed9bbc5b094e795e795e0cdf03ace9a3a6c5e9e26f4e640e09",
+    "UC-003": "d5426f9f1cca9f3abb46cc08469358811efe35e1f9c626854cad6dd62476512b",
+    "UC-004": "3184768b1a1c8ec8703228ecdfd365f0c5137f475dd933501fdfe42b353772a6",
+    "UC-005": "8a7f68bd317e453cc7fdfe040568be047c6907ed9740a47aa445a7570b29c3b3",
+    "UC-006": "4f43991f0248d94e1106350ac94ac756b96edf2b800138a77b7d26a1b6d1327c",
+    "SEQ-001": "1429be2b776d04d62261cadf8b7ea3a03c9e2fc43cba8d98306c5ff00187120a",
+    "SEQ-002": "a30114a0a6b15f7c6e96715760263b6f0d434b59baf1500f8a6163ef0cc248c4",
+    "SEQ-003": "e0cbff8bce58ea6510a0d198e7f1f1a2c9a6135aabf71c96cc2b36a20155ff3e",
+    "SEQ-004": "c9f8bca90b40be5510b45578a75dd5e94b13b6ad7f5b8419c1b49b2788bb4ffa",
+    "SEQ-005": "feee9aac8cc6ae351c7a9069fdb40b8b2095e378c96f8991d6601a963ebabc46",
+    "SEQ-006": "ae8cfacba038042d21d22e39aa9e47fcea0c7f0caaf4b84984f5aac8d658ad0f"
+  }
+}

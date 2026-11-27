@@ -1,0 +1,4 @@
+{
+  ".aise/checks/P4.json": "{\n  \"at\": \"2026-11-22T13:15:50.198Z\",\n  \"codeHash\": \"14ffa4ceb690a708146fad7d6577fba22be51b717ba60fc66a6b491cef1c0567\",\n  \"designHash\": \"6c87f80a7a1baa8fa781cbf4404efece817711122c1023b91724a95262d03b68\",\n  \"typecheck\": {\n    \"ok\": true,\n    \"errors\": [],\n    \"timedOut\": false\n  },\n  \"drift\": [],\n  \"start\": {\n    \"ok\": true,\n    \"entries\": [\n      {\n        \"entry\": \"src/app/main.ts\",\n        \"portVar\": \"PORT\",\n        \"port\": 8080,\n        \"ok\": true,\n        \"log\": \"\"\n      },\n      {\n        \"entry\": \"src/app/live-update-server.ts\",\n        \"portVar\": \"LIVE_UPDATE_SERVER_PORT\",\n        \"port\": 8081,\n        \"ok\": true,\n        \"log\": \"\"\n      }\n    ],\n    \"timedOut\": false\n  }\n}\n",
+  ".aise/checks/P5.json": null
+}

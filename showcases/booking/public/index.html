@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- @trace DSN-016 REQ-006 REQ-008 -->
+<meta charset="utf-8">
+<title>Room booking</title>
+<style>
+body{font-family:sans-serif;max-width:800px;margin:1em auto;padding:0 1em}
+section{border:1px solid #ccc;padding:.7em;margin:.7em 0}
+input,button{margin:.2em}
+li{margin:.3em 0}
+#msg{color:#b00}
+</style>
+</head>
+<body>
+<h1>Room booking</h1>
+<p id="msg"></p>
+<section>
+<h2>Identity</h2>
+<input id="name" placeholder="Name"><input id="email" placeholder="Email">
+<button id="saveId">Save</button>
+</section>
+<section>
+<h2>Availability</h2>
+<input id="start" type="datetime-local"><input id="end" type="datetime-local">
+<button id="check">Show free rooms</button>
+<ul id="rooms"></ul>
+</section>
+<section>
+<h2>My bookings</h2>
+<button id="mine">Refresh</button>
+<ul id="bookings"></ul>
+</section>
+<section>
+<h2>Room schedule</h2>
+<input id="schedRoom" placeholder="Room id"><input id="schedDate" type="date">
+<button id="sched">Show</button>
+<ul id="schedule"></ul>
+</section>
+<section>
+<h2>Admin</h2>
+<input id="pw" type="password" placeholder="Password"><button id="login">Login</button>
+<div>
+<button id="allRooms">List all rooms</button>
+<ul id="adminRooms"></ul>
+<input id="rn" placeholder="Name"><input id="rc" type="number" placeholder="Capacity" style="width:6em">
+<input id="rf" type="number" placeholder="Floor" style="width:5em"><input id="re" placeholder="Equipment, comma separated">
+<button id="addRoom">Add room</button>
+</div>
+</section>
+<script>
+const $ = (id) => document.getElementById(id);
+let adminToken = null;
+const msg = (t) => { $('msg').textContent = t || ''; };
+async function api(method, path, body, admin) {
+  const headers = {'Content-Type': 'application/json'};
+  if (admin && adminToken) headers['x-admin-token'] = adminToken;
+  const r = await fetch(path, {method, headers, body: body ? JSON.stringify(body) : undefined});
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.error || r.statusText);
+  return data;
+}
+function run(fn) { return async () => { try { msg(''); await fn(); } catch (e) { msg(e.message); } }; }
+function identity() {
+  try { return JSON.parse(localStorage.getItem('identity')) || null; } catch (e) { return null; }
+}
+function needIdentity() {
+  const i = identity();
+  if (!i) throw new Error('Save your name and email first');
+  return i;
+}
+function iso(v) { return new Date(v).toISOString(); }
+function fill(ul, items, build) {
+  ul.textContent = '';
+  for (const it of items) { const li = document.createElement('li'); build(li, it); ul.appendChild(li); }
+}
+function btn(label, fn) {
+  const b = document.createElement('button'); b.textContent = label; b.addEventListener('click', run(fn)); return b;
+}
+const i0 = identity();
+if (i0) { $('name').value = i0.name; $('email').value = i0.email; }
+$('saveId').addEventListener('click', run(async () => {
+  localStorage.setItem('identity', JSON.stringify({name: $('name').value, email: $('email').value}));
+  msg('Saved');
+}));
+$('check').addEventListener('click', run(async () => {
+  const rooms = await api('GET', '/api/rooms/available?start=' + encodeURIComponent(iso($('start').value)) + '&end=' + encodeURIComponent(iso($('end').value)));
+  fill($('rooms'), rooms, (li, r) => {
+    li.append(r.name + ' (id ' + r.id + ', cap ' + r.capacity + ', floor ' + r.floor + ', ' + r.equipment.join(', ') + ') ');
+    li.append(btn('Book', async () => {
+      const i = needIdentity();
+      await api('POST', '/api/bookings', {roomId: r.id, start: iso($('start').value), end: iso($('end').value), name: i.name, email: i.email});
+      msg('Booked'); $('check').click();
+    }));
+  });
+}));
+$('mine').addEventListener('click', run(async () => {
+  const i = needIdentity();
+  const list = await api('GET', '/api/bookings?email=' + encodeURIComponent(i.email));
+  fill($('bookings'), list, (li, b) => {
+    li.append('Room ' + b.roomId + ' ' + new Date(b.startTime).toLocaleString() + ' - ' + new Date(b.endTime).toLocaleString() + ' ');
+    li.append(btn('Cancel', async () => {
+      await api('DELETE', '/api/bookings/' + b.id + '?email=' + encodeURIComponent(i.email));
+      $('mine').click();
+    }));
+    li.append(btn('Change to selected time', async () => {
+      await api('PUT', '/api/bookings/' + b.id, {email: i.email, start: iso($('start').value), end: iso($('end').value)});
+      $('mine').click();
+    }));
+  });
+}));
+$('sched').addEventListener('click', run(async () => {
+  const list = await api('GET', '/api/rooms/' + encodeURIComponent($('schedRoom').value) + '/schedule?date=' + $('schedDate').value);
+  fill($('schedule'), list, (li, b) => {
+    li.textContent = new Date(b.startTime).toLocaleTimeString() + ' - ' + new Date(b.endTime).toLocaleTimeString() + ' ' + b.creatorName;
+  });
+}));
+$('login').addEventListener('click', run(async () => {
+  adminToken = (await api('POST', '/api/admin/login', {password: $('pw').value})).token;
+  msg('Admin logged in');
+}));
+$('allRooms').addEventListener('click', run(async () => {
+  const rooms = await api('GET', '/api/admin/rooms', null, true);
+  fill($('adminRooms'), rooms, (li, r) => {
+    li.append(r.name + ' (id ' + r.id + ') ' + (r.active ? 'active' : 'inactive') + ' ');
+    li.append(btn(r.active ? 'Deactivate' : 'Activate', async () => {
+      await api('PUT', '/api/admin/rooms/' + r.id + '/active', {active: !r.active}, true);
+      $('allRooms').click();
+    }));
+    li.append(btn('Delete', async () => {
+      await api('DELETE', '/api/admin/rooms/' + r.id, null, true);
+      $('allRooms').click();
+    }));
+  });
+}));
+$('addRoom').addEventListener('click', run(async () => {
+  await api('POST', '/api/admin/rooms', {
+    name: $('rn').value, capacity: Number($('rc').value), floor: Number($('rf').value),
+    equipment: $('re').value.split(',').map((s) => s.trim()).filter(Boolean), active: true
+  }, true);
+  $('allRooms').click();
+}));
+</script>
+</body>
+</html>

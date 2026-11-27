@@ -1,0 +1,21 @@
+{
+  "id": "20261120-233620-P1",
+  "phase": "P1",
+  "agent": "requirements",
+  "status": "done",
+  "startedAt": "2026-11-20T23:36:20.733Z",
+  "finishedAt": "2026-11-20T23:36:43.835Z",
+  "usage": {
+    "input": 702,
+    "output": 3269,
+    "cacheRead": 9168,
+    "cacheWrite": 5120
+  },
+  "costUsd": 0.0447157,
+  "summary": "The agent saved an updated requirements document with 11 requirements, changing four (REQ-001, 002, 004, 005) and adding four (REQ-008 to 011), and removed the five questions the developer had already answered. Two questions remain open for the developer to decide: Q-006, whether display names are free-form and whether a taken name should be rejected or reused by a new browser, and Q-007, whether bidders may pick only CHF, EUR and USD for display or any currency Frankfurter supports. Both reads and writes of the requirements document succeeded, so no tool calls failed.",
+  "prevPhase": {
+    "status": "awaiting_approval"
+  },
+  "prevArtefactHash": "185129def715c36c2c37c09ff6fafcb84a46b4cc2af5c2fef30c20a2d058aa28",
+  "postArtefactHash": "08c3fe6d60bb52690d7b6e9736072607af5cf71af51472016df74247639f1e32"
+}

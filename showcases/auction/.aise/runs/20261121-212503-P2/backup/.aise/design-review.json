@@ -1,0 +1,378 @@
+{
+  "designHash": "51e80b649847189a57ab76c28434d6ed48896acf798b3fe170908d142e8d2d79",
+  "rows": [
+    {
+      "reqId": "REQ-001",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-019",
+          "method": "listItem"
+        },
+        {
+          "classId": "DSN-022",
+          "method": "listItem"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-022",
+          "method": "listItem"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-022",
+          "method": "listItem"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-002",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-023",
+          "method": "placeBid"
+        },
+        {
+          "classId": "DSN-015",
+          "method": "isOpen"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-002",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-015",
+          "method": "isOpen"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-002",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-015",
+          "method": "minimumBid"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-002",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-015",
+          "method": "minimumBid"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-002",
+      "criterion": 5,
+      "coveredBy": [
+        {
+          "classId": "DSN-023",
+          "method": "placeBid"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-003",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-034",
+          "method": "publish"
+        },
+        {
+          "classId": "DSN-032",
+          "method": "onEvent"
+        },
+        {
+          "classId": "DSN-033",
+          "method": "broadcast"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-003",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-033",
+          "method": "watch"
+        },
+        {
+          "classId": "DSN-033",
+          "method": "broadcast"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-004",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-022",
+          "method": "closeDueAuctions"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-004",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-022",
+          "method": "closeDueAuctions"
+        },
+        {
+          "classId": "DSN-019",
+          "method": "getItem"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-004",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "sequenceId": "SEQ-005",
+          "step": 8
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-004",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-022",
+          "method": "closeDueAuctions"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-005",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-025",
+          "method": "convert"
+        },
+        {
+          "classId": "DSN-026",
+          "method": "fetchRates"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-005",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-019",
+          "method": "getItem"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-005",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-019",
+          "method": "getItem"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-005",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-023",
+          "method": "placeBid"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-008",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-021",
+          "method": "register"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-008",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-021",
+          "method": "register"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-008",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-028",
+          "method": "findByName"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-008",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-028",
+          "method": "save"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-008",
+      "criterion": 5,
+      "coveredBy": [
+        {
+          "classId": "DSN-019",
+          "method": "listItem"
+        },
+        {
+          "classId": "DSN-020",
+          "method": "placeBid"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-008",
+      "criterion": 6,
+      "coveredBy": [],
+      "note": "No admin role exists in the design."
+    },
+    {
+      "reqId": "REQ-009",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-015",
+          "method": "extendIfLate"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-009",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-015",
+          "method": "extendIfLate"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-009",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "sequenceId": "SEQ-003",
+          "step": 12
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-025",
+          "method": "convert"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-025",
+          "method": "convert"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-025",
+          "method": "convert"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-006",
+      "criterion": 1,
+      "coveredBy": [],
+      "note": "Separate service nodes."
+    },
+    {
+      "reqId": "REQ-006",
+      "criterion": 2,
+      "coveredBy": [],
+      "note": "Separate service nodes."
+    },
+    {
+      "reqId": "REQ-007",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-032",
+          "method": "connect"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-007",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-032",
+          "method": "connect"
+        }
+      ],
+      "note": "Instances configured by apiUrl."
+    },
+    {
+      "reqId": "REQ-011",
+      "criterion": 1,
+      "coveredBy": [],
+      "note": "Non-functional."
+    },
+    {
+      "reqId": "REQ-011",
+      "criterion": 2,
+      "coveredBy": [],
+      "note": "Non-functional."
+    }
+  ]
+}
