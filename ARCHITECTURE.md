@@ -16,12 +16,90 @@ MCP client (Claude Code, Inspector) ──stdio──> MCP server (`npm run mcp`
 
 One tool registry, two transports: our agents call `executeTool` in process; `src/lib/server/mcp/` serves the same `TOOLS` over stdio for any MCP client. Every call is validated by the same zod schema and limited by the same agent scope either way.
 
+## Agents and artefact flow
+
+The orchestrator (plain code) starts every agent; agents never call each other. Solid arrows are writes, each a scoped tool call through the registry (`AG` stands for every agent); dashed arrows are handoffs the orchestrator carries out. Every agent also reads through the registry, and Docker runs only behind the `typecheck`, `run_tests`, `start_app` and `deploy_check` tools.
+
+For slides and the report, [docs/diagrams/agent-architecture.html](docs/diagrams/agent-architecture.html) is an overview of the same flow with the agents grouped per phase, exported as [SVG](docs/diagrams/agent-architecture.svg) and [PNG](docs/diagrams/agent-architecture.png) (2560 x 1440).
+
+```mermaid
+flowchart LR
+  dev(["Developer"]) <-->|"HTTP actions,<br/>SSE events"| ui["SvelteKit UI"]
+  ui <--> orch{{"Orchestrator<br/>(plain code)<br/>phases, gates,<br/>staleness, fix loop"}}
+  mcpc(["MCP client"]) -->|stdio| mcp["MCP server"]
+
+  subgraph AG["Agents (own loop on the Anthropic SDK)"]
+    direction TB
+    req["requirements P1<br/>Sonnet 5.5"]
+    des["design P2<br/>Sonnet 5.5"]
+    rev["review P3<br/>Sonnet 5.5"]
+    cw["code workers P4<br/>Haiku 5.5 (Sonnet on attempt 3)"]
+    code["code agent P4<br/>Sonnet 5.5"]
+    tw["test workers P5<br/>Haiku 5.5 (Sonnet on attempt 3)"]
+    test["test agent P5<br/>Sonnet 5.5"]
+    dep["deploy P6<br/>Sonnet 5.5"]
+    mnt["maintenance P7<br/>Opus 5.5"]
+    sum["gate summary<br/>Haiku 5.5, no tools"]
+  end
+
+  subgraph ART["Project artefacts"]
+    direction TB
+    reqj[(".aise/requirements.json")]
+    desj[(".aise/design.json<br/>all diagrams rendered from it")]
+    prop[(".aise/design-proposals.json")]
+    srcf[("src/, public/")]
+    tst[("test/")]
+    find[(".aise/runs/runId/findings.json")]
+    depf[("Dockerfile, compose.yaml, RUN.md")]
+    tick[(".aise/tickets.json")]
+    chk[(".aise/state.json, .aise/checks/")]
+  end
+
+  orch -->|"one brief per run"| AG
+  orch -->|"gates, staleness hashes"| chk
+  AG -->|"every tool call, in process"| reg[["Tool registry<br/>zod schemas,<br/>per agent scope"]]
+  mcp --> reg
+  reg --> docker[("Docker runner<br/>and compose")]
+
+  req -->|write_requirements| reqj
+  des -->|update_design| desj
+  rev -->|report_design_proposals| prop
+  cw -->|"write_file, one class each"| srcf
+  code -->|"wiring, Update, fixes"| srcf
+  tw -->|"write_file, one use case each"| tst
+  test -->|"triage, report_test_fix"| tst
+  test -->|report_code_bug| find
+  code -->|report_fix_result| find
+  dep -->|write_file| depf
+  mnt -->|"write_ticket_plan, write_ticket_report"| tick
+
+  find -.->|"fix brief, P5 fix loop"| code
+  prop -.->|"accepted: P2 run"| des
+  tick -.->|"plan approved: phase agent runs"| orch
+```
+
+| Agent             | Responsibility                                                                 | Model and why                                                                                |
+| ----------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| requirements (P1) | Vague description to structured requirements; asks instead of guessing         | Sonnet 5.5: good dialogue and structured output at moderate cost                             |
+| design (P2)       | Design model (all diagrams) from approved requirements, coverage of every AC   | Sonnet 5.5: multi step model edits with validation feedback                                  |
+| review (P3)       | 0 to 5 design proposals the developer accepts or rejects                       | Sonnet 5.5: one short run, $0.50 guard                                                       |
+| code workers (P4) | One file per design class, in parallel rounds                                  | Haiku 5.5: small, well specified files, cheap and fast in parallel; Sonnet only on attempt 3 |
+| code agent (P4)   | Express wiring, chat changes, Update runs, fixes for test findings             | Sonnet 5.5: cross file edits with typecheck and drift feedback                               |
+| test workers (P5) | One test file per use case, one test per acceptance criterion                  | Haiku 5.5: same reason as the code workers                                                   |
+| test agent (P5)   | Triage of failing tests: fix the test or record a code bug with a proposed fix | Sonnet 5.5: needs to judge requirement, design and API against a failure                     |
+| deploy (P6)       | Dockerfile, compose.yaml, RUN.md, proven by `deploy_check`                     | Sonnet 5.5: short run against a checker, $1 guard                                            |
+| maintenance (P7)  | Ticket triage into a plan (start phase, affected IDs) and the change report    | Opus 5.5 at medium effort: reasons over every artefact at once to find what a change touches |
+| gate summary      | One short summary after each run                                               | Haiku 5.5: one call, no tools                                                                |
+
+The tools of each agent are in [Agents](#agents) below.
+
 ## Modules (as built)
 
 - `src/lib/server/core/`: zod schemas for requirements and design (`schemas/`), ID patterns, `ProjectStore` (file I/O inside one project, every JSON write validated), `validate.ts` (references, types, class to component membership, node links), Mermaid and Markdown renderers (`render/`, the only place diagram text is produced, every label escaped), tools (`tools/`), runs with backups (`runs.ts`), phase state (`state.ts`) and chat logs (`chat.ts`).
 - `src/lib/server/agents/`: our own agent loop (`loop.ts`, turn limit 30, SDK retries), agent definitions, cost accounting and the gate summary.
 - `src/lib/server/orchestrator/`: `Orchestrator` (plain code: one action or run per project, phase state, gates, staleness, discard), gate checks, requirement hashes for staleness, the P4 rules (`p4.ts`), the P5 rules (`p5.ts`), the ticket walk rules (`tickets.ts`, pure functions that take the phase order as a parameter) and the event bus.
 - Tickets: `core/schemas/tickets.ts` (zod), `core/tickets.ts` (store for `.aise/tickets.json`, ticket chat files), `core/ticket-report.ts` (report data), `core/tools/tickets.ts` (the three ticket tools) and `agents/maintenance.ts` (the agent and its briefs).
+- Design review (P3): `core/tools/proposals.ts` (the `report_design_proposals` tool, `.aise/design-proposals.json`, the pure `p3Status` and `resolveProposal`) and `agents/review.ts` (the agent and `reviewBrief`).
 - `src/lib/server/codegen/`: the P4 pipeline: `plan.ts` (one file per class), `scaffold.ts` (`package.json`, `tsconfig.json`), `generate.ts` (rounds, escalation, wiring, final checks).
 - `src/lib/server/testgen/`: the P5 pipeline: `plan.ts` (one test file per use case), `generate.ts` (rounds, escalation, triage, final checks). The agent definitions are `agents/test-worker.ts` and `agents/test.ts`; the P5 rules (`p5.ts`, `testGate`) live in the orchestrator folder.
 - The P6 pieces are `core/deploy-plan.ts` (pure plan, compose check, staleness hashes), `core/deploy-env.ts` (extra env variables), `core/deploy-state.ts` (stored check and its files hash), `agents/deploy.ts` and `orchestrator/p6.ts` (readiness, `deployGate` inputs, `generateDeployment`, `checkDeploy`).
@@ -58,6 +136,7 @@ Always refused: absolute paths, `..`, links leaving the project or its scope, `.
 | ----------------- | ------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | requirements (P1) | `claude-sonnet-5-5` | medium | `read_requirements`, `write_requirements`                                                                                                                                                                    |
 | design (P2)       | `claude-sonnet-5-5` | medium | `read_requirements`, `read_design`, `update_design`, `report_coverage`, `code_model` (read only, for drift tickets in the design direction)                                                                  |
+| review (P3)       | `claude-sonnet-5-5` | medium | `read_requirements`, `read_design`, `report_design_proposals` (run only); 8 turns, $0.50 cost guard                                                                                                          |
 | code worker (P4)  | `claude-haiku-5-5`  | low    | `write_file` (its one file only), `read_file` from attempt 2; attempt 3 runs the same worker on `claude-sonnet-5-5`, medium                                                                                  |
 | code agent (P4)   | `claude-sonnet-5-5` | medium | `read_requirements`, `read_design`, `list_files`, `read_file`, `write_file`, `delete_file`, `trace`, `typecheck`, `detect_drift`, `start_app`, `report_fix_result` (fix loop runs only)                      |
 | test worker (P5)  | `claude-haiku-5-5`  | low    | `read_file`, `write_file` (its one test file only); attempt 3 runs the same worker on `claude-sonnet-5-5`, medium                                                                                            |
@@ -71,6 +150,15 @@ The code agent writes the wiring after generation, answers P4 chat requests, pat
 The maintenance agent triages a ticket into a plan and writes the prose of the change report (20 turns per run). It runs on Opus because it reasons over every artefact at once: which requirement, use case, class and test a change touches, and in which phase the change must start. Its only writes are the two ticket tools, which run bound to a ticket (see below).
 
 Opus 5.5 runs at medium effort only (`callModel` refuses other values). Caching: a 1 hour breakpoint on the system prompt (tools and system are shared by every run of an agent, across review gates) plus the automatic 5 minute breakpoint on the conversation tail; the gate summary skips the tail breakpoint.
+
+## Design review (P3)
+
+P3 is a review layer on top of P2 without a gate: P4 still starts from P2 approval. A P3 run of the review agent gets one message, `reviewBrief` with the acceptance criteria the stored coverage (`.aise/design-review.json`) leaves uncovered when it matches the current design, computed in code. It reports 0 to 5 proposals (`missing_class`, `missing_method`, `unclear_responsibility`, `uncovered_criterion`, `sequence_mismatch`) through `report_design_proposals`, which checks every DSN, UC, SEQ, ACT and REQ ID and stores them with the design hash. A new review replaces the open proposals and keeps accepted and rejected ones; `lastId` keeps PRP numbers from being reused.
+
+- Triggers: `reviewDesign` (needs a design), and a `FollowUp` of every P2 run that ends done and changed the design, except a run with `fromProposal`, so a review never reviews its own proposal. The constructor option `autoReview` turns the follow up on; the app's `getOrchestrator` passes it, while tests and the smoke scripts leave it off (a paid review after every design change would only add cost there). A review during a ticket in progress belongs to that ticket, like any run.
+- `acceptProposal(name, id)` marks the proposal accepted and starts a P2 run (`fromProposal` on `RunMeta`) whose message is `Apply review proposal <id>: <title>. <change>`. When it settles done and the review matched the design before the run (read from the run's backup of `.aise/design.json`), the review takes the new design hash; a stale review stays stale. A run that leaves the design unchanged, done or not, reopens the proposal. Discarding the run reopens the proposal and moves the review hash back, and leaves every other proposal as it is, so a later reject stays. `rejectProposal(name, id)` marks it rejected without a run. Both need an open proposal (404 unknown, 409 resolved).
+- State: P3 is derived in the snapshot like P7 and never written to `state.json`: `running` while a P3 run is active, else `p3Status`: not started without a review, stale when the design hash differs, awaiting approval while a proposal is open, approved when none is. The snapshot carries `proposals` and the P3 chat.
+- UI: P3 is a station of the rail once P2 has started. Its panel (`ProposalsPanel`, above the diagrams tab) has Review design, the open proposals as cards with Accept, Reject and Discuss, and the resolved ones collapsed; the left pane shows the review run read only (the `Chat` component with phase P3, no composer). Accept switches to the P2 chat to watch the design run. Discuss switches to the P2 chat and appends the proposal text to its composer (`Chat.insert`), so the developer edits it and sends it as an ordinary change request. Discard of a review run has no button yet.
 
 ## Code generation (P4)
 
@@ -168,7 +256,7 @@ After a run, a phase that was approved (or stale) keeps that state when the run 
 ## Workspace UI (week 1)
 
 - `/` lists projects and creates one (`create` action, validated with `isValidProjectName` on the server). `/p/<name>` is the workspace: phase rail (`PhaseBar.svelte`, all seven phases with their status and cost), chat bound to P1, P2, P4, P5 or P6 (or to a ticket, see below), artefact tabs (Requirements, Diagrams, Code, Tests, Deploy, Tickets, Trace); run costs show in the phase rail.
-- Form actions on `/p/<name>` (`send`, `approve`, `stillValid`, `update`, `generate`, `checkCode`, `generateTests`, `checkTests`, `triageTests`, `fixLoop`, `generateDeployment`, `checkDeploy`, `applyFix`, `discard`, `editRequirements`, and the ticket actions `createTicket`, `ticketSend`, `approvePlan`, `rejectTicket`, `closeTicket`, `openDriftTicket`) call the orchestrator; `src/lib/action-errors.server.ts` maps `ConflictError` to 409, `PathError` and zod errors to 400 and `NotFoundError` to 404, always with a plain `message`.
+- Form actions on `/p/<name>` (`send`, `approve`, `stillValid`, `update`, `generate`, `checkCode`, `generateTests`, `checkTests`, `triageTests`, `fixLoop`, `generateDeployment`, `checkDeploy`, `applyFix`, `discard`, `editRequirements`, and the ticket actions `createTicket`, `ticketSend`, `approvePlan`, `rejectTicket`, `closeTicket`, `openDriftTicket`, and the P3 actions `reviewDesign`, `acceptProposal`, `rejectProposal` with a `proposalId`) call the orchestrator; `src/lib/action-errors.server.ts` maps `ConflictError` to 409, `PathError` and zod errors to 400 and `NotFoundError` to 404, always with a plain `message`.
 - `/p/<name>/events` streams the project's bus events as server sent events (`data: <json>`, a `: ping` every 15 s). `WorkspaceStream` (`src/lib/workspace-stream.svelte.ts`) folds them into a live run (`src/lib/live-run.ts`) and calls `invalidateAll()` on `changed` and `run_finished`. After a reload the live part starts from the current event on; earlier streamed text is not replayed.
 - The right column of the workspace shows, top to bottom: `StaleBanner` (only when `staleReqIds` is not empty), `GatePanel` (gate checks of the selected phase, Approve, Approve anyway for P1 open questions, Approve with override for P2, and the only Discard last run entry), and the artefact tabs. `RequirementsPanel` edits post the whole document to `editRequirements`. `DiagramsPanel` draws the Mermaid sources of the snapshot with `Mermaid.svelte`, which imports `mermaid` in the browser and registers `window.aiseSelect` so a click on an element calls `Chat.insert` and shows the element's trace below the diagram; with P7 selected and the New ticket form open (or no ticket yet) the page appends the ID to the new ticket's description instead, which it keeps so it survives the tab switch.
 - **Trace navigation.** `/p/<name>/trace` returns `traceAll` (`core/trace.ts`) over `loadTraceInput` (`tools/trace.ts`, the same input as the `trace` tool); `TraceStore` (`src/lib/trace-store.svelte.ts`) fetches it again when the files, the stored checks, the requirements or the design change. `showId` in the page takes any ID from a link: `traceTarget` (`src/lib/trace-nav.ts`) sends a REQ to its row in `RequirementsPanel` (opened, scrolled to, focused) and a UC, ACT, DSN or SEQ to the diagram that draws it; `focusSource` adds the `aiseFocus` class to that element's node in the Mermaid source, and `PanZoom.show()` centres on it. `TraceLinks.svelte` renders one trace as links (requirements, design elements, code at file:line, tests with status) in an opened requirement row and below a diagram for the clicked element. Code tab trace badges and test rows (`REQ-001 AC2`, `SEQ-001`) call `showId` too, as do ticket plan IDs.

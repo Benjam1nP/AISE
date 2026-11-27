@@ -39,6 +39,19 @@ describe('Chat error banner', () => {
 	});
 });
 
+describe('Chat of the design review (P3)', () => {
+	it('shows the review run without a composer and without Retry', () => {
+		const failed = snapshotOf({
+			lastRun: { phase: 'P3', agent: 'review', status: 'failed', error: 'boom' }
+		} as never);
+		render(Chat, { snapshot: failed, phase: 'P3', live: null, form: null });
+		expect(screen.getByRole('heading', { name: /review agent/ })).toBeTruthy();
+		expect(screen.queryByRole('textbox')).toBeNull();
+		expect(screen.queryByRole('button', { name: 'Retry' })).toBeNull();
+		expect(screen.getByText(/Press Review design to run it again/)).toBeTruthy();
+	});
+});
+
 describe('Chat messages', () => {
 	const at = '2026-11-04T10:00:00.000Z';
 	const withChat = (over: Record<string, unknown>) =>
@@ -121,7 +134,7 @@ describe('Chat for P4', () => {
 	it('explains the empty chat before any code exists', () => {
 		const empty = {
 			...p4([], 'approved'),
-			chat: { P1: [], P2: [], P4: [], P5: [], P6: [] }
+			chat: { P1: [], P2: [], P3: [], P4: [], P5: [], P6: [] }
 		} as ProjectSnapshot;
 		render(Chat, { snapshot: empty, phase: 'P4', live: null, form: null });
 		expect(screen.getByText(/Generate the code first/)).toBeTruthy();
@@ -130,7 +143,7 @@ describe('Chat for P4', () => {
 	it('explains the empty chat when only the scaffold exists', () => {
 		const scaffold = {
 			...p4(['package.json', 'tsconfig.json'], 'approved'),
-			chat: { P1: [], P2: [], P4: [], P5: [], P6: [] }
+			chat: { P1: [], P2: [], P3: [], P4: [], P5: [], P6: [] }
 		} as ProjectSnapshot;
 		render(Chat, { snapshot: scaffold, phase: 'P4', live: null, form: null });
 		expect(screen.getByText(/Generate the code first/)).toBeTruthy();
@@ -139,7 +152,7 @@ describe('Chat for P4', () => {
 	it('asks for the design approval first when P2 is not approved', () => {
 		const open = {
 			...p4([], 'not_started'),
-			chat: { P1: [], P2: [], P4: [], P5: [], P6: [] }
+			chat: { P1: [], P2: [], P3: [], P4: [], P5: [], P6: [] }
 		} as ProjectSnapshot;
 		render(Chat, { snapshot: open, phase: 'P4', live: null, form: null });
 		expect(screen.getByText(/Approve the design first/)).toBeTruthy();

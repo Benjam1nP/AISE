@@ -1,0 +1,190 @@
+{
+	"actors": [
+		{
+			"id": "ACT-001",
+			"name": "User",
+			"description": "Person managing their own tasks in the browser."
+		},
+		{
+			"id": "ACT-002",
+			"name": "API client",
+			"description": "Script or app reading tasks over the HTTP API."
+		}
+	],
+	"useCases": [
+		{
+			"id": "UC-001",
+			"name": "Add task",
+			"description": "The user enters a title and the new task appears in the list.",
+			"actorIds": ["ACT-001"],
+			"reqIds": ["REQ-001"]
+		},
+		{
+			"id": "UC-002",
+			"name": "List tasks",
+			"description": "All tasks are shown, newest first.",
+			"actorIds": ["ACT-001", "ACT-002"],
+			"reqIds": ["REQ-002"]
+		},
+		{
+			"id": "UC-003",
+			"name": "Complete task",
+			"description": "The user marks an open task as done.",
+			"actorIds": ["ACT-001"],
+			"reqIds": ["REQ-004"]
+		}
+	],
+	"classes": [
+		{
+			"id": "DSN-001",
+			"name": "Task",
+			"kind": "class",
+			"description": "A single to-do item.",
+			"attributes": [
+				{ "name": "id", "type": "number" },
+				{ "name": "title", "type": "string" },
+				{ "name": "createdAt", "type": "Date" },
+				{ "name": "status", "type": "'open' | 'done'" }
+			],
+			"methods": [],
+			"relations": [],
+			"reqIds": ["REQ-001", "REQ-004"]
+		},
+		{
+			"id": "DSN-002",
+			"name": "TaskController",
+			"kind": "class",
+			"description": "HTTP routes for tasks: POST /tasks, GET /tasks, PATCH /tasks/:id.",
+			"attributes": [{ "name": "service", "type": "TaskService" }],
+			"methods": [
+				{
+					"name": "postTask",
+					"params": [{ "name": "title", "type": "string" }],
+					"returnType": "Promise<Task>"
+				},
+				{ "name": "getTasks", "params": [], "returnType": "Promise<Array<Task>>" },
+				{
+					"name": "patchTaskDone",
+					"params": [{ "name": "id", "type": "number" }],
+					"returnType": "Promise<Task>"
+				}
+			],
+			"relations": [{ "kind": "dependency", "targetId": "DSN-003", "label": "uses" }],
+			"reqIds": ["REQ-001", "REQ-002", "REQ-004"]
+		},
+		{
+			"id": "DSN-003",
+			"name": "TaskService",
+			"kind": "class",
+			"description": "Task rules: validates titles, orders the list, completes tasks.",
+			"attributes": [{ "name": "repository", "type": "TaskRepository" }],
+			"methods": [
+				{
+					"name": "addTask",
+					"params": [{ "name": "title", "type": "string" }],
+					"returnType": "Promise<Task>"
+				},
+				{ "name": "listTasks", "params": [], "returnType": "Promise<Task[]>" },
+				{
+					"name": "completeTask",
+					"params": [{ "name": "id", "type": "number" }],
+					"returnType": "Promise<Task>"
+				}
+			],
+			"relations": [
+				{
+					"kind": "association",
+					"targetId": "DSN-004",
+					"multiplicity": "1",
+					"label": "stores tasks in"
+				},
+				{ "kind": "dependency", "targetId": "DSN-001" }
+			],
+			"reqIds": ["REQ-001", "REQ-002", "REQ-004"]
+		},
+		{
+			"id": "DSN-004",
+			"name": "TaskRepository",
+			"kind": "interface",
+			"description": "Storage for tasks.",
+			"attributes": [],
+			"methods": [
+				{
+					"name": "create",
+					"params": [{ "name": "title", "type": "string" }],
+					"returnType": "Promise<Task>"
+				},
+				{ "name": "findAll", "params": [], "returnType": "Promise<Task[]>" },
+				{
+					"name": "findById",
+					"params": [{ "name": "id", "type": "number" }],
+					"returnType": "Promise<Task | null>"
+				},
+				{
+					"name": "update",
+					"params": [{ "name": "task", "type": "Task" }],
+					"returnType": "Promise<Task>"
+				}
+			],
+			"relations": [{ "kind": "association", "targetId": "DSN-001", "multiplicity": "0..*" }],
+			"reqIds": ["REQ-003"]
+		},
+		{
+			"id": "DSN-005",
+			"name": "SqliteTaskRepository",
+			"kind": "class",
+			"description": "TaskRepository backed by a SQLite file.",
+			"attributes": [{ "name": "dbPath", "type": "string" }],
+			"methods": [
+				{
+					"name": "create",
+					"params": [{ "name": "title", "type": "string" }],
+					"returnType": "Promise<Task>"
+				},
+				{ "name": "findAll", "params": [], "returnType": "Promise<Task[]>" },
+				{
+					"name": "findById",
+					"params": [{ "name": "id", "type": "number" }],
+					"returnType": "Promise<Task | null>"
+				},
+				{
+					"name": "update",
+					"params": [{ "name": "task", "type": "Task" }],
+					"returnType": "Promise<Task>"
+				}
+			],
+			"relations": [{ "kind": "inheritance", "targetId": "DSN-004" }],
+			"reqIds": ["REQ-003"]
+		}
+	],
+	"components": [
+		{
+			"id": "DSN-006",
+			"name": "Task API",
+			"classIds": ["DSN-001", "DSN-002", "DSN-003", "DSN-004"],
+			"nodeId": "DSN-008",
+			"reqIds": ["REQ-001", "REQ-002"]
+		},
+		{
+			"id": "DSN-007",
+			"name": "Persistence",
+			"classIds": ["DSN-005"],
+			"nodeId": "DSN-008",
+			"reqIds": ["REQ-003"]
+		}
+	],
+	"nodes": [{ "id": "DSN-008", "name": "App server", "kind": "service", "reqIds": [] }],
+	"links": [],
+	"sequences": [
+		{
+			"id": "SEQ-001",
+			"name": "Add task",
+			"useCaseId": "UC-001",
+			"messages": [
+				{ "fromId": "ACT-001", "toId": "DSN-002", "method": "postTask", "label": "POST /tasks" },
+				{ "fromId": "DSN-002", "toId": "DSN-003", "method": "addTask" },
+				{ "fromId": "DSN-003", "toId": "DSN-004", "method": "create" }
+			]
+		}
+	]
+}

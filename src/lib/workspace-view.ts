@@ -3,8 +3,8 @@ import type { TabItem } from '#lib/ui/index.ts';
 
 /** The phases with a gate and a phase chat. */
 export type GatePhase = 'P1' | 'P2' | 'P4' | 'P5' | 'P6';
-/** What the rail can select: a gate phase, or P7 (the tickets, with the ticket chat). */
-export type WorkPhase = GatePhase | 'P7';
+/** What the rail can select: a gate phase, P3 (the design review, no gate) or P7 (the tickets, with the ticket chat). */
+export type WorkPhase = GatePhase | 'P3' | 'P7';
 
 /**
  * The phase the page shows until the developer picks one: the one with a run, else the first one

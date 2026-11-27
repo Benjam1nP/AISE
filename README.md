@@ -17,17 +17,19 @@
 
 AI-assisted software engineering environment, a group project for "Coding with AI" (University of St. Gallen, WS 2026). A multi-agent system guides a developer through requirements, design, code, tests, deployment and maintenance. At every phase the developer sees, discusses and changes the output before the system moves on.
 
-| Phase                | Status | What it does                                                                                         |
-| -------------------- | ------ | ---------------------------------------------------------------------------------------------------- |
-| P1 Requirements      | built  | Turns a vague description into structured requirements, asks instead of guessing                     |
-| P2 Design            | built  | Use case, class, sequence and deployment diagrams from approved requirements                         |
-| P3 Design refinement | next   | Interactive loop; changes stay consistent across all diagrams                                        |
-| P4 Code generation   | built  | Code from the approved design, one file per class, gated by typecheck and drift                      |
-| P5 Testing           | built  | One test file per use case, one test per criterion, run in a locked down container, failures triaged |
-| P6 Deployment        | built  | Dockerfile, compose.yaml and RUN.md from the design, checked by starting the stack in Docker         |
-| P7 Maintenance       | built  | Every change goes through a ticket: triage, plan, the phases with their gates, a change report       |
+| Phase                | Status | What it does                                                                                               |
+| -------------------- | ------ | ---------------------------------------------------------------------------------------------------------- |
+| P1 Requirements      | built  | Turns a vague description into structured requirements, asks instead of guessing                           |
+| P2 Design            | built  | Use case, class, sequence and deployment diagrams from approved requirements                               |
+| P3 Design refinement | built  | A review agent proposes design improvements; Accept, Reject or Discuss, accepted ones update every diagram |
+| P4 Code generation   | built  | Code from the approved design, one file per class, gated by typecheck and drift                            |
+| P5 Testing           | built  | One test file per use case, one test per criterion, run in a locked down container, failures triaged       |
+| P6 Deployment        | built  | Dockerfile, compose.yaml and RUN.md from the design, checked by starting the stack in Docker               |
+| P7 Maintenance       | built  | Every change goes through a ticket: triage, plan, the phases with their gates, a change report             |
 
-The agents are in [ARCHITECTURE.md](ARCHITECTURE.md): Sonnet 5.5 for requirements, design, code wiring, test triage and deployment, Haiku 5.5 for the file workers, Opus 5.5 (medium effort) for maintenance.
+![Agents and artefact flow](docs/diagrams/agent-architecture.png)
+
+The agents and the artefact flow are in [ARCHITECTURE.md](ARCHITECTURE.md#agents-and-artefact-flow): Sonnet 5.5 for requirements, design, design review (P3 proposals), code wiring, test triage and deployment, Haiku 5.5 for the file workers, Opus 5.5 (medium effort) for maintenance.
 
 **P4 in short.** Approving the design starts code generation. Plain code plans one file per design class (`src/<component>/<Class>.ts`); Haiku workers write the files in parallel rounds, a type check and a drift check against the design decide which are done, failing files retry and the third attempt runs on Sonnet. A Sonnet code agent then writes the Express wiring in `src/app/` and a small page in `public/`. The gate shows typecheck and drift, goes out of date after a hand edit or a design change, and P4 turns stale when the design changes (Update or Still valid). The Code tab shows the files read only. The agents are listed in [ARCHITECTURE.md](ARCHITECTURE.md#agents).
 
@@ -82,4 +84,7 @@ Tools: `read_requirements`, `write_requirements`, `read_design`, `update_design`
 - [docs/superpowers/specs/2026-11-04-ai-se-environment-design.md](docs/superpowers/specs/2026-11-04-ai-se-environment-design.md): the frozen design
 - [AGENTS.md](AGENTS.md): every command and convention (also read by coding agents)
 - [CHANGELOG.md](CHANGELOG.md), [docs/decisions.md](docs/decisions.md), [docs/design-system.md](docs/design-system.md)
+- [showcases/](showcases/README.md): the three showcase projects with all their artefacts
+- [evidence/](evidence/README.md): the evidence for each grading criterion
+- [presentation/](presentation/INSTRUCTIONS.md): slides and demo script
 - [docs/context/INDEX.md](docs/context/INDEX.md): course material and requirements as Markdown

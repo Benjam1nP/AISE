@@ -46,7 +46,11 @@
 			'Design',
 			'Use case, class, sequence and component diagrams from the approved requirements.'
 		],
-		['P3', 'Refinement', 'Change the design in conversation; every diagram stays consistent.'],
+		[
+			'P3',
+			'Refinement',
+			'A review agent proposes improvements; accept one and every diagram stays consistent.'
+		],
 		['P4', 'Code', 'Generated from the design, structured like the diagrams.'],
 		['P5', 'Testing', 'Tests from the requirements, run, explained and fixed.'],
 		['P6', 'Deployment', 'Dockerfile, Compose and a start script that run locally.'],

@@ -16,6 +16,7 @@ import {
 	ticketTriageBrief,
 	triageBrief,
 	updateBrief,
+	reviewBrief,
 	type summariseRun
 } from '../agents';
 import type { runAgent } from '../agents/loop';
@@ -54,6 +55,8 @@ import {
 	type TestChecks
 } from '../core/test-state';
 import { executeTool, ToolError, type ToolContext } from '../core/tools';
+import { DesignReview } from '../core/tools/coverage';
+import { readDesignProposals } from '../core/tools/proposals';
 import type { AgentMessage, fixLoop } from '../testgen/fix-loop';
 import type { generateTests } from '../testgen/generate';
 import { subscribe, type WorkspaceEvent } from './bus';
@@ -153,6 +156,8 @@ type Fake = {
 	/** Keeps the fake fix loop (only) open until it is resolved. */
 	loopHold: Deferred | null;
 	loopChecks: boolean;
+	/** What a review agent run reports through report_design_proposals; null reports nothing. */
+	proposals: unknown[] | null;
 };
 
 let root: string;
@@ -187,16 +192,18 @@ const fakeRun: typeof runAgent = async ({ def, ctx, history, onEvent, maxTurns, 
 				? fake.deployEdits
 				: fake.codeEdits;
 	const writes: [string, unknown][] =
-		def.name === 'maintenance'
-			? [
-					['write_ticket_plan', fake.ticketPlan],
-					['write_ticket_report', fake.ticketReport && { text: fake.ticketReport }]
-				]
-			: def.name === 'requirements'
-				? [['write_requirements', fake.reqs]]
-				: def.name === 'design'
-					? [['update_design', fake.design]]
-					: Object.entries(edits).map(([p, content]) => ['write_file', { path: p, content }]);
+		def.name === 'review'
+			? [['report_design_proposals', fake.proposals && { proposals: fake.proposals }]]
+			: def.name === 'maintenance'
+				? [
+						['write_ticket_plan', fake.ticketPlan],
+						['write_ticket_report', fake.ticketReport && { text: fake.ticketReport }]
+					]
+				: def.name === 'requirements'
+					? [['write_requirements', fake.reqs]]
+					: def.name === 'design'
+						? [['update_design', fake.design]]
+						: Object.entries(edits).map(([p, content]) => ['write_file', { path: p, content }]);
 	if (def.name === 'test') for (const r of fake.reports) writes.push(['report_code_bug', r]);
 	for (const [tool, input] of writes) {
 		if (!input) continue;
@@ -398,9 +405,10 @@ const fakeFixLoop: typeof fixLoop = async (opts) => {
 	return { status: 'done', text: 'Fix loop: 1 round.', usage, costUsd: 0.3, turns: 2, checked };
 };
 
-const newOrchestrator = () =>
+const newOrchestrator = (autoReview = false) =>
 	new Orchestrator({
 		root,
+		autoReview,
 		run: fakeRun,
 		summarise: fakeSummarise,
 		generate: fakeGenerate,
@@ -542,7 +550,8 @@ beforeEach(async () => {
 		loopMessages: [],
 		lastMessage: null,
 		loopHold: null,
-		loopChecks: false
+		loopChecks: false,
+		proposals: null
 	};
 	orch = newOrchestrator();
 	await orch.createProject('todo');
@@ -4367,5 +4376,257 @@ describe('closing tickets and drift tickets', () => {
 			ticketOf({ id: 'TCK-003', status: 'triaged' })
 		]);
 		expect((await snap()).canOpenDriftTicket).toBe(true);
+	});
+});
+
+describe('P3 design review', () => {
+	const snap = () => orch.snapshot('todo');
+	const proposal = (title: string) => ({
+		kind: 'missing_method',
+		title,
+		change: `${title} in one sentence.`,
+		elementIds: ['DSN-001'],
+		reqIds: ['REQ-001']
+	});
+	/** Waits until no run is active; a P2 run may start a review on the same claim. */
+	const idle = async () => {
+		while ((await snap()).activeRun) await new Promise((r) => setTimeout(r, 5));
+	};
+	/** The fixture design with one use case renamed, so a P2 run changes the design. */
+	const changedDesign = (at = 0, name = 'Add a task'): DesignDoc => {
+		const d = fixture<DesignDoc>('todo-design.json');
+		const useCases = d.useCases.map((u, i) => (i === at ? { ...u, name } : u));
+		return { ...d, useCases };
+	};
+	const review = async () => {
+		const done = nextFinished();
+		const { runId } = await orch.reviewDesign('todo');
+		await done;
+		return runId;
+	};
+	const p3 = async () => (await snap()).state.phases.P3.status;
+
+	beforeEach(() => {
+		fake.proposals = [proposal('Add delete'), proposal('Add rename')];
+	});
+
+	it('reviews the design after a P2 run that changed it, never after an unchanged one', async () => {
+		orch = newOrchestrator(true);
+		await send('P1', 'A to-do app for one person');
+		await orch.approve('todo', 'P1');
+		await idle();
+		let s = await snap();
+		expect(s.lastRun).toMatchObject({ phase: 'P3', agent: 'review', status: 'done' });
+		expect(fake.calls.at(-1)).toMatchObject({ agent: 'review', maxTurns: 8, costLimitUsd: 0.5 });
+		expect(fake.calls.at(-1)?.history).toEqual([{ role: 'user', content: reviewBrief(null) }]);
+		expect(s.proposals?.proposals.map((p) => `${p.id} ${p.status}`)).toEqual([
+			'PRP-001 open',
+			'PRP-002 open'
+		]);
+		expect(s.state.phases.P3.status).toBe('awaiting_approval');
+		expect(s.chat.P3.map((c) => c.role)).toEqual(['user', 'assistant']);
+		const runs = (await listRuns(store())).length;
+		await send('P2', 'Is anything missing?');
+		await idle();
+		s = await snap();
+		expect(s.lastRun?.phase).toBe('P2');
+		expect(await listRuns(store())).toHaveLength(runs + 1);
+	});
+
+	it('runs on demand with the computed uncovered criteria, and refuses without a design or while busy', async () => {
+		await expect(orch.reviewDesign('todo')).rejects.toThrow('There is no design to review yet');
+		await approvedP1WithDesign();
+		const design = (await snap()).design!;
+		const rows = [{ reqId: 'REQ-001', criterion: 1, coveredBy: [] }];
+		await store().writeJson('.aise/design-review.json', DesignReview, {
+			designHash: designHash(design)!,
+			rows
+		});
+		fake.hold = deferred();
+		const done = nextFinished();
+		await orch.reviewDesign('todo');
+		expect(await p3()).toBe('running');
+		expect((await snap()).activeRun?.phase).toBe('P3');
+		await expect(orch.reviewDesign('todo')).rejects.toMatchObject({ code: 'run_active' });
+		await expect(orch.acceptProposal('todo', 'PRP-001')).rejects.toMatchObject({
+			code: 'run_active'
+		});
+		fake.hold.resolve();
+		await done;
+		const brief = fake.calls.at(-1)?.history as { content: string }[];
+		expect(brief[0].content).toContain('- REQ-001 AC1:');
+		expect(brief[0].content).toContain('- REQ-002 AC1:');
+	});
+
+	it('accept starts a P2 run with the proposal, keeps the review current and starts no review', async () => {
+		orch = newOrchestrator(true);
+		await approvedP1WithDesign();
+		await idle();
+		fake.design = changedDesign();
+		const done = nextFinished();
+		const { runId } = await orch.acceptProposal('todo', 'PRP-001');
+		expect((await snap()).proposals?.proposals[0].status).toBe('accepted');
+		await done;
+		await idle();
+		const s = await snap();
+		expect(s.lastRun).toMatchObject({ id: runId, phase: 'P2', fromProposal: 'PRP-001' });
+		expect(s.chat.P2.at(-2)?.text).toBe(
+			'Apply review proposal PRP-001: Add delete. Add delete in one sentence.'
+		);
+		expect(s.proposals?.designHash).toBe(designHash(s.design));
+		expect(s.state.phases.P3.status).toBe('awaiting_approval');
+		await expect(orch.acceptProposal('todo', 'PRP-001')).rejects.toThrow('PRP-001 is accepted');
+		await expect(orch.acceptProposal('todo', 'PRP-009')).rejects.toBeInstanceOf(NotFoundError);
+	});
+
+	it('discarding the accept run reopens the proposal at the old design', async () => {
+		await approvedP1WithDesign();
+		await review();
+		const before = (await snap()).proposals;
+		fake.design = changedDesign();
+		const done = nextFinished();
+		await orch.acceptProposal('todo', 'PRP-001');
+		await done;
+		expect((await snap()).proposals?.designHash).not.toBe(before?.designHash);
+		await orch.discardLastRun('todo');
+		const s = await snap();
+		expect(s.proposals).toEqual(before);
+		expect(s.state.phases.P3.status).toBe('awaiting_approval');
+	});
+
+	it('reject needs no run; P3 is approved once nothing is open and stale after a design change', async () => {
+		await approvedP1WithDesign();
+		await review();
+		const calls = fake.calls.length;
+		await orch.rejectProposal('todo', 'PRP-001');
+		expect(await p3()).toBe('awaiting_approval');
+		await orch.rejectProposal('todo', 'PRP-002');
+		expect(fake.calls).toHaveLength(calls);
+		const s = await snap();
+		expect(s.proposals?.proposals.map((p) => p.status)).toEqual(['rejected', 'rejected']);
+		expect(s.state.phases.P3.status).toBe('approved');
+		await expect(orch.rejectProposal('todo', 'PRP-002')).rejects.toBeInstanceOf(ConflictError);
+		fake.design = changedDesign();
+		await send('P2', 'Rename the first use case');
+		expect(await p3()).toBe('stale');
+	});
+
+	it('discarding a review run takes its proposals back', async () => {
+		await approvedP1WithDesign();
+		await review();
+		await orch.discardLastRun('todo');
+		const s = await snap();
+		expect(s.proposals).toBeNull();
+		expect(s.state.phases.P3.status).toBe('not_started');
+	});
+
+	it('an accept leaves a stale review stale', async () => {
+		await approvedP1WithDesign();
+		await review();
+		const reviewed = (await snap()).proposals!.designHash;
+		fake.design = changedDesign();
+		await send('P2', 'Rename the first use case');
+		expect(await p3()).toBe('stale');
+		fake.design = changedDesign(1, 'List the tasks');
+		const done = nextFinished();
+		await orch.acceptProposal('todo', 'PRP-001');
+		expect((await done).status).toBe('done');
+		expect((await snap()).proposals?.designHash).toBe(reviewed);
+		expect(await p3()).toBe('stale');
+	});
+
+	it('discarding an accept run keeps a later reject and moves the review back', async () => {
+		await approvedP1WithDesign();
+		await review();
+		const reviewed = (await snap()).proposals!.designHash;
+		fake.design = changedDesign();
+		const done = nextFinished();
+		await orch.acceptProposal('todo', 'PRP-001');
+		await done;
+		await orch.rejectProposal('todo', 'PRP-002');
+		await orch.discardLastRun('todo');
+		const s = await snap();
+		expect(s.proposals?.proposals.map((p) => `${p.id} ${p.status}`)).toEqual([
+			'PRP-001 open',
+			'PRP-002 rejected'
+		]);
+		expect(s.proposals?.designHash).toBe(reviewed);
+		expect(s.state.phases.P3.status).toBe('awaiting_approval');
+	});
+
+	it('an accept run that fails reopens its proposal unless it changed the design', async () => {
+		await approvedP1WithDesign();
+		await review();
+		fake.runFailure = { error: 'boom', reason: 'error' };
+		fake.design = null;
+		let done = nextFinished();
+		await orch.acceptProposal('todo', 'PRP-001');
+		expect((await done).status).toBe('failed');
+		expect((await snap()).proposals?.proposals[0].status).toBe('open');
+		fake.design = changedDesign();
+		done = nextFinished();
+		await orch.acceptProposal('todo', 'PRP-001');
+		expect((await done).status).toBe('failed');
+		expect((await snap()).proposals?.proposals[0].status).toBe('accepted');
+	});
+
+	it('an accept run that ends done without changing the design reopens its proposal', async () => {
+		await approvedP1WithDesign();
+		await review();
+		fake.design = null;
+		const done = nextFinished();
+		await orch.acceptProposal('todo', 'PRP-001');
+		expect((await done).status).toBe('done');
+		expect((await snap()).proposals?.proposals[0].status).toBe('open');
+	});
+
+	it('an accept that cannot start its run reopens the proposal', async () => {
+		await approvedP1WithDesign();
+		await review();
+		await writeFile(store().resolve('.aise/requirements.json'), '{');
+		await expect(orch.acceptProposal('todo', 'PRP-001')).rejects.toThrow(SyntaxError);
+		expect((await readDesignProposals(store()))?.proposals[0].status).toBe('open');
+	});
+
+	it('a failed P2 run that changed the design starts no review', async () => {
+		orch = newOrchestrator(true);
+		await send('P1', 'A to-do app for one person');
+		fake.runFailure = { error: 'boom', reason: 'error' };
+		await orch.approve('todo', 'P1');
+		await idle();
+		const s = await snap();
+		expect(s.design).not.toBeNull();
+		expect(s.lastRun).toMatchObject({ phase: 'P2', status: 'failed' });
+		expect((await listRuns(store())).some((r) => r.phase === 'P3')).toBe(false);
+	});
+
+	it('a review during a ticket in progress belongs to it, and discarding it keeps the ticket', async () => {
+		orch = newOrchestrator(true);
+		await approvedP1WithDesign();
+		await idle();
+		const plan: TicketPlan = { entry: 'P2', affectedIds: [], files: [], steps: ['Rename'] };
+		const t: Ticket = {
+			id: 'TCK-001',
+			kind: 'change',
+			title: 'Rename a use case',
+			description: 'The first use case needs a clearer name.',
+			status: 'in_progress',
+			createdAt: '2026-11-27T09:00:00.000Z',
+			plan
+		};
+		await writeTickets(store(), [t]);
+		fake.design = changedDesign();
+		const { runId } = await send('P2', 'Rename the first use case');
+		await idle();
+		const s = await snap();
+		expect(s.lastRun).toMatchObject({
+			phase: 'P3',
+			ticketId: 'TCK-001',
+			prevTicket: { status: 'in_progress' }
+		});
+		expect(s.tickets[0].runIds).toEqual([runId, s.lastRun!.id]);
+		await orch.discardLastRun('todo');
+		const after = await snap();
+		expect(after.tickets[0]).toMatchObject({ status: 'in_progress', runIds: [runId] });
 	});
 });
