@@ -17,15 +17,15 @@
 
 AI-assisted software engineering environment, a group project for "Coding with AI" (University of St. Gallen, WS 2026). A multi-agent system guides a developer through requirements, design, code, tests, deployment and maintenance. At every phase the developer sees, discusses and changes the output before the system moves on.
 
-| Phase                | Status | What it does                                                                                         |
-| -------------------- | ------ | ---------------------------------------------------------------------------------------------------- |
-| P1 Requirements      | built  | Turns a vague description into structured requirements, asks instead of guessing                     |
-| P2 Design            | built  | Use case, class, sequence and deployment diagrams from approved requirements                         |
-| P3 Design refinement | next   | Interactive loop; changes stay consistent across all diagrams                                        |
-| P4 Code generation   | built  | Code from the approved design, one file per class, gated by typecheck and drift                      |
-| P5 Testing           | built  | One test file per use case, one test per criterion, run in a locked down container, failures triaged |
-| P6 Deployment        | built  | Dockerfile, compose.yaml and RUN.md from the design, checked by starting the stack in Docker         |
-| P7 Maintenance       | built  | Every change goes through a ticket: triage, plan, the phases with their gates, a change report       |
+| Phase                | Status | What it does                                                                                               |
+| -------------------- | ------ | ---------------------------------------------------------------------------------------------------------- |
+| P1 Requirements      | built  | Turns a vague description into structured requirements, asks instead of guessing                           |
+| P2 Design            | built  | Use case, class, sequence and deployment diagrams from approved requirements                               |
+| P3 Design refinement | built  | A review agent proposes design improvements; Accept, Reject or Discuss, accepted ones update every diagram |
+| P4 Code generation   | built  | Code from the approved design, one file per class, gated by typecheck and drift                            |
+| P5 Testing           | built  | One test file per use case, one test per criterion, run in a locked down container, failures triaged       |
+| P6 Deployment        | built  | Dockerfile, compose.yaml and RUN.md from the design, checked by starting the stack in Docker               |
+| P7 Maintenance       | built  | Every change goes through a ticket: triage, plan, the phases with their gates, a change report             |
 
 The agents are in [ARCHITECTURE.md](ARCHITECTURE.md): Sonnet 5.5 for requirements, design, design review (P3 proposals), code wiring, test triage and deployment, Haiku 5.5 for the file workers, Opus 5.5 (medium effort) for maintenance.
 

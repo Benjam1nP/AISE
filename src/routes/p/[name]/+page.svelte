@@ -14,6 +14,7 @@
 	import GenerateDeployment from '#lib/components/GenerateDeployment.svelte';
 	import GenerateTests from '#lib/components/GenerateTests.svelte';
 	import PhaseBar from '#lib/components/PhaseBar.svelte';
+	import ProposalsPanel from '#lib/components/ProposalsPanel.svelte';
 	import RequirementsPanel from '#lib/components/RequirementsPanel.svelte';
 	import StaleBanner from '#lib/components/StaleBanner.svelte';
 	import TestsPanel from '#lib/components/TestsPanel.svelte';
@@ -44,6 +45,7 @@
 		Tabs,
 		ThemeToggle
 	} from '#lib/ui/index.ts';
+	import type { Proposal } from '#lib/server/core/tools/proposals.ts';
 	import type { PageProps } from './$types';
 
 	let { data, form }: PageProps = $props();
@@ -99,7 +101,12 @@
 		phase === 'P7' && (ticketCreating || snapshot.tickets.length === 0)
 	);
 	/** An element ID clicked in a diagram: into the new ticket's description, else the chat message. */
-	function insertId(text: string) {
+	async function insertId(text: string) {
+		// The P3 chat is read only: the ID goes to the design chat, like Discuss.
+		if (phase === 'P3') {
+			showDesignRun();
+			await tick();
+		}
 		if (!draftTakesIds) return chat?.insert(text);
 		const gap = ticketDraft === '' || /\s$/.test(ticketDraft) ? '' : ' ';
 		ticketDraft = `${ticketDraft}${gap}${text}`;
@@ -119,8 +126,9 @@
 		if (openFile && !fileBelongsToTab(id, openFile.path)) openFile = undefined;
 	}
 
-	function select(p: GatePhase) {
+	function select(p: GatePhase | 'P3') {
 		picked = p;
+		if (p === 'P3') tab = 'diagrams';
 		if (p === 'P4' && codeTab) tab = 'code';
 		if (p === 'P5' && testsTab) tab = 'tests';
 		if (p === 'P6' && deployTab) tab = 'deploy';
@@ -144,6 +152,19 @@
 	function selectRail(p: WorkPhase) {
 		if (p === 'P7') showTickets();
 		else select(p);
+	}
+
+	/** Accept started a design run: the design chat shows it. */
+	function showDesignRun() {
+		picked = 'P2';
+		pane = 'left';
+	}
+
+	/** Discuss: the design chat opens with the proposal in the composer, to edit and send as a change request. */
+	async function discuss(p: Proposal) {
+		showDesignRun();
+		await tick();
+		chat?.insert(`Regarding ${p.id} (${p.title}): ${p.change}`);
 	}
 
 	/** A drift ticket was opened from the P4 gate: show it, its triage runs in its chat. */
@@ -327,7 +348,17 @@
 							{/if}
 							<GenerateDeployment {snapshot} {form} />
 						{/if}
-						{#if phase !== 'P7'}
+						{#if phase === 'P3'}
+							<ProposalsPanel
+								proposals={snapshot.proposals}
+								status={snapshot.state.phases.P3.status}
+								hasDesign={snapshot.design !== null}
+								running={snapshot.activeRun !== null}
+								ondiscuss={discuss}
+								onaccepted={showDesignRun}
+								{form}
+							/>
+						{:else if phase !== 'P7'}
 							<GatePanel
 								{snapshot}
 								{phase}

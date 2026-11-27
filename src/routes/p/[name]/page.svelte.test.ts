@@ -86,6 +86,7 @@ const snapshot = (over: Record<string, unknown> = {}) =>
 		chat: {
 			P1: [],
 			P2: [],
+			P3: [],
 			P4: [{ role: 'assistant', text: 'Chat of the code agent', at }],
 			P5: []
 		},
@@ -401,5 +402,83 @@ describe('workspace page, panes below md', () => {
 		expect(screen.getByRole('tab', { name: 'Artefacts' }).getAttribute('aria-selected')).toBe(
 			'true'
 		);
+	});
+});
+
+describe('workspace page, P3', () => {
+	const diagrams = { useCase: 'flowchart LR', class: '', deployment: '', sequences: [] };
+	const proposal = {
+		id: 'PRP-001',
+		kind: 'missing_method',
+		title: 'Add a delete method',
+		change: 'TaskService gets deleteTask(id).',
+		elementIds: ['DSN-001'],
+		reqIds: ['REQ-003'],
+		status: 'open'
+	};
+	const mountP3 = () =>
+		mount({
+			design: {},
+			diagrams,
+			proposals: { designHash: 'h', proposals: [proposal] }
+		});
+	const designMessage = () =>
+		(screen.getByRole('textbox', { name: /Message to the design agent/ }) as HTMLTextAreaElement)
+			.value;
+	/** Collects the forms submitted while `act` runs. */
+	const posted = async (act: () => Promise<void>) => {
+		const actions: string[] = [];
+		const record = (e: Event) => actions.push((e.target as HTMLFormElement).action);
+		document.addEventListener('submit', record);
+		await act();
+		document.removeEventListener('submit', record);
+		return actions;
+	};
+
+	it('shows the review run read only next to the proposals', async () => {
+		mountP3();
+		await userEvent.click(rail(/P3\s*Refinement/));
+		expect(heading('Chat with the review agent')).toBeTruthy();
+		expect(screen.queryByRole('textbox')).toBeNull();
+		expect(screen.getByRole('article', { name: /PRP-001/ })).toBeTruthy();
+		expect(selected('Diagrams')).toBe(true);
+	});
+
+	it('Discuss opens the design chat with the proposal in the composer and posts nothing', async () => {
+		mountP3();
+		await userEvent.click(rail(/P3\s*Refinement/));
+		const sent = await posted(() =>
+			userEvent.click(screen.getByRole('button', { name: 'Discuss PRP-001' }))
+		);
+		expect(sent).toEqual([]);
+		expect(rail(/P2\s*Design/).getAttribute('aria-current')).toBe('step');
+		await vi.waitFor(() => expect(designMessage()).toContain('Regarding PRP-001'));
+		expect(designMessage()).toContain('TaskService gets deleteTask(id).');
+	});
+
+	it('Accept switches to the design chat', async () => {
+		mountP3();
+		await userEvent.click(rail(/P3\s*Refinement/));
+		await userEvent.click(screen.getByRole('button', { name: 'Accept PRP-001' }));
+		expect(rail(/P2\s*Design/).getAttribute('aria-current')).toBe('step');
+		expect(heading('Chat with the design agent')).toBeTruthy();
+	});
+
+	it('Reject moves focus to the panel heading', async () => {
+		mountP3();
+		await userEvent.click(rail(/P3\s*Refinement/));
+		await userEvent.click(screen.getByRole('button', { name: 'Reject PRP-001' }));
+		await vi.waitFor(() =>
+			expect(document.activeElement).toBe(screen.getByRole('heading', { name: 'Design review' }))
+		);
+	});
+
+	it('a diagram click in P3 switches to the design chat and puts the ID in its composer', async () => {
+		mountP3();
+		await userEvent.click(rail(/P3\s*Refinement/));
+		await vi.waitFor(() => expect(window.aiseSelect).toBeTypeOf('function'));
+		window.aiseSelect!('DSN-003');
+		await vi.waitFor(() => expect(designMessage()).toBe('DSN-003 '));
+		expect(rail(/P2\s*Design/).getAttribute('aria-current')).toBe('step');
 	});
 });

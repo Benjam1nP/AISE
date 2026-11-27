@@ -265,7 +265,7 @@ type AgentName = 'requirements' | 'design' | 'review' | 'code' | 'test' | 'deplo
 type Deps = {
 	root: string;
 	agents?: Record<AgentName, AgentDef>;
-	/** Review the design after every P2 run that changed it; off by default until the UI shows proposals. */
+	/** Review the design after every P2 run that changed it; the app turns it on (`getOrchestrator`), scripts and tests leave it off. */
 	autoReview?: boolean;
 	run?: typeof runAgent;
 	summarise?: typeof summariseRun;

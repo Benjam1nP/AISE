@@ -62,7 +62,7 @@ P3 has no Approve button and no gate: its status follows the proposals.
 
 ## UI
 
-- P3 rail station opens once P2 has a design. The P3 panel shows the diagrams (existing
+- P3 rail station opens once P2 has started (not `not_started`) or P3 holds a state of its own; the Review design button needs a design, and without one the panel says so. The P3 panel shows the diagrams (existing
   `DiagramsPanel`), the Review design button, the open proposals as cards (kind badge, title,
   change, linked IDs, Accept, Reject, Discuss) and a collapsed list of resolved ones.
 - Landing page and README status table: P3 built.
@@ -74,7 +74,7 @@ P3 has no Approve button and no gate: its status follows the proposals.
   until then Accept still works (the design agent decides) and P3 shows `stale`.
 - Accept while a run is active: 409 as for every action today.
 - `report_design_proposals` with unknown IDs or more than 5 proposals: ToolError listing every problem.
-- Review run fails or is discarded: P3 returns to its previous state (as other runs).
+- Review run fails or is discarded: P3 returns to its previous state (as other runs). The UI has no Discard button for review runs (decision 2026-11-27); a failed or unwanted review is rerun with Review design.
 
 ## Tests
 

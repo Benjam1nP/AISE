@@ -18,8 +18,8 @@
 	type TicketView = ProjectSnapshot['tickets'][number];
 	type Props = {
 		snapshot: ProjectSnapshot;
-		/** The phase chat. Omit it when `ticket` is set. */
-		phase?: 'P1' | 'P2' | 'P4' | 'P5' | 'P6';
+		/** The phase chat. Omit it when `ticket` is set. P3 shows the design review run and takes no messages. */
+		phase?: 'P1' | 'P2' | 'P3' | 'P4' | 'P5' | 'P6';
 		/** Ticket mode: the chat of this ticket with the maintenance agent instead of a phase chat. */
 		ticket?: TicketView;
 		live: LiveRun | null;
@@ -29,7 +29,16 @@
 
 	let { snapshot, phase, ticket, live, form }: Props = $props();
 
-	const AGENT = { P1: 'requirements', P2: 'design', P4: 'code', P5: 'test', P6: 'deploy' } as const;
+	const AGENT = {
+		P1: 'requirements',
+		P2: 'design',
+		P3: 'review',
+		P4: 'code',
+		P5: 'test',
+		P6: 'deploy'
+	} as const;
+	/** The review agent takes no messages: Discuss in the proposals opens the design chat. */
+	const readOnly = $derived(phase === 'P3');
 	const agent = $derived(ticket ? 'maintenance' : phase ? AGENT[phase] : 'requirements');
 	/** A done or rejected ticket takes no more messages. */
 	const closed = $derived(ticket?.status === 'done' || ticket?.status === 'rejected');
@@ -114,6 +123,7 @@
 	const START_TITLE = {
 		P1: 'Describe your idea',
 		P2: 'Start the design',
+		P3: 'Review the design',
 		P4: 'Review the code',
 		P5: 'Review the tests',
 		P6: 'Review the deployment'
@@ -144,6 +154,7 @@
 		return {
 			P1: 'Tell the requirements agent what you want to build. It asks questions instead of guessing.',
 			P2: 'Ask the design agent for changes, or ask why it modelled something the way it did.',
+			P3: 'Press Review design. The review agent works through the design here and proposes improvements.',
 			P4: 'Ask the code agent for changes, for example to store the tasks in a Map.',
 			P5: 'Ask the test agent for changes, for example to add a test for an edge case.',
 			P6: 'Ask the deploy agent for changes, for example why a service uses port 8081 or to add a troubleshooting section to RUN.md.'
@@ -278,7 +289,11 @@
 		{#if running}
 			<div class="working" role="status">
 				<ThinkingOrb state={orbMood(liveAll)} size={20} />
-				<span>The agent is working; you can send when it finishes.</span>
+				<span
+					>{readOnly
+						? 'The agent is working.'
+						: 'The agent is working; you can send when it finishes.'}</span
+				>
 			</div>
 		{/if}
 
@@ -286,7 +301,12 @@
 			<Banner
 				tone="error"
 				title="The last run failed"
-				actions={entryFailed || reportFailed || leftBroken || leftBrokenTests || testsTabButton
+				actions={readOnly ||
+				entryFailed ||
+				reportFailed ||
+				leftBroken ||
+				leftBrokenTests ||
+				testsTabButton
 					? undefined
 					: retryAction}
 			>
@@ -306,10 +326,12 @@
 					Check them in the Tests tab or the P5 chat.
 				{:else if testsTabButton}
 					Press {testsTabButton} in the Tests tab to start it again.
+				{:else if readOnly}
+					Press Review design to run it again.
 				{:else}
 					Retry sends your last message again.
 				{/if}
-				{#if !ticket}
+				{#if !ticket && !readOnly}
 					To put the files back as they were before the run, use Discard last run in the approval
 					panel.
 				{/if}
@@ -325,7 +347,12 @@
 			</Banner>
 		{/if}
 
-		{#if closed}
+		{#if readOnly}
+			<p class="note">
+				The review agent takes no messages. Use Discuss on a proposal to talk about it in the design
+				chat.
+			</p>
+		{:else if closed}
 			<p class="note">This ticket is closed. Open a new ticket for further changes.</p>
 		{:else}
 			<form

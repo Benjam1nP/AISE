@@ -35,10 +35,13 @@
 		approved: 'Approved',
 		stale: 'Stale'
 	};
-	/** P1 and P2 always; P4 once the design is approved, P5 once the code is, P6 and P7 once the tests are, or as long as they hold a state of their own. */
+	/** P1 and P2 always; P3 once P2 has started; P4 once the design is approved, P5 once the code is, P6 and P7 once the tests are, or as long as they hold a state of their own. */
 	const isOpen = (phase: PhaseId): phase is WorkPhase =>
 		phase === 'P1' ||
 		phase === 'P2' ||
+		(phase === 'P3' &&
+			(phases.P2.status !== 'not_started' ||
+				(phases.P3?.status ?? 'not_started') !== 'not_started')) ||
 		(phase === 'P4' &&
 			(phases.P2.status === 'approved' ||
 				(phases.P4?.status ?? 'not_started') !== 'not_started')) ||
@@ -91,7 +94,9 @@
 						<span class="text">
 							<span class="name"><span class="id">{phase}</span>{NAMES[phase]}</span>
 							<span class="status"
-								>{STATUS[status]}{#if costByPhase[phase] !== undefined}<span class="aise-sr-only"
+								>{phase === 'P3' && status === 'awaiting_approval'
+									? 'Open proposals'
+									: STATUS[status]}{#if costByPhase[phase] !== undefined}<span class="aise-sr-only"
 										>, cost
 									</span><span class="cost aise-num">{formatUsd(costByPhase[phase])}</span
 									>{/if}</span
@@ -104,13 +109,15 @@
 						<span class="text">
 							<span class="name"><span class="id">{phase}</span>{NAMES[phase]}</span>
 							<span class="status"
-								>{phase === 'P4'
-									? 'After design approval'
-									: phase === 'P5'
-										? 'After code approval'
-										: phase === 'P6' || phase === 'P7'
-											? 'After test approval'
-											: 'Not built yet'}</span
+								>{phase === 'P3'
+									? 'After the design starts'
+									: phase === 'P4'
+										? 'After design approval'
+										: phase === 'P5'
+											? 'After code approval'
+											: phase === 'P6' || phase === 'P7'
+												? 'After test approval'
+												: 'Not built yet'}</span
 							>
 						</span>
 					</span>
