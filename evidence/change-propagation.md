@@ -2,7 +2,7 @@
 
 Requirements §5 C2: demo a requirement, a design and a code change on a showcase, show which
 artefacts each one updated, and explain how synchronisation works and where it fails. Every change
-below except the pending booking one is a closed P7 ticket. Its change report (`report` in the ticket) and its chat
+below is a closed P7 ticket. Its change report (`report` in the ticket) and its chat
 (`.aise/chat/TCK-*.jsonl`) are committed with the showcase.
 
 | Change kind                       | Showcase | Ticket  | Entry | Report                                                  |
@@ -11,7 +11,7 @@ below except the pending booking one is a closed P7 ticket. Its change report (`
 | Requirement                       | auction  | TCK-001 | P1    | [tickets.json](../showcases/auction/.aise/tickets.json) |
 | Code (hand edit adopted)          | auction  | TCK-002 | P2    | [tickets.json](../showcases/auction/.aise/tickets.json) |
 | Code (hand edit repaired in code) | auction  | TCK-003 | P4    | [tickets.json](../showcases/auction/.aise/tickets.json) |
-| Design                            | booking  | pending | P2    | waits for #4: booking has not reached P7 yet            |
+| Design                            | booking  | TCK-001 | P2    | [tickets.json](../showcases/booking/.aise/tickets.json) |
 
 ## The changes and what they updated
 
@@ -25,6 +25,15 @@ Tests 48 passed, 0 failed.
 P5. Updated: REQ-001, REQ-004, new REQ-012; UC-002 to UC-006; SEQ-002, SEQ-003, SEQ-005 and SEQ-006;
 13 design elements, new DSN-044 (`PublicItem`); 11 files under `src/` plus `public/index.html`; 6 test files.
 Tests 57 passed, 0 failed.
+
+**Booking TCK-001 "One overlap check for booking and rescheduling" (design).** No requirement
+changed. Entry at P2, then P4, P5 (one fix loop round) and P6. Updated: new DSN-024
+(`BookingRuleChecker`), DSN-007 (`BookingService` depends on it instead of `TimeSlotPolicy`), SEQ-002
+and SEQ-004 (both call `check`); `src/domain-services/BookingRuleChecker.ts` (new),
+`BookingService.ts`, `src/app/app.ts`; `test/UC-002`, `UC-004` and `UC-009`; `docs/design.md`,
+`README.md`. The updated SEQ-002 test found the code calling the room lookup before the check, which
+the fix loop reordered to match the diagram. P6 turned stale on the code change and its Update reran
+the deploy check (200). Tests 58 passed, 0 failed.
 
 **Auction TCK-002 (drift, code to design).** A method `Item.timeLeftMs(now)` added by hand to
 `src/auction-api/Item.ts`. The P4 check found one difference (`method timeLeftMs: in code, not in
