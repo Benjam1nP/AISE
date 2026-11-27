@@ -131,6 +131,9 @@ classDiagram
   class AdminGuard {
     +requireAdmin(token: string) void
   }
+  class BookingRuleChecker {
+    +check(roomId: string, start: Date, end: Date, now: Date, excludeId: string | null) Promise~void~
+  }
   Booking --> "1" Room : books
   RoomController ..> AvailabilityService : uses
   RoomController ..> RoomService : uses
@@ -140,7 +143,7 @@ classDiagram
   AdminController ..> AdminAuthService : uses
   AvailabilityService ..> RoomRepository : uses
   AvailabilityService ..> BookingRepository : uses
-  BookingService ..> TimeSlotPolicy : validates with
+  BookingService ..> BookingRuleChecker : checks with
   BookingService ..> RoomRepository : uses
   BookingService ..> BookingRepository : uses
   RoomService ..> RoomRepository : uses
@@ -148,6 +151,8 @@ classDiagram
   RoomRepository ..> Room
   BookingRepository ..> Booking
   AdminGuard ..> AdminAuthService : uses
+  BookingRuleChecker ..> TimeSlotPolicy : validates with
+  BookingRuleChecker ..> BookingRepository : finds overlaps with
   click Room call aiseSelect("DSN-001")
   click Booking call aiseSelect("DSN-002")
   click RoomController call aiseSelect("DSN-003")
@@ -161,6 +166,7 @@ classDiagram
   click RoomRepository call aiseSelect("DSN-011")
   click BookingRepository call aiseSelect("DSN-012")
   click AdminGuard call aiseSelect("DSN-013")
+  click BookingRuleChecker call aiseSelect("DSN-024")
 ```
 
 ## Sequences
@@ -187,12 +193,15 @@ sequenceDiagram
   participant ACT_001 as User
   participant DSN_004 as BookingController
   participant DSN_007 as BookingService
+  participant DSN_024 as BookingRuleChecker
   participant DSN_009 as TimeSlotPolicy
-  participant DSN_011 as RoomRepository
   participant DSN_012 as BookingRepository
+  participant DSN_011 as RoomRepository
   ACT_001->>DSN_004: createBooking(roomId, start, end, name, email)
   DSN_004->>DSN_007: create(roomId, start, end, name, email)
-  DSN_007->>DSN_009: validate(start, end, now)
+  DSN_007->>DSN_024: check(roomId, start, end, now, excludeId)
+  DSN_024->>DSN_009: validate(start, end, now)
+  DSN_024->>DSN_012: findOverlapping(roomId, start, end, excludeId)
   DSN_007->>DSN_011: findById(id)
   DSN_007->>DSN_012: saveIfFree(booking)
 ```
@@ -219,12 +228,14 @@ sequenceDiagram
   participant DSN_004 as BookingController
   participant DSN_007 as BookingService
   participant DSN_012 as BookingRepository
+  participant DSN_024 as BookingRuleChecker
   participant DSN_009 as TimeSlotPolicy
   ACT_001->>DSN_004: changeBooking(id, email, start, end)
   DSN_004->>DSN_007: changeTime(id, email, start, end)
   DSN_007->>DSN_012: findById(id)
-  DSN_007->>DSN_009: validate(start, end, now)
-  DSN_007->>DSN_012: findOverlapping(roomId, start, end, excludeId)
+  DSN_007->>DSN_024: check(roomId, start, end, now, excludeId)
+  DSN_024->>DSN_009: validate(start, end, now)
+  DSN_024->>DSN_012: findOverlapping(roomId, start, end, excludeId)
   DSN_007->>DSN_012: update(booking)
 ```
 
@@ -348,6 +359,11 @@ flowchart TB
     DSN_023["Domain Model"]
   end
   DSN_020 -->|"HTTP"| DSN_021
+  click DSN_016 call aiseSelect("DSN-016")
+  click DSN_017 call aiseSelect("DSN-017")
+  click DSN_018 call aiseSelect("DSN-018")
+  click DSN_019 call aiseSelect("DSN-019")
+  click DSN_023 call aiseSelect("DSN-023")
 ```
 
 ## Elements
@@ -378,6 +394,7 @@ flowchart TB
 - DSN-011 RoomRepository (class) (REQ-001, REQ-005, REQ-012)
 - DSN-012 BookingRepository (class) (REQ-003, REQ-001, REQ-002, REQ-004, REQ-005)
 - DSN-013 AdminGuard (class) (REQ-009)
+- DSN-024 BookingRuleChecker (class) (REQ-003, REQ-007, REQ-002, REQ-010)
 - DSN-016 Web Frontend (component) (REQ-006, REQ-008)
 - DSN-017 API Layer (component) (REQ-009, REQ-006)
 - DSN-018 Domain Services (component) (REQ-007, REQ-003, REQ-009)

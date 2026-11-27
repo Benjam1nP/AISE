@@ -1,0 +1,489 @@
+{
+  "designHash": "58994488118865858b96cd1a79e972b1c74fad2664af67659e2c730e9f562230",
+  "rows": [
+    {
+      "reqId": "REQ-001",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-006",
+          "method": "findFreeRooms"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-006",
+          "method": "findFreeRooms"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-003",
+          "method": "listAvailable"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-006",
+          "method": "findFreeRooms"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-002",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "create"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-002",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "listByRoomAndDay"
+        },
+        {
+          "classId": "DSN-007",
+          "method": "listByEmail"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-002",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "sequenceId": "SEQ-002",
+          "step": 6
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-002",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-024",
+          "method": "check"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-003",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-024",
+          "method": "check"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-003",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-012",
+          "method": "saveIfFree"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-003",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-012",
+          "method": "findOverlapping"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-003",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-012",
+          "method": "findOverlapping"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-004",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "cancelByUser"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-004",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-012",
+          "method": "update"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-004",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "cancelByUser"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-004",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "cancelByUser"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-005",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-008",
+          "method": "addRoom"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-005",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-008",
+          "method": "editRoom"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-005",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-008",
+          "method": "deleteRoom"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-005",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-008",
+          "method": "deleteRoom"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-005",
+      "criterion": 5,
+      "coveredBy": [
+        {
+          "classId": "DSN-013",
+          "method": "requireAdmin"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-006",
+      "criterion": 1,
+      "coveredBy": [],
+      "note": "Non-functional; satisfied by Web Frontend component and HTTP link."
+    },
+    {
+      "reqId": "REQ-007",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-009",
+          "method": "validate"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-007",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-009",
+          "method": "validate"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-007",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-009",
+          "method": "validate"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-007",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-009",
+          "method": "validate"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-007",
+      "criterion": 5,
+      "coveredBy": [
+        {
+          "classId": "DSN-009",
+          "method": "validate"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-007",
+      "criterion": 6,
+      "coveredBy": [
+        {
+          "classId": "DSN-009",
+          "method": "validate"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-008",
+      "criterion": 1,
+      "coveredBy": [],
+      "note": "Browser-side behaviour."
+    },
+    {
+      "reqId": "REQ-008",
+      "criterion": 2,
+      "coveredBy": [],
+      "note": "Browser-side behaviour."
+    },
+    {
+      "reqId": "REQ-008",
+      "criterion": 3,
+      "coveredBy": [],
+      "note": "Booking attributes creatorName/creatorEmail; no method."
+    },
+    {
+      "reqId": "REQ-008",
+      "criterion": 4,
+      "coveredBy": [],
+      "note": "Browser-side behaviour."
+    },
+    {
+      "reqId": "REQ-008",
+      "criterion": 5,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "cancelByAdmin"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-009",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-005",
+          "method": "login"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-009",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-010",
+          "method": "verifyPassword"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-009",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-013",
+          "method": "requireAdmin"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-009",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-010",
+          "method": "verifyPassword"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "sequenceId": "SEQ-004",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "sequenceId": "SEQ-004",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "changeTime"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "changeTime"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 5,
+      "coveredBy": [
+        {
+          "sequenceId": "SEQ-004",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-011",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "cancelByAdmin"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-011",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "cancelByAdmin"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-011",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-012",
+          "method": "update"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-011",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "cancelByAdmin"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-012",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-008",
+          "method": "setActive"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-012",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "create"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-012",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-008",
+          "method": "setActive"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-012",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-008",
+          "method": "setActive"
+        }
+      ]
+    }
+  ]
+}

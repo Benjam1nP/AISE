@@ -1,0 +1,14 @@
+services:
+  application-server:
+    build: .
+    command: npm start
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      PORT: "8080"
+      DB_PATH: "/data/app.db"
+      ADMIN_PASSWORD: "change-me-admin-password"
+    volumes:
+      - data:/data
+volumes:
+  data:

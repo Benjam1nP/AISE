@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Booking showcase taken through P7: P4 approved as generated, P5 generated 58 passing tests, P6 deployed one compose service with a passing deploy check, and design change ticket TCK-001 (one `BookingRuleChecker` for booking and rescheduling) walked P2, P4, P5 (with one fix loop round) and P6 and closed with its change report; no override. `scripts/run-showcase.ts <auction|booking>` replaces `scripts/run-auction.ts` and starts the fix loop once when the P5 gate fails on open code bug findings (#4).
 - The P3 review no longer proposes classes on the browser page, which the design save always refused. The review prompt states that the browser component holds no classes and that a criterion about what the page shows is met by the page itself. An uncovered criterion whose requirement the browser page serves is marked as such in the review brief. `report_design_proposals` refuses a missing class or method proposal that names a client node or its component (#21).
 - The P7 change report brief keeps run summaries and walk notes whole up to 1500 characters (before: 500 and 300), shortens a longer one at a sentence end with the mark "(shortened for this brief)", and the maintenance agent no longer reports such a note as cut off (#24).
 - P7 plans number their steps by the real phases (code is P4, tests P5), and the P5 stale banner reads "keeps the tests as they are" and "The tests fail these checks" (#25).

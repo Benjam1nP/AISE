@@ -566,7 +566,7 @@
       "id": "DSN-007",
       "name": "BookingService",
       "kind": "class",
-      "description": "Booking rules: creation, listing, time change, cancellation; enforces slot rules, ownership and atomic overlap check. Listings exclude cancelled bookings; a day is a calendar day in Europe/Zurich.",
+      "description": "Booking rules: creation, listing, time change, cancellation; delegates slot and overlap checks to BookingRuleChecker, enforces ownership and the atomic insert. Listings exclude cancelled bookings; a day is a calendar day in Europe/Zurich.",
       "attributes": [],
       "methods": [
         {
@@ -670,8 +670,8 @@
       "relations": [
         {
           "kind": "dependency",
-          "targetId": "DSN-009",
-          "label": "validates with"
+          "targetId": "DSN-024",
+          "label": "checks with"
         },
         {
           "kind": "dependency",
@@ -1038,6 +1038,60 @@
       "reqIds": [
         "REQ-009"
       ]
+    },
+    {
+      "id": "DSN-024",
+      "name": "BookingRuleChecker",
+      "kind": "class",
+      "description": "Single rule check shared by booking and rescheduling: runs the time slot validation, then rejects overlaps with non-cancelled bookings of the same room, optionally ignoring the booking being changed.",
+      "attributes": [],
+      "methods": [
+        {
+          "name": "check",
+          "params": [
+            {
+              "name": "roomId",
+              "type": "string"
+            },
+            {
+              "name": "start",
+              "type": "Date"
+            },
+            {
+              "name": "end",
+              "type": "Date"
+            },
+            {
+              "name": "now",
+              "type": "Date"
+            },
+            {
+              "name": "excludeId",
+              "type": "string | null"
+            }
+          ],
+          "returnType": "Promise<void>"
+        }
+      ],
+      "values": [],
+      "relations": [
+        {
+          "kind": "dependency",
+          "targetId": "DSN-009",
+          "label": "validates with"
+        },
+        {
+          "kind": "dependency",
+          "targetId": "DSN-012",
+          "label": "finds overlaps with"
+        }
+      ],
+      "reqIds": [
+        "REQ-003",
+        "REQ-007",
+        "REQ-002",
+        "REQ-010"
+      ]
     }
   ],
   "components": [
@@ -1074,7 +1128,8 @@
         "DSN-007",
         "DSN-008",
         "DSN-009",
-        "DSN-010"
+        "DSN-010",
+        "DSN-024"
       ],
       "nodeId": "DSN-021",
       "reqIds": [
@@ -1183,8 +1238,18 @@
         },
         {
           "fromId": "DSN-007",
+          "toId": "DSN-024",
+          "method": "check"
+        },
+        {
+          "fromId": "DSN-024",
           "toId": "DSN-009",
           "method": "validate"
+        },
+        {
+          "fromId": "DSN-024",
+          "toId": "DSN-012",
+          "method": "findOverlapping"
         },
         {
           "fromId": "DSN-007",
@@ -1247,11 +1312,16 @@
         },
         {
           "fromId": "DSN-007",
+          "toId": "DSN-024",
+          "method": "check"
+        },
+        {
+          "fromId": "DSN-024",
           "toId": "DSN-009",
           "method": "validate"
         },
         {
-          "fromId": "DSN-007",
+          "fromId": "DSN-024",
           "toId": "DSN-012",
           "method": "findOverlapping"
         },

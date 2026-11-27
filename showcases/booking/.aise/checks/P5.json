@@ -1,0 +1,502 @@
+{
+  "at": "2026-11-27T13:45:54.363Z",
+  "codeHash": "8b81a2bd2d204a4ee6c8ffb348a7e69f01807bfccb32093ae5afaec32a55a567",
+  "testHash": "a068f5d3702d61e560bf68d0d9f763592de939fc8a84309e71cfd15ddf523360",
+  "typecheck": {
+    "ok": true,
+    "errors": [],
+    "timedOut": false
+  },
+  "result": {
+    "ok": true,
+    "passed": 58,
+    "failed": 0,
+    "tests": [
+      {
+        "name": "UC-001 View room availability REQ-001 AC1: Given a date and time range, rooms with no booking overlapping that range are listed as free",
+        "title": "REQ-001 AC1: Given a date and time range, rooms with no booking overlapping that range are listed as free",
+        "file": "test/UC-001.test.ts",
+        "status": "passed",
+        "line": 40
+      },
+      {
+        "name": "UC-001 View room availability REQ-001 AC2: Rooms with an overlapping booking are not shown as free",
+        "title": "REQ-001 AC2: Rooms with an overlapping booking are not shown as free",
+        "file": "test/UC-001.test.ts",
+        "status": "passed",
+        "line": 46
+      },
+      {
+        "name": "UC-001 View room availability REQ-001 AC3: Each listed room shows name, capacity, floor and equipment",
+        "title": "REQ-001 AC3: Each listed room shows name, capacity, floor and equipment",
+        "file": "test/UC-001.test.ts",
+        "status": "passed",
+        "line": 52
+      },
+      {
+        "name": "UC-001 View room availability REQ-001 AC4: Deactivated rooms are not listed as bookable",
+        "title": "REQ-001 AC4: Deactivated rooms are not listed as bookable",
+        "file": "test/UC-001.test.ts",
+        "status": "passed",
+        "line": 63
+      },
+      {
+        "name": "UC-001 View room availability REQ-006 AC1: manual: browser usability requires a person to open the app in a web browser without installing client software",
+        "title": "REQ-006 AC1: manual: browser usability requires a person to open the app in a web browser without installing client software",
+        "file": "test/UC-001.test.ts",
+        "status": "todo",
+        "line": 73
+      },
+      {
+        "name": "UC-001 View room availability SEQ-001 scenario: View room availability",
+        "title": "SEQ-001 scenario: View room availability",
+        "file": "test/UC-001.test.ts",
+        "status": "passed",
+        "line": 75
+      },
+      {
+        "name": "UC-002 Book a room REQ-002 AC1: A user can create a booking for a free room with a start and end time",
+        "title": "REQ-002 AC1: A user can create a booking for a free room with a start and end time",
+        "file": "test/UC-002.test.ts",
+        "status": "passed",
+        "line": 104
+      },
+      {
+        "name": "UC-002 Book a room REQ-002 AC2: The new booking appears in the room's schedule and in the user's bookings",
+        "title": "REQ-002 AC2: The new booking appears in the room's schedule and in the user's bookings",
+        "file": "test/UC-002.test.ts",
+        "status": "passed",
+        "line": 112
+      },
+      {
+        "name": "UC-002 Book a room REQ-002 AC3: Booking a deactivated room is rejected",
+        "title": "REQ-002 AC3: Booking a deactivated room is rejected",
+        "file": "test/UC-002.test.ts",
+        "status": "passed",
+        "line": 121
+      },
+      {
+        "name": "UC-002 Book a room REQ-002 AC4: A booking whose start is in the past is rejected with an error message",
+        "title": "REQ-002 AC4: A booking whose start is in the past is rejected with an error message",
+        "file": "test/UC-002.test.ts",
+        "status": "passed",
+        "line": 128
+      },
+      {
+        "name": "UC-002 Book a room REQ-003 AC1: A booking whose time range overlaps an existing booking for the same room is rejected with an error message",
+        "title": "REQ-003 AC1: A booking whose time range overlaps an existing booking for the same room is rejected with an error message",
+        "file": "test/UC-002.test.ts",
+        "status": "passed",
+        "line": 135
+      },
+      {
+        "name": "UC-002 Book a room REQ-003 AC2: Two simultaneous requests for the same room and overlapping time result in only one stored booking",
+        "title": "REQ-003 AC2: Two simultaneous requests for the same room and overlapping time result in only one stored booking",
+        "file": "test/UC-002.test.ts",
+        "status": "passed",
+        "line": 143
+      },
+      {
+        "name": "UC-002 Book a room REQ-003 AC3: Bookings in different rooms at the same time are allowed",
+        "title": "REQ-003 AC3: Bookings in different rooms at the same time are allowed",
+        "file": "test/UC-002.test.ts",
+        "status": "passed",
+        "line": 154
+      },
+      {
+        "name": "UC-002 Book a room REQ-003 AC4: A booking that starts exactly when another ends in the same room is allowed",
+        "title": "REQ-003 AC4: A booking that starts exactly when another ends in the same room is allowed",
+        "file": "test/UC-002.test.ts",
+        "status": "passed",
+        "line": 161
+      },
+      {
+        "name": "UC-002 Book a room REQ-007 AC1: A booking with a start or end not on a 15-minute step is rejected",
+        "title": "REQ-007 AC1: A booking with a start or end not on a 15-minute step is rejected",
+        "file": "test/UC-002.test.ts",
+        "status": "passed",
+        "line": 168
+      },
+      {
+        "name": "UC-002 Book a room REQ-007 AC2: A booking shorter than 15 minutes or longer than 4 hours is rejected",
+        "title": "REQ-007 AC2: A booking shorter than 15 minutes or longer than 4 hours is rejected",
+        "file": "test/UC-002.test.ts",
+        "status": "passed",
+        "line": 174
+      },
+      {
+        "name": "UC-002 Book a room REQ-007 AC3: A booking outside 07:00-20:00 Europe/Zurich or on a Saturday or Sunday is rejected",
+        "title": "REQ-007 AC3: A booking outside 07:00-20:00 Europe/Zurich or on a Saturday or Sunday is rejected",
+        "file": "test/UC-002.test.ts",
+        "status": "passed",
+        "line": 180
+      },
+      {
+        "name": "UC-002 Book a room REQ-007 AC4: A booking ending exactly at 20:00 is accepted; one ending after 20:00 is rejected",
+        "title": "REQ-007 AC4: A booking ending exactly at 20:00 is accepted; one ending after 20:00 is rejected",
+        "file": "test/UC-002.test.ts",
+        "status": "passed",
+        "line": 187
+      },
+      {
+        "name": "UC-002 Book a room REQ-007 AC5: A booking starting more than 60 days ahead is rejected",
+        "title": "REQ-007 AC5: A booking starting more than 60 days ahead is rejected",
+        "file": "test/UC-002.test.ts",
+        "status": "passed",
+        "line": 193
+      },
+      {
+        "name": "UC-002 Book a room REQ-007 AC6: A valid 15-minute booking and a valid 4-hour booking are accepted",
+        "title": "REQ-007 AC6: A valid 15-minute booking and a valid 4-hour booking are accepted",
+        "file": "test/UC-002.test.ts",
+        "status": "passed",
+        "line": 198
+      },
+      {
+        "name": "UC-002 Book a room REQ-008 AC1: manual: the first-visit name and email prompt is browser UI behaviour outside the API",
+        "title": "REQ-008 AC1: manual: the first-visit name and email prompt is browser UI behaviour outside the API",
+        "file": "test/UC-002.test.ts",
+        "status": "todo",
+        "line": 204
+      },
+      {
+        "name": "UC-002 Book a room REQ-008 AC2: manual: remembering name and email in browser storage is browser UI behaviour outside the API",
+        "title": "REQ-008 AC2: manual: remembering name and email in browser storage is browser UI behaviour outside the API",
+        "file": "test/UC-002.test.ts",
+        "status": "todo",
+        "line": 206
+      },
+      {
+        "name": "UC-002 Book a room REQ-008 AC3: Each booking shows the name and email of its creator",
+        "title": "REQ-008 AC3: Each booking shows the name and email of its creator",
+        "file": "test/UC-002.test.ts",
+        "status": "passed",
+        "line": 208
+      },
+      {
+        "name": "UC-002 Book a room REQ-008 AC4: Booking is not possible until name and email are provided",
+        "title": "REQ-008 AC4: Booking is not possible until name and email are provided",
+        "file": "test/UC-002.test.ts",
+        "status": "passed",
+        "line": 215
+      },
+      {
+        "name": "UC-002 Book a room REQ-008 AC5: A user who clears browser data or uses another browser cannot cancel or change earlier bookings themselves; an admin can cancel them",
+        "title": "REQ-008 AC5: A user who clears browser data or uses another browser cannot cancel or change earlier bookings themselves; an admin can cancel them",
+        "file": "test/UC-002.test.ts",
+        "status": "passed",
+        "line": 222
+      },
+      {
+        "name": "UC-002 Book a room SEQ-002 scenario: Book a room",
+        "title": "SEQ-002 scenario: Book a room",
+        "file": "test/UC-002.test.ts",
+        "status": "passed",
+        "line": 231
+      },
+      {
+        "name": "UC-003 Cancel own booking REQ-004 AC1: A user can cancel a not-yet-started booking created with their email",
+        "title": "REQ-004 AC1: A user can cancel a not-yet-started booking created with their email",
+        "file": "test/UC-003.test.ts",
+        "status": "passed",
+        "line": 27
+      },
+      {
+        "name": "UC-003 Cancel own booking REQ-004 AC2: After cancellation the time slot is shown as free",
+        "title": "REQ-004 AC2: After cancellation the time slot is shown as free",
+        "file": "test/UC-003.test.ts",
+        "status": "passed",
+        "line": 37
+      },
+      {
+        "name": "UC-003 Cancel own booking REQ-004 AC3: A user cannot cancel a booking created with a different email",
+        "title": "REQ-004 AC3: A user cannot cancel a booking created with a different email",
+        "file": "test/UC-003.test.ts",
+        "status": "passed",
+        "line": 47
+      },
+      {
+        "name": "UC-003 Cancel own booking REQ-004 AC4: Cancelling a booking that has already started or ended is rejected for a user",
+        "title": "REQ-004 AC4: Cancelling a booking that has already started or ended is rejected for a user",
+        "file": "test/UC-003.test.ts",
+        "status": "passed",
+        "line": 57
+      },
+      {
+        "name": "UC-003 Cancel own booking SEQ-003 scenario: Cancel own booking",
+        "title": "SEQ-003 scenario: Cancel own booking",
+        "file": "test/UC-003.test.ts",
+        "status": "passed",
+        "line": 67
+      },
+      {
+        "name": "UC-004 Change own booking time REQ-010 AC1: A user can change the time of their own not-yet-started booking to a free valid slot in the same room",
+        "title": "REQ-010 AC1: A user can change the time of their own not-yet-started booking to a free valid slot in the same room",
+        "file": "test/UC-004.test.ts",
+        "status": "passed",
+        "line": 47
+      },
+      {
+        "name": "UC-004 Change own booking time REQ-010 AC2: A change that violates the overlap rule or time slot rules is rejected and the original booking stays unchanged",
+        "title": "REQ-010 AC2: A change that violates the overlap rule or time slot rules is rejected and the original booking stays unchanged",
+        "file": "test/UC-004.test.ts",
+        "status": "passed",
+        "line": 65
+      },
+      {
+        "name": "UC-004 Change own booking time REQ-010 AC3: A user cannot change a booking created with a different email",
+        "title": "REQ-010 AC3: A user cannot change a booking created with a different email",
+        "file": "test/UC-004.test.ts",
+        "status": "passed",
+        "line": 87
+      },
+      {
+        "name": "UC-004 Change own booking time REQ-010 AC4: Changing a booking that has already started or ended is rejected",
+        "title": "REQ-010 AC4: Changing a booking that has already started or ended is rejected",
+        "file": "test/UC-004.test.ts",
+        "status": "passed",
+        "line": 104
+      },
+      {
+        "name": "UC-004 Change own booking time REQ-010 AC5: A change moving the start into the past is rejected",
+        "title": "REQ-010 AC5: A change moving the start into the past is rejected",
+        "file": "test/UC-004.test.ts",
+        "status": "passed",
+        "line": 127
+      },
+      {
+        "name": "UC-004 Change own booking time SEQ-004 scenario: Change own booking time",
+        "title": "SEQ-004 scenario: Change own booking time",
+        "file": "test/UC-004.test.ts",
+        "status": "passed",
+        "line": 142
+      },
+      {
+        "name": "UC-005 Admin login REQ-009 AC1: Entering the correct password enables admin functions",
+        "title": "REQ-009 AC1: Entering the correct password enables admin functions",
+        "file": "test/UC-005.test.ts",
+        "status": "passed",
+        "line": 32
+      },
+      {
+        "name": "UC-005 Admin login REQ-009 AC2: Entering a wrong password does not enable admin functions",
+        "title": "REQ-009 AC2: Entering a wrong password does not enable admin functions",
+        "file": "test/UC-005.test.ts",
+        "status": "passed",
+        "line": 41
+      },
+      {
+        "name": "UC-005 Admin login REQ-009 AC3: Admin actions called without valid admin authentication are rejected by the server",
+        "title": "REQ-009 AC3: Admin actions called without valid admin authentication are rejected by the server",
+        "file": "test/UC-005.test.ts",
+        "status": "passed",
+        "line": 49
+      },
+      {
+        "name": "UC-005 Admin login REQ-009 AC4: The password is read from an environment variable and is not stored in the source code",
+        "title": "REQ-009 AC4: The password is read from an environment variable and is not stored in the source code",
+        "file": "test/UC-005.test.ts",
+        "status": "passed",
+        "line": 73
+      },
+      {
+        "name": "UC-005 Admin login SEQ-005 scenario: Admin login",
+        "title": "SEQ-005 scenario: Admin login",
+        "file": "test/UC-005.test.ts",
+        "status": "passed",
+        "line": 86
+      },
+      {
+        "name": "UC-006 Manage rooms REQ-005 AC1: An admin can add a room with name, capacity, floor and equipment list, and it becomes available for booking",
+        "title": "REQ-005 AC1: An admin can add a room with name, capacity, floor and equipment list, and it becomes available for booking",
+        "file": "test/UC-006.test.ts",
+        "status": "passed",
+        "line": 65
+      },
+      {
+        "name": "UC-006 Manage rooms REQ-005 AC2: An admin can edit a room's name, capacity, floor and equipment",
+        "title": "REQ-005 AC2: An admin can edit a room's name, capacity, floor and equipment",
+        "file": "test/UC-006.test.ts",
+        "status": "passed",
+        "line": 82
+      },
+      {
+        "name": "UC-006 Manage rooms REQ-005 AC3: An admin can delete a room that has no future bookings",
+        "title": "REQ-005 AC3: An admin can delete a room that has no future bookings",
+        "file": "test/UC-006.test.ts",
+        "status": "passed",
+        "line": 97
+      },
+      {
+        "name": "UC-006 Manage rooms REQ-005 AC4: Deleting a room with one or more future bookings is rejected with an error message",
+        "title": "REQ-005 AC4: Deleting a room with one or more future bookings is rejected with an error message",
+        "file": "test/UC-006.test.ts",
+        "status": "passed",
+        "line": 104
+      },
+      {
+        "name": "UC-006 Manage rooms REQ-005 AC5: Non-admin users cannot perform these actions",
+        "title": "REQ-005 AC5: Non-admin users cannot perform these actions",
+        "file": "test/UC-006.test.ts",
+        "status": "passed",
+        "line": 113
+      },
+      {
+        "name": "UC-006 Manage rooms SEQ-006 scenario: Manage rooms",
+        "title": "SEQ-006 scenario: Manage rooms",
+        "file": "test/UC-006.test.ts",
+        "status": "passed",
+        "line": 133
+      },
+      {
+        "name": "UC-007 Admin cancels any booking REQ-011 AC1: An admin can cancel a not-yet-started booking created by any user",
+        "title": "REQ-011 AC1: An admin can cancel a not-yet-started booking created by any user",
+        "file": "test/UC-007.test.ts",
+        "status": "passed",
+        "line": 34
+      },
+      {
+        "name": "UC-007 Admin cancels any booking REQ-011 AC2: An admin can cancel a booking that is currently in progress",
+        "title": "REQ-011 AC2: An admin can cancel a booking that is currently in progress",
+        "file": "test/UC-007.test.ts",
+        "status": "passed",
+        "line": 45
+      },
+      {
+        "name": "UC-007 Admin cancels any booking REQ-011 AC3: After cancellation the time slot is shown as free",
+        "title": "REQ-011 AC3: After cancellation the time slot is shown as free",
+        "file": "test/UC-007.test.ts",
+        "status": "passed",
+        "line": 56
+      },
+      {
+        "name": "UC-007 Admin cancels any booking REQ-011 AC4: Cancelling a booking that has already ended is rejected and the booking remains unchanged",
+        "title": "REQ-011 AC4: Cancelling a booking that has already ended is rejected and the booking remains unchanged",
+        "file": "test/UC-007.test.ts",
+        "status": "passed",
+        "line": 70
+      },
+      {
+        "name": "UC-007 Admin cancels any booking SEQ-007 scenario: Admin cancels any booking",
+        "title": "SEQ-007 scenario: Admin cancels any booking",
+        "file": "test/UC-007.test.ts",
+        "status": "passed",
+        "line": 87
+      },
+      {
+        "name": "UC-008 Deactivate or reactivate room REQ-012 AC1: An admin can deactivate a room",
+        "title": "REQ-012 AC1: An admin can deactivate a room",
+        "file": "test/UC-008.test.ts",
+        "status": "passed",
+        "line": 67
+      },
+      {
+        "name": "UC-008 Deactivate or reactivate room REQ-012 AC2: New bookings for a deactivated room are rejected",
+        "title": "REQ-012 AC2: New bookings for a deactivated room are rejected",
+        "file": "test/UC-008.test.ts",
+        "status": "passed",
+        "line": 79
+      },
+      {
+        "name": "UC-008 Deactivate or reactivate room REQ-012 AC3: A room with future bookings can be deactivated and those bookings remain active",
+        "title": "REQ-012 AC3: A room with future bookings can be deactivated and those bookings remain active",
+        "file": "test/UC-008.test.ts",
+        "status": "passed",
+        "line": 104
+      },
+      {
+        "name": "UC-008 Deactivate or reactivate room REQ-012 AC4: An admin can reactivate a deactivated room and it accepts bookings again",
+        "title": "REQ-012 AC4: An admin can reactivate a deactivated room and it accepts bookings again",
+        "file": "test/UC-008.test.ts",
+        "status": "passed",
+        "line": 120
+      },
+      {
+        "name": "UC-008 Deactivate or reactivate room SEQ-008 scenario: Deactivate or reactivate room",
+        "title": "SEQ-008 scenario: Deactivate or reactivate room",
+        "file": "test/UC-008.test.ts",
+        "status": "passed",
+        "line": 132
+      },
+      {
+        "name": "UC-009 View my bookings SEQ-009 scenario: View my bookings",
+        "title": "SEQ-009 scenario: View my bookings",
+        "file": "test/UC-009.test.ts",
+        "status": "passed",
+        "line": 9
+      },
+      {
+        "name": "UC-010 View room schedule SEQ-010 scenario: View room schedule",
+        "title": "SEQ-010 scenario: View room schedule",
+        "file": "test/UC-010.test.ts",
+        "status": "passed",
+        "line": 9
+      },
+      {
+        "name": "UC-011 List all rooms SEQ-011 scenario: List all rooms",
+        "title": "SEQ-011 scenario: List all rooms",
+        "file": "test/UC-011.test.ts",
+        "status": "passed",
+        "line": 12
+      }
+    ],
+    "timedOut": false,
+    "logTail": "JSON report written to /opt/aise/out/report.json\n(node:36) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:65) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:22) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:79) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:52) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:54) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  "findings": [
+    {
+      "id": "20261127-134134-P5-1",
+      "runId": "20261127-134134-P5",
+      "test": "SEQ-002 scenario: Book a room",
+      "file": "test/UC-002.test.ts",
+      "reqId": "REQ-002",
+      "explanation": "SEQ-002 orders messages: BookingService.create calls BookingRuleChecker.check (validate, findOverlapping), then RoomRepository.findById, then BookingRepository.saveIfFree. Observed call order is RoomRepository.findById first, before check.",
+      "proposedFix": "In BookingService.create, call bookingRuleChecker.check(roomId, start, end, now, null) first, then load the room with roomRepository.findById and reject if missing or inactive, then call saveIfFree.",
+      "resolvedAt": "2026-11-27T13:44:41.307Z"
+    }
+  ],
+  "testFixes": [
+    {
+      "runId": "20261127-133327-P5",
+      "test": "REQ-004 AC1: A user can cancel a not-yet-started booking created with their email",
+      "file": "test/UC-003.test.ts",
+      "reason": "Tests assumed the seeded booking keeps its chosen id and that DELETE reads email from the JSON body. The repository assigns the id, and the route reads email from the query string. Fixed in all tests of the file (AC1-AC4, SEQ-003)."
+    },
+    {
+      "runId": "20261127-133327-P5",
+      "test": "REQ-010 AC1: A user can change the time of their own not-yet-started booking to a free valid slot in the same room",
+      "file": "test/UC-004.test.ts",
+      "reason": "Tests booked a non-existent room on dates more than 60 days ahead and used hard-coded ids. They now create the room through RoomService, use weekday slots inside the 60-day window and the stored ids. Fixed in AC1-AC5 and SEQ-004."
+    },
+    {
+      "runId": "20261127-133327-P5",
+      "test": "REQ-011 AC1: An admin can cancel a not-yet-started booking created by any user",
+      "file": "test/UC-007.test.ts",
+      "reason": "Tests saved plain objects instead of Booking instances (startTime, endTime), expected a cancelled booking to be deleted although the Booking model has a cancelled flag, and used a hard-coded id. Fixed in AC1-AC4 and SEQ-007."
+    },
+    {
+      "runId": "20261127-133327-P5",
+      "test": "SEQ-010 scenario: View room schedule",
+      "file": "test/UC-010.test.ts",
+      "reason": "The GET route reads date from the query string, not a body, and the stored booking id is assigned by the repository."
+    },
+    {
+      "runId": "20261127-134134-P5",
+      "test": "SEQ-002 scenario: Book a room",
+      "file": "test/UC-002.test.ts",
+      "reason": "requirement changed: SEQ-002 now routes through BookingRuleChecker (check, validate, findOverlapping), then room findById, then saveIfFree; setup builds BookingService with a BookingRuleChecker and the test asserts the message order."
+    },
+    {
+      "runId": "20261127-134134-P5",
+      "test": "SEQ-004 scenario: Change own booking time",
+      "file": "test/UC-004.test.ts",
+      "reason": "requirement changed: SEQ-004 now follows changeBooking, changeTime, findById, check, validate, findOverlapping, update; the test spies on these calls and asserts their order."
+    },
+    {
+      "runId": "20261127-134134-P5",
+      "test": "SEQ-009 scenario: View my bookings",
+      "file": "test/UC-009.test.ts",
+      "reason": "BookingService constructor takes a BookingRuleChecker as first argument per the design (DSN-007/DSN-024); test setup fixed to compile."
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+{
+  ".aise/checks/deploy.json": "{\n  \"at\": \"2026-11-27T13:38:39.814Z\",\n  \"filesHash\": \"ea177823496a9f7aa691093537b36f482f2ebc96372ec7ea81ba0b1816111a69\",\n  \"passed\": true,\n  \"services\": [\n    {\n      \"url\": \"http://localhost:8080/health\",\n      \"status\": 200\n    }\n  ],\n  \"logTail\": \"application-server-1  | \\napplication-server-1  | > start\\napplication-server-1  | > tsx src/app/main.ts\\napplication-server-1  | \\napplication-server-1  | (node:30) ExperimentalWarning: SQLite is an experimental feature and might change at any time\\napplication-server-1  | (Use `node --trace-warnings ...` to show where the warning was created)\\napplication-server-1  | Listening on port 8080\",\n  \"durationMs\": 33460\n}\n"
+}

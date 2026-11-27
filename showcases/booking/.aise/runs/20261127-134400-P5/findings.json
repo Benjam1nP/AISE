@@ -1,0 +1,13 @@
+{
+  "findings": [],
+  "testFixes": [],
+  "fixResults": [
+    {
+      "runId": "20261127-134400-P5",
+      "findingId": "20261127-134134-P5-1",
+      "outcome": "fixed",
+      "reason": "BookingService.create now calls bookingRuleChecker.check before roomRepository.findById and saveIfFree. Typecheck and drift are clean. I did not run the test.",
+      "at": "2026-11-27T13:44:20.467Z"
+    }
+  ]
+}
