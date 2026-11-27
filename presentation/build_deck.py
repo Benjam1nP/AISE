@@ -116,7 +116,7 @@ def box(slide, x, y, w, h, fill=BOX, line=None, line_w=1.5, shape=MSO_SHAPE.ROUN
     return s
 
 
-def arrow(slide, x1, y1, x2, y2, color=GREY, width=1.5, both=False, dash=False):
+def arrow(slide, x1, y1, x2, y2, color=GREY, width=1.5, both=False, dash=False, head=True):
     c = slide.shapes.add_connector(MSO_CONNECTOR.STRAIGHT, Inches(x1), Inches(y1), Inches(x2), Inches(y2))
     c.line.color.rgb = color
     c.line.width = Pt(width)
@@ -125,7 +125,8 @@ def arrow(slide, x1, y1, x2, y2, color=GREY, width=1.5, both=False, dash=False):
         etree.SubElement(ln, qn("a:prstDash")).set("val", "dash")
     if both:
         etree.SubElement(ln, qn("a:headEnd")).set("type", "triangle")
-    etree.SubElement(ln, qn("a:tailEnd")).set("type", "triangle")
+    if head:
+        etree.SubElement(ln, qn("a:tailEnd")).set("type", "triangle")
     return c
 
 
@@ -250,7 +251,8 @@ chain = [
     ("Design", ".aise/design.json",
      [[("UC-003", {"bold": True, "color": GREEN, "mono": True}), ("  use case", {})],
       [("SEQ-003", {"bold": True, "color": GREEN, "mono": True}), ("  calls setDone", {})],
-      [("DSN-007", {"bold": True, "color": GREEN, "mono": True}), ("  TaskService", {})]]),
+      [("DSN-007", {"bold": True, "color": GREEN, "mono": True}), ("  TaskService", {})],
+      [("renders 4 UML diagrams", {"color": GREY})]]),
     ("Code", "src/tasks-app/TaskService.ts",
      [[("@trace DSN-007", {"color": GREEN, "mono": True, "bold": True})],
       [("REQ-001 REQ-002 …", {"color": GREEN, "mono": True, "bold": True})],
@@ -260,7 +262,7 @@ chain = [
       [("it(\"", {"mono": True}), ("REQ-002 AC1", {"bold": True, "color": GREEN, "mono": True}), (": …\")", {"mono": True})],
       [("runs green in Docker", {"color": GREY})]]),
 ]
-kw, kh, ky = 2.6, 2.15, 2.25
+kw, kh, ky = 2.6, 2.45, 2.25
 kg = (12.29 - 4 * kw) / 3
 for i, (head, path, body) in enumerate(chain):
     x = 0.52 + i * (kw + kg)
@@ -271,17 +273,13 @@ for i, (head, path, body) in enumerate(chain):
     if i < len(chain) - 1:
         arrow(s, x + kw + 0.06, ky + kh / 2, x + kw + kg - 0.06, ky + kh / 2, color=GREEN, width=2)
 # drift: design and code compared both ways
-dx1, dx2, dy = 0.52 + (kw + kg) + kw / 2, 0.52 + 2 * (kw + kg) + kw / 2, ky + kh + 0.45
+dx1, dx2, dy = 0.52 + (kw + kg) + kw / 2, 0.52 + 2 * (kw + kg) + kw / 2, ky + kh + 0.35
 for x in (dx1, dx2):
     arrow(s, x, dy, x, ky + kh + 0.04, color=DARK, width=1.75, dash=True)
-c = arrow(s, dx1, dy, dx2, dy, color=DARK, width=1.75, dash=True)
-c.line._get_or_add_ln().remove(c.line._get_or_add_ln().find(qn("a:tailEnd")))
+arrow(s, dx1, dy, dx2, dy, color=DARK, width=1.75, dash=True, head=False)
 text(s, dx1 - 1.0, dy + 0.12, dx2 - dx1 + 2.0, 0.6,
      [[("Drift check: ", {"bold": True, "color": GREEN}), ("the class model read from the code is compared with design.json; the developer repairs either side.", {})]],
      size=14, align=PP_ALIGN.CENTER)
-text(s, 0.52, ky + kh + 0.25, kw, 0.9,
-     [[("4 UML diagrams", {"bold": True}), (" are rendered from design.json by code", {})]],
-     size=14, color=GREY)
 box(s, 0.52, 5.85, 12.29, 0.62, fill=CARD, shape=MSO_SHAPE.RECTANGLE, align=PP_ALIGN.LEFT, inset=0.25,
     runs=[[("Source of truth: ", {"bold": True, "color": GREEN}),
            ("one JSON design model behind every diagram; agents edit it through a zod-checked tool, never Mermaid.", {})]],
@@ -370,7 +368,7 @@ for i, (h, b) in enumerate(limits):
     box(s, x, 4.8, cw, 1.5, fill=WHITE, line=GREEN, shape=MSO_SHAPE.RECTANGLE, name=f"Limit {i + 1}")
     text(s, x + 0.2, 4.93, cw - 0.4, 0.3, h, size=14, bold=True, color=GREEN)
     text(s, x + 0.2, 5.3, cw - 0.4, 1.2, b, size=13)
-source(s, "showcases/, evidence/scaling-comparison.md (auction: 35 runs, $6.33 in total)")
+source(s, "showcases/, evidence/scaling-comparison.md (to do: 22 runs, $1.73; auction: 35 runs, $6.33 in total)")
 notes(s, "0:45. To do is the small one we just demoed: 10 requirements and 5 classes, taken through a due date change ticket with 48 tests green, for 1.73 dollars over 22 runs. Booking is medium: 12 requirements, 11 use cases, 13 classes. Auction is the larger one: 23 classes on four nodes, two live services, taken through a reserve price change ticket with 57 tests green, for 6.33 dollars over 35 runs. Where it broke: the gates were green while concurrent bids could overwrite each other, because generated tests do not race requests; the design agent adds infrastructure outside our stack; and the auction ticket showed two gate problems, which we have since fixed. CHECK BEFORE THE TALK: update the booking numbers once issue #4 is done.")
 
 # 8 Lessons learned -----------------------------------------------------------
