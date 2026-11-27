@@ -347,12 +347,12 @@ if (only === 'bug') {
 	if (name !== 'booking') await stop('the bug step has a hand edit for the booking showcase only');
 	console.log(`\n--- injected bug: overlap check removed from ${BUG.file} ---`);
 	const text = (await store.readText(BUG.file)) ?? '';
-	// A rerun after the fix (the overlap check rewritten, its finding resolved) only goes on to the
-	// final checks and approvals.
+	// A rerun after the fix (its finding resolved) only goes on to the final checks and approvals,
+	// also when the fix restored the original lines.
 	const fixed = ((await orch.snapshot(name)).testChecks?.findings ?? []).some(
 		(f) => f.resolvedAt && f.file === BUG.test.file && f.test.startsWith(BUG.test.title)
 	);
-	if (fixed && !text.includes(BUG.from)) console.log('the injected bug is fixed already');
+	if (fixed) console.log('the injected bug is fixed already');
 	else await injectAndFix(text);
 }
 
@@ -379,6 +379,7 @@ async function injectAndFix(text: string): Promise<void> {
 	console.log(`run tests after the fix: ${green.length} failing`);
 	for (const t of green) console.log(`  FAIL ${t}`);
 	console.log(`\n=== ${BUG.file} after the fix ===\n${await store.readText(BUG.file)}`);
+	if (green.length > 0) await stop('tests still fail after the fix; P5 not approved');
 }
 
 // Rerun all checks at the end, also after the drift hand edits and their repairs, so the stored

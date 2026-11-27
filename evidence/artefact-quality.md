@@ -52,7 +52,8 @@ Samples from the [booking](../showcases/booking/) showcase (medium size, after i
 ## Mutation check: does a test catch each broken must rule?
 
 46 hand mutants, one at a time, in a scratch copy of the booking code (`npx vitest run` on the
-generated suite, 58 tests); every file restored and the suite green afterwards.
+generated suite, 58 tests); every file restored and the suite green afterwards. The mutants
+were made by hand and are not committed, so no script reproduces the table.
 
 | Requirement             | Mutants | Caught | Survivors (why)                                                                                                                                              |
 | ----------------------- | ------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
