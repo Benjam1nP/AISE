@@ -16,6 +16,83 @@ MCP client (Claude Code, Inspector) ──stdio──> MCP server (`npm run mcp`
 
 One tool registry, two transports: our agents call `executeTool` in process; `src/lib/server/mcp/` serves the same `TOOLS` over stdio for any MCP client. Every call is validated by the same zod schema and limited by the same agent scope either way.
 
+## Agents and artefact flow
+
+The orchestrator (plain code) starts every agent; agents never call each other. Solid arrows are writes, each a scoped tool call through the registry (`AG` stands for every agent); dashed arrows are handoffs the orchestrator carries out. Every agent also reads through the registry, and Docker runs only behind the `typecheck`, `run_tests`, `start_app` and `deploy_check` tools.
+
+For slides and the report, [docs/diagrams/agent-architecture.html](docs/diagrams/agent-architecture.html) is an overview of the same flow with the agents grouped per phase, exported as [SVG](docs/diagrams/agent-architecture.svg) and [PNG](docs/diagrams/agent-architecture.png) (2560 x 1440).
+
+```mermaid
+flowchart LR
+  dev(["Developer"]) <-->|"HTTP actions,<br/>SSE events"| ui["SvelteKit UI"]
+  ui <--> orch{{"Orchestrator<br/>(plain code)<br/>phases, gates,<br/>staleness, fix loop"}}
+  mcpc(["MCP client"]) -->|stdio| mcp["MCP server"]
+
+  subgraph AG["Agents (own loop on the Anthropic SDK)"]
+    direction TB
+    req["requirements P1<br/>Sonnet 5.5"]
+    des["design P2<br/>Sonnet 5.5"]
+    rev["review P3<br/>Sonnet 5.5"]
+    cw["code workers P4<br/>Haiku 5.5 (Sonnet on attempt 3)"]
+    code["code agent P4<br/>Sonnet 5.5"]
+    tw["test workers P5<br/>Haiku 5.5 (Sonnet on attempt 3)"]
+    test["test agent P5<br/>Sonnet 5.5"]
+    dep["deploy P6<br/>Sonnet 5.5"]
+    mnt["maintenance P7<br/>Opus 5.5"]
+    sum["gate summary<br/>Haiku 5.5, no tools"]
+  end
+
+  subgraph ART["Project artefacts"]
+    direction TB
+    reqj[(".aise/requirements.json")]
+    desj[(".aise/design.json<br/>all diagrams rendered from it")]
+    prop[(".aise/design-proposals.json")]
+    srcf[("src/, public/")]
+    tst[("test/")]
+    find[(".aise/runs/runId/findings.json")]
+    depf[("Dockerfile, compose.yaml, RUN.md")]
+    tick[(".aise/tickets.json")]
+    chk[(".aise/state.json, .aise/checks/")]
+  end
+
+  orch -->|"one brief per run"| AG
+  orch -->|"gates, staleness hashes"| chk
+  AG -->|"every tool call, in process"| reg[["Tool registry<br/>zod schemas,<br/>per agent scope"]]
+  mcp --> reg
+  reg --> docker[("Docker runner<br/>and compose")]
+
+  req -->|write_requirements| reqj
+  des -->|update_design| desj
+  rev -->|report_design_proposals| prop
+  cw -->|"write_file, one class each"| srcf
+  code -->|"wiring, Update, fixes"| srcf
+  tw -->|"write_file, one use case each"| tst
+  test -->|"triage, report_test_fix"| tst
+  test -->|report_code_bug| find
+  code -->|report_fix_result| find
+  dep -->|write_file| depf
+  mnt -->|"write_ticket_plan, write_ticket_report"| tick
+
+  find -.->|"fix brief, P5 fix loop"| code
+  prop -.->|"accepted: P2 run"| des
+  tick -.->|"plan approved: phase agent runs"| orch
+```
+
+| Agent             | Responsibility                                                                 | Model and why                                                                                |
+| ----------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| requirements (P1) | Vague description to structured requirements; asks instead of guessing         | Sonnet 5.5: good dialogue and structured output at moderate cost                             |
+| design (P2)       | Design model (all diagrams) from approved requirements, coverage of every AC   | Sonnet 5.5: multi step model edits with validation feedback                                  |
+| review (P3)       | 0 to 5 design proposals the developer accepts or rejects                       | Sonnet 5.5: one short run, $0.50 guard                                                       |
+| code workers (P4) | One file per design class, in parallel rounds                                  | Haiku 5.5: small, well specified files, cheap and fast in parallel; Sonnet only on attempt 3 |
+| code agent (P4)   | Express wiring, chat changes, Update runs, fixes for test findings             | Sonnet 5.5: cross file edits with typecheck and drift feedback                               |
+| test workers (P5) | One test file per use case, one test per acceptance criterion                  | Haiku 5.5: same reason as the code workers                                                   |
+| test agent (P5)   | Triage of failing tests: fix the test or record a code bug with a proposed fix | Sonnet 5.5: needs to judge requirement, design and API against a failure                     |
+| deploy (P6)       | Dockerfile, compose.yaml, RUN.md, proven by `deploy_check`                     | Sonnet 5.5: short run against a checker, $1 guard                                            |
+| maintenance (P7)  | Ticket triage into a plan (start phase, affected IDs) and the change report    | Opus 5.5 at medium effort: reasons over every artefact at once to find what a change touches |
+| gate summary      | One short summary after each run                                               | Haiku 5.5: one call, no tools                                                                |
+
+The tools of each agent are in [Agents](#agents) below.
+
 ## Modules (as built)
 
 - `src/lib/server/core/`: zod schemas for requirements and design (`schemas/`), ID patterns, `ProjectStore` (file I/O inside one project, every JSON write validated), `validate.ts` (references, types, class to component membership, node links), Mermaid and Markdown renderers (`render/`, the only place diagram text is produced, every label escaped), tools (`tools/`), runs with backups (`runs.ts`), phase state (`state.ts`) and chat logs (`chat.ts`).
