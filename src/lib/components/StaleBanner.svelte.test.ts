@@ -160,6 +160,15 @@ describe('StaleBanner for P5', () => {
 		expect(screen.getByText(/requirements or design changed/)).toBeTruthy();
 	});
 
+	it('uses plural verbs for the tests (#25)', () => {
+		render(StaleBanner, {
+			...props,
+			failing: [{ label: 'Tests pass', ok: false }]
+		});
+		expect(screen.getByText(/Still valid keeps the tests as they are\./)).toBeTruthy();
+		expect(screen.getByText(/The tests fail these checks right now: Tests pass\./)).toBeTruthy();
+	});
+
 	it('submits both actions with phase P5', () => {
 		render(StaleBanner, props);
 		for (const name of ['Update tests', 'Still valid']) {
