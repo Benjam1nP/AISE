@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- The P7 change report brief keeps run summaries and walk notes whole up to 1500 characters (before: 500 and 300), shortens a longer one at a sentence end with the mark "(shortened for this brief)", and the maintenance agent no longer reports such a note as cut off (#24).
+- P7 plans number their steps by the real phases (code is P4, tests P5), and the P5 stale banner reads "keeps the tests as they are" and "The tests fail these checks" (#25).
 - C2 evidence in `evidence/change-propagation.md`: the requirement tickets of to do and auction, and two auction drift tickets from hand edits in `src/`. TCK-002 adopts a new `Item.timeLeftMs` into the design, and TCK-003 renames a parameter of `Item.isOpen` back to the name the design uses. The file lists what each ticket updated, how staleness, drift and tickets keep the artefacts aligned, and where they do not. `scripts/run-auction.ts drift` reproduces both tickets (about $0.66). The booking design change waits for #4 (#6).
 
 - To do showcase taken end to end in the UI: P1 to P6 (8 requirements after 7 clarifying questions, a P3 review round, 28 tests, deploy check passing) and ticket TCK-001 (tasks get an optional due date and an overdue mark), walked through P1 to P6 again and closed with its change report, 48 tests passing. All seven phases approved without override, $1.73 in total. Numbers and what needed help are in `evidence/scaling-comparison.md` (#3).

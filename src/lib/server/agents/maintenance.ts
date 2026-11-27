@@ -15,11 +15,11 @@ The first line of the user message names the mode. A message that starts with "M
 Triage mode:
 - Read the requirements and the design. Call trace on every ID the ticket may touch, and detect_drift when code exists and the ticket concerns the code.
 - If the ticket is unclear, ask at most 3 questions in plain prose and do not write a plan. The ticket stays open and the developer answers in the chat.
-- Otherwise call write_ticket_plan until the tool accepts it. entry is the phase where the change starts: requirement tickets use P1; change tickets use P1 for a requirement change or P2 for a design change; bug tickets use P5; drift tickets use P2 with direction design when the design should follow the code, or P4 with direction code when the code should follow the design. direction is for drift tickets only. affectedIds are existing IDs only (REQ, UC, SEQ, DSN); describe new requirements or design elements in the steps, not in affectedIds. files are existing project files the change touches. steps has one short line per step, in phase order, starting at the entry phase. The tool refuses a plan with an unknown ID or file or a wrong entry: fix what it names and call it again.
+- Otherwise call write_ticket_plan until the tool accepts it. entry is the phase where the change starts: requirement tickets use P1; change tickets use P1 for a requirement change or P2 for a design change; bug tickets use P5; drift tickets use P2 with direction design when the design should follow the code, or P4 with direction code when the code should follow the design. direction is for drift tickets only. affectedIds are existing IDs only (REQ, UC, SEQ, DSN); describe new requirements or design elements in the steps, not in affectedIds. files are existing project files the change touches. steps has one short line per step, in phase order, starting at the entry phase. The phases are P1 requirements, P2 design, P3 design review, P4 code, P5 tests and P6 deployment; a step that names its phase uses this numbering, so code steps are P4 and test steps P5. The tool refuses a plan with an unknown ID or file or a wrong entry: fix what it names and call it again.
 - Then reply in short prose: the entry phase, what is affected and why.
 
 Report mode:
-- The message holds the ticket, its steps, the IDs and files that changed with their diffs, the test result and notes. Call write_ticket_report once with a few short paragraphs: what changed in each phase and why, the test result, and anything that was not reproduced or is still open. Use only what the brief says; do not invent changes.
+- The message holds the ticket, its steps, the IDs and files that changed with their diffs, the test result and notes. Call write_ticket_report once with a few short paragraphs: what changed in each phase and why, the test result, and anything that was not reproduced or is still open. Use only what the brief says; do not invent changes. A summary or note marked (shortened for this brief) is not missing information: do not tell the developer it was cut off.
 
 Never write Mermaid or any diagram syntax. Do not repeat code or whole diffs. Reply in short plain prose.`;
 
@@ -41,6 +41,16 @@ const defang = (text: string) => text.replace(/\bmode (triage|report)\./gi, 'Mod
 /** A short single line value (ID, path) for a brief. */
 const short = (text: string) => defang(clip(oneLine(text), 200));
 const titleOf = (t: Ticket) => short(t.title);
+/** A run summary or walk note longer than any usual one; the system prompt explains the marker. */
+const MAX_PROSE_CHARS = 1500;
+/** Shortens prose at its last sentence end within the limit and marks it as shortened. */
+function prose(text: string): string {
+	const flat = oneLine(text);
+	if (flat.length <= MAX_PROSE_CHARS) return flat;
+	const head = flat.slice(0, MAX_PROSE_CHARS);
+	const end = head.search(/[.!?](?=\s[^.!?]*$)/);
+	return `${end > 0 ? head.slice(0, end + 1) : head} (shortened for this brief)`;
+}
 
 /** The first chat message of a ticket (plain, for the chat view). */
 export function ticketMessage(t: Ticket): string {
@@ -108,12 +118,12 @@ export function closeBrief(
 		if (s.files.length > MAX_STEP_FILES)
 			shown.push(`... (${s.files.length - MAX_STEP_FILES} more files)`);
 		const files = shown.length > 0 ? `; files: ${shown.join(', ')}` : '';
-		const summary = s.summary ? clip(oneLine(s.summary), 500) : 'no summary';
+		const summary = s.summary ? prose(s.summary) : 'no summary';
 		return `${s.phase} ${s.agent} run ${s.runId} (${s.status}): ${summary}${files}`;
 	});
 	if (data.steps.length > MAX_STEPS)
 		steps.push(`... (${data.steps.length - MAX_STEPS} more steps)`);
-	const shownNotes = notes.slice(0, MAX_NOTES).map((n) => `- ${clip(oneLine(n), 300)}`);
+	const shownNotes = notes.slice(0, MAX_NOTES).map((n) => `- ${prose(n)}`);
 	if (notes.length > MAX_NOTES) shownNotes.push(`... (${notes.length - MAX_NOTES} more notes)`);
 
 	let spent = 0;

@@ -39,6 +39,7 @@
 			changed: 'requirements',
 			upstream: 'requirements',
 			made: 'design',
+			plural: false,
 			update: 'Update design',
 			agent: 'design'
 		},
@@ -46,6 +47,7 @@
 			changed: 'design',
 			upstream: 'design',
 			made: 'code',
+			plural: false,
 			update: 'Update code',
 			agent: 'code'
 		},
@@ -53,6 +55,7 @@
 			changed: 'requirements or design',
 			upstream: 'code',
 			made: 'tests',
+			plural: true,
 			update: 'Update tests',
 			agent: 'test'
 		},
@@ -60,6 +63,7 @@
 			changed: 'services, start scripts, dependencies or code',
 			upstream: 'tests',
 			made: 'deployment',
+			plural: false,
 			update: 'Update deployment',
 			agent: 'deploy'
 		}
@@ -94,11 +98,12 @@
 	<p>
 		Update asks the {words.agent} agent to adjust the affected {phase === 'P2'
 			? 'elements'
-			: 'files'}. Still valid keeps the {words.made} as it is.
+			: 'files'}. Still valid keeps the {words.made} as {words.plural ? 'they are' : 'it is'}.
 	</p>
 	{#if blocking.length > 0}
 		<p>
-			The {words.made} fails these checks right now: {blocking
+			The {words.made}
+			{words.plural ? 'fail' : 'fails'} these checks right now: {blocking
 				.map((c) => (c.detail ? `${c.label} (${c.detail})` : c.label))
 				.join(', ')}. Still valid records this as an override.
 		</p>

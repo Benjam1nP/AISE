@@ -1268,6 +1268,26 @@ describe('maintenance agent and ticket briefs', () => {
 		).not.toContain('out of date');
 	});
 
+	it('tells triage which phase number each kind of step has (#25)', () => {
+		expect(maintenanceAgent.system).toContain(
+			'P1 requirements, P2 design, P3 design review, P4 code, P5 tests and P6 deployment'
+		);
+	});
+
+	it('keeps a step summary or note of a usual length whole (#24)', () => {
+		const long = `${'The agent added REQ-009 and changed two criteria. '.repeat(15)}Check REQ-003 yourself.`;
+		const brief = closeBrief(ticket(), data({ steps: [step({ summary: long })] }), [long]);
+		expect(brief.match(/Check REQ-003 yourself\./g)).toHaveLength(2);
+		expect(brief).not.toContain('shortened');
+	});
+
+	it('shortens an overlong summary or note at a sentence end and says so (#24)', () => {
+		const long = 'One sentence here. '.repeat(200);
+		const brief = closeBrief(ticket(), data({ steps: [step({ summary: long })] }), [long]);
+		expect(brief.match(/One sentence here\. \(shortened for this brief\)/g)).toHaveLength(2);
+		expect(maintenanceAgent.system).toMatch(/shortened for this brief.*not missing/i);
+	});
+
 	it('spends a budget on the diffs in path order and names every path', () => {
 		const diff = 'x'.repeat(5000);
 		const files = Array.from({ length: 50 }, (_, i) => ({
