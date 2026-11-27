@@ -1,0 +1,21 @@
+{
+  "id": "20261127-121236-P1",
+  "phase": "P1",
+  "agent": "requirements",
+  "status": "done",
+  "startedAt": "2026-11-27T12:12:36.673Z",
+  "finishedAt": "2026-11-27T12:12:48.564Z",
+  "usage": {
+    "input": 419,
+    "output": 1525,
+    "cacheRead": 5668,
+    "cacheWrite": 1320
+  },
+  "costUsd": 0.017387899999999998,
+  "summary": "The agent read the existing requirements and then saved a first draft of four requirements for the phase P1: add a task, mark it done, keep the list between visits, and run in a browser. Its reply lists five open questions for you to answer before the draft is final: where tasks should be stored (browser-only or a server), whether done tasks can be unmarked, whether editing and deleting are needed, how done tasks should be displayed, and whether tasks need extra fields. Both tool calls succeeded, so the draft is saved, and your next step is to answer those questions, which will decide whether the requirements need revising.",
+  "prevPhase": {
+    "status": "not_started"
+  },
+  "prevArtefactHash": null,
+  "postArtefactHash": "b5b1783074ee24b559d6709189f149e3b7fbcc4624d951da0b8bb405fc10ab5c"
+}

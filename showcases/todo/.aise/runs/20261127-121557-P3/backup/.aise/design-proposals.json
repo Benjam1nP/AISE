@@ -1,0 +1,23 @@
+{
+  "designHash": "30b52a9185db75b5d109f65b08c30b49ba0692b8a431f233c14f879bdbb5254b",
+  "proposals": [
+    {
+      "kind": "uncovered_criterion",
+      "title": "Add view that shows done state",
+      "change": "Add a browser-side TaskListView class, placed in the Browser page component DSN-003. It renders each task with a checkbox that is ticked when done is true and with struck-through text, and it has a method that calls PATCH when the user ticks or unticks. Add a final SEQ-003 message that re-renders the task from the returned Task, so the done and not-done states look different.",
+      "elementIds": [
+        "DSN-003",
+        "UC-003",
+        "SEQ-003",
+        "DSN-005"
+      ],
+      "reqIds": [
+        "REQ-002",
+        "REQ-007"
+      ],
+      "id": "PRP-001",
+      "status": "open"
+    }
+  ],
+  "lastId": "PRP-001"
+}

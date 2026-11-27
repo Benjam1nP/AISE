@@ -1,0 +1,32 @@
+{
+  "id": "20261127-121452-P2",
+  "phase": "P2",
+  "agent": "design",
+  "status": "done",
+  "startedAt": "2026-11-27T12:14:52.460Z",
+  "finishedAt": "2026-11-27T12:15:19.655Z",
+  "usage": {
+    "input": 620,
+    "output": 4545,
+    "cacheRead": 24932,
+    "cacheWrite": 10245
+  },
+  "costUsd": 0.0717804,
+  "summary": "The agent could not apply PRP-001 because the save was rejected: a class cannot sit on the Browser client node, which holds only plain `public/index.html`, so the design is unchanged. The developer should choose between keeping the browser free of classes by modelling the task-list behaviour as use-case and requirement text on DSN-003 (the agent's recommendation, which leaves REQ-002 criterion 3 without a class method), moving `TaskListView` to the server-side `Tasks` node, or changing the environment's constraint so browser-side classes are allowed. The agent will apply whichever option is picked.",
+  "prevPhase": {
+    "status": "awaiting_approval"
+  },
+  "prevArtefactHash": "30b52a9185db75b5d109f65b08c30b49ba0692b8a431f233c14f879bdbb5254b",
+  "postArtefactHash": "30b52a9185db75b5d109f65b08c30b49ba0692b8a431f233c14f879bdbb5254b",
+  "reqHashes": {
+    "REQ-001": "dd2178e696584311b9db920d04e9019d8160ee2ca86c5e27845810a03c8470d1",
+    "REQ-002": "8194c9f5f5ec51c3c6141cd9da26e60519043b8ea81af4a0d44df6cbacb1b73f",
+    "REQ-003": "ea117479352a811725da3deb218a6479510c32f9c4468969640ce907f31a5817",
+    "REQ-004": "fbb008e714fd25c3d816038213b387e9db937782e7c89e380eeb090ac3dca4c6",
+    "REQ-005": "6b7c0a7f0d9a62019eda6287e749eead6f26cd9f70eba024836e705b6fcbd440",
+    "REQ-006": "4da07fea6bebed336b08d51838fa9734d6af4ceddef62d266084b9600f751143",
+    "REQ-007": "594572812fba023d410326cc9819df731303ac1ceee9a5fbf3b992b8c0c3ea5f",
+    "REQ-008": "914a6219c5fe0adfeb81eca4c5239baf19626241f9132561f51f7ade81534ff2"
+  },
+  "fromProposal": "PRP-001"
+}

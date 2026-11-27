@@ -1,0 +1,81 @@
+{
+  "phases": {
+    "P1": {
+      "status": "approved",
+      "approvedAt": "2026-11-27T12:57:05.874Z"
+    },
+    "P2": {
+      "status": "approved",
+      "approvedAt": "2026-11-27T12:59:30.288Z",
+      "reqHashes": {
+        "REQ-001": "4df7ca82e7249b0f16dfc6d0b84b43c5a931d2dd4d7754d8e856b95cf0262660",
+        "REQ-002": "8194c9f5f5ec51c3c6141cd9da26e60519043b8ea81af4a0d44df6cbacb1b73f",
+        "REQ-003": "ea117479352a811725da3deb218a6479510c32f9c4468969640ce907f31a5817",
+        "REQ-004": "fbb008e714fd25c3d816038213b387e9db937782e7c89e380eeb090ac3dca4c6",
+        "REQ-005": "ee15c8dc4a0ff8efb63b8c92ea93c0774a77c56ff35c6a5c873f5f1c92128989",
+        "REQ-006": "4da07fea6bebed336b08d51838fa9734d6af4ceddef62d266084b9600f751143",
+        "REQ-007": "594572812fba023d410326cc9819df731303ac1ceee9a5fbf3b992b8c0c3ea5f",
+        "REQ-008": "914a6219c5fe0adfeb81eca4c5239baf19626241f9132561f51f7ade81534ff2",
+        "REQ-009": "49073fe9bd94e13f6e82fc0f1d25b7e13158e5ddf3682ab5d3f2950fc64565ce",
+        "REQ-010": "59d8a0f8fbe5fd6e6ea65fca896ef7931ba3dd1b34593faa88d5a76e07a036ec"
+      }
+    },
+    "P3": {
+      "status": "not_started"
+    },
+    "P4": {
+      "status": "approved",
+      "approvedAt": "2026-11-27T13:00:46.722Z",
+      "designHashes": {
+        "DSN-005": "d098fd060aaf70a5cdc536288c2b40b5206128ed745fcf623e69904b1a18451f",
+        "DSN-009": "58712da7b8ce0e2dda987c644aac1fd35876f29de76af1ff139f35c1ce6f4772",
+        "DSN-006": "b90392d5e157c9d4dcbfa4e971e8e5de3e10dfa3849d254165152fe670ea23a2",
+        "DSN-007": "e002f93c7ba440037648ad4b4852dc806e19eb8f971ba30507b42cd829e25979",
+        "DSN-008": "cf2181910e3af9032ace5b9c32582b72e1f625d21653b4a3a74a1f9679ae2b96",
+        "DSN-003": "d682e168e37732be119a30dbc60de8aa6942c0743cb38f073e1de571a33f16cd",
+        "DSN-004": "1dd3795db12cd114d84c75fea5aa0f6e1bfde29f7181511ee2c12e9b3d465710",
+        "DSN-001": "597488c14b5303d7e7f1933958608e6196bf6ed33ad375d2d9a55a639163b1fa",
+        "DSN-002": "281af52c9317d5e11bd90b75f9ceb522cdb02f2e52c3cafa2b4044fe77032112"
+      }
+    },
+    "P5": {
+      "status": "approved",
+      "approvedAt": "2026-11-27T13:02:32.415Z",
+      "reqHashes": {
+        "REQ-001": "4df7ca82e7249b0f16dfc6d0b84b43c5a931d2dd4d7754d8e856b95cf0262660",
+        "REQ-002": "8194c9f5f5ec51c3c6141cd9da26e60519043b8ea81af4a0d44df6cbacb1b73f",
+        "REQ-003": "ea117479352a811725da3deb218a6479510c32f9c4468969640ce907f31a5817",
+        "REQ-004": "fbb008e714fd25c3d816038213b387e9db937782e7c89e380eeb090ac3dca4c6",
+        "REQ-005": "ee15c8dc4a0ff8efb63b8c92ea93c0774a77c56ff35c6a5c873f5f1c92128989",
+        "REQ-006": "4da07fea6bebed336b08d51838fa9734d6af4ceddef62d266084b9600f751143",
+        "REQ-007": "594572812fba023d410326cc9819df731303ac1ceee9a5fbf3b992b8c0c3ea5f",
+        "REQ-008": "914a6219c5fe0adfeb81eca4c5239baf19626241f9132561f51f7ade81534ff2",
+        "REQ-009": "49073fe9bd94e13f6e82fc0f1d25b7e13158e5ddf3682ab5d3f2950fc64565ce",
+        "REQ-010": "59d8a0f8fbe5fd6e6ea65fca896ef7931ba3dd1b34593faa88d5a76e07a036ec"
+      },
+      "useCaseHashes": {
+        "UC-001": "c4035fbe4d55cba4181a9e963f3002fecdaa504fc74ba9fcdea428067d4abe96",
+        "UC-002": "747e541b34b9d728b8f1b709c4965506153bc898c04c8e3e4a51ebe74125eeb4",
+        "UC-003": "4962597a99ae663db37b8764705f3b8e10e326d8d456edc47360e69a8544480e",
+        "UC-004": "9bd9ea2029207a9cf9087a85067a878df2e43cac2f68738449811b3d4807a7db",
+        "UC-005": "962ac7d265f8ed87a5b205d11f57beb0892f4e105adae41036281ca4c397a31e",
+        "SEQ-001": "dd8f7d9bcebe4a1a73b8d18b76d6e472f1384f7240f2e33f101274a440983fe9",
+        "SEQ-002": "3f12382fb0b3edff8725a08ac7248bc8770867f5b68efaa5dc768c6befc5fb39",
+        "SEQ-003": "d830354c98807673ac6f45164df7ced47995c987b2a67dffbecd463a63a875eb",
+        "SEQ-004": "8fdbd1feb45596fff26de09f23495281a6c21db75e7bfab34935377ad7901d21",
+        "SEQ-005": "aa4215cb9707dd51981deb0c2c09188a91216f74a38e81de97f4e6330ae82f22"
+      }
+    },
+    "P6": {
+      "status": "approved",
+      "approvedAt": "2026-11-27T12:18:57.400Z",
+      "deployHashes": {
+        "DSN-002": "fecc38807d889e99f06e1d2cdaf5e4554206aff5cf20d3230af943c007e5de6c",
+        "dependencies": "45c93ca748e57462e98272018be92de1d2bd1c85c4fa38b9addfb2a1abd84837"
+      }
+    },
+    "P7": {
+      "status": "not_started"
+    }
+  }
+}

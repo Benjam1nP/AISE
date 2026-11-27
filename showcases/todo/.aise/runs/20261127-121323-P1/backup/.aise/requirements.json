@@ -1,0 +1,86 @@
+{
+  "requirements": [
+    {
+      "id": "REQ-001",
+      "title": "Add task",
+      "text": "The system shall let the user add a task by entering a text description.",
+      "type": "functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "Entering text and confirming adds a new task to the list",
+        "The new task is shown as not done",
+        "An empty task description is not added"
+      ]
+    },
+    {
+      "id": "REQ-002",
+      "title": "Mark task done",
+      "text": "The system shall let the user mark a task as done.",
+      "type": "functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "Ticking a task changes it to the done state",
+        "The done state is visibly distinguishable from the not-done state"
+      ]
+    },
+    {
+      "id": "REQ-003",
+      "title": "Persist tasks",
+      "text": "The system shall keep the user's tasks and their done state available when the user closes the app and returns later.",
+      "type": "functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "After adding tasks and ticking some, closing and reopening the app shows the same tasks with the same done states"
+      ]
+    },
+    {
+      "id": "REQ-004",
+      "title": "Run in browser",
+      "text": "The system shall be usable in a web browser.",
+      "type": "non-functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "All features are usable in a web browser without installing additional software"
+      ]
+    }
+  ],
+  "openQuestions": [
+    {
+      "id": "Q-001",
+      "text": "Where should tasks be stored? Browser-only storage (simple, but only that browser on that device) or on a server (available from other devices, needs a backend)?",
+      "reqIds": [
+        "REQ-003"
+      ]
+    },
+    {
+      "id": "Q-002",
+      "text": "Should you be able to untick a task to mark it as not done again?",
+      "reqIds": [
+        "REQ-002"
+      ]
+    },
+    {
+      "id": "Q-003",
+      "text": "Do you need to edit or delete tasks?",
+      "reqIds": [
+        "REQ-001"
+      ]
+    },
+    {
+      "id": "Q-004",
+      "text": "Should done tasks stay in the list, move to a separate section, or be hideable?",
+      "reqIds": [
+        "REQ-002"
+      ]
+    },
+    {
+      "id": "Q-005",
+      "text": "Is a task just a text description, or do you want extras such as due date, priority or categories?",
+      "reqIds": [
+        "REQ-001"
+      ]
+    }
+  ],
+  "assumptions": [],
+  "outOfScope": []
+}

@@ -1,0 +1,119 @@
+{
+  "id": "20261127-130050-P5",
+  "phase": "P5",
+  "agent": "test",
+  "status": "done",
+  "startedAt": "2026-11-27T13:00:50.550Z",
+  "finishedAt": "2026-11-27T13:02:25.106Z",
+  "usage": {
+    "input": 974,
+    "output": 14769,
+    "cacheRead": 218234,
+    "cacheWrite": 47877
+  },
+  "costUsd": 0.2874185,
+  "summary": "The agent patched the tests for the changed and added requirement IDs across UC-001 to UC-005, and also fixed UC-005, which was not on its list and had broken typecheck by calling `add` with one argument. Typecheck is now clean and all 48 tests pass, with 3 `it.todo` entries, two of which (REQ-004 AC1 and REQ-002 AC3) are manual checks. Before approving, check that the `it.todo` entries are acceptable, that the UC-005 change was intended, and that REQ-009 AC4 being covered in both UC-002 and UC-004 is the coverage you want.",
+  "prevPhase": {
+    "status": "stale",
+    "approvedAt": "2026-11-27T12:18:31.160Z",
+    "reqHashes": {
+      "REQ-001": "dd2178e696584311b9db920d04e9019d8160ee2ca86c5e27845810a03c8470d1",
+      "REQ-002": "8194c9f5f5ec51c3c6141cd9da26e60519043b8ea81af4a0d44df6cbacb1b73f",
+      "REQ-003": "ea117479352a811725da3deb218a6479510c32f9c4468969640ce907f31a5817",
+      "REQ-004": "fbb008e714fd25c3d816038213b387e9db937782e7c89e380eeb090ac3dca4c6",
+      "REQ-005": "6b7c0a7f0d9a62019eda6287e749eead6f26cd9f70eba024836e705b6fcbd440",
+      "REQ-006": "4da07fea6bebed336b08d51838fa9734d6af4ceddef62d266084b9600f751143",
+      "REQ-007": "594572812fba023d410326cc9819df731303ac1ceee9a5fbf3b992b8c0c3ea5f",
+      "REQ-008": "914a6219c5fe0adfeb81eca4c5239baf19626241f9132561f51f7ade81534ff2"
+    },
+    "useCaseHashes": {
+      "UC-001": "214aa31246a8fa105f23268d5db34a5e84938c6ea90c74dcc4d4d622dc6185eb",
+      "UC-002": "8e47e1d7c68c519650fa9a4a3226692ca8dacfc413f732684ce12ddd2e1017ef",
+      "UC-003": "b1fa3f6452a147018d7575c210f2e1b979b348e595ec87f1031230373390662a",
+      "UC-004": "e187f98e1e36102b23c5299b79d62f2846676dad240f92759d004910ea97e55d",
+      "UC-005": "962ac7d265f8ed87a5b205d11f57beb0892f4e105adae41036281ca4c397a31e",
+      "SEQ-001": "a8f41dd8e05c4b5af5141c7d7385ed4940d55307c26ee3378b3898260497c515",
+      "SEQ-002": "c1c6e121a14a13c033eddc73d4225e1d7c7138770ef5036812ef099b18b7a1ff",
+      "SEQ-003": "d830354c98807673ac6f45164df7ced47995c987b2a67dffbecd463a63a875eb",
+      "SEQ-004": "15d9756809656982d0049e5a76a20a6a511ba933398b313f8735054a39465fd5",
+      "SEQ-005": "aa4215cb9707dd51981deb0c2c09188a91216f74a38e81de97f4e6330ae82f22"
+    }
+  },
+  "prevArtefactHash": "063b5c125426f1563a76d5a80ec43118ebbeb56c30c42d3d4ef96e50b3c73360",
+  "postArtefactHash": "bbf475ef5cdf41d19a8d26b14d6499a3506b810ba62875ac5e0535dc2c32e1f9",
+  "reqHashes": {
+    "REQ-001": "4df7ca82e7249b0f16dfc6d0b84b43c5a931d2dd4d7754d8e856b95cf0262660",
+    "REQ-002": "8194c9f5f5ec51c3c6141cd9da26e60519043b8ea81af4a0d44df6cbacb1b73f",
+    "REQ-003": "ea117479352a811725da3deb218a6479510c32f9c4468969640ce907f31a5817",
+    "REQ-004": "fbb008e714fd25c3d816038213b387e9db937782e7c89e380eeb090ac3dca4c6",
+    "REQ-005": "ee15c8dc4a0ff8efb63b8c92ea93c0774a77c56ff35c6a5c873f5f1c92128989",
+    "REQ-006": "4da07fea6bebed336b08d51838fa9734d6af4ceddef62d266084b9600f751143",
+    "REQ-007": "594572812fba023d410326cc9819df731303ac1ceee9a5fbf3b992b8c0c3ea5f",
+    "REQ-008": "914a6219c5fe0adfeb81eca4c5239baf19626241f9132561f51f7ade81534ff2",
+    "REQ-009": "49073fe9bd94e13f6e82fc0f1d25b7e13158e5ddf3682ab5d3f2950fc64565ce",
+    "REQ-010": "59d8a0f8fbe5fd6e6ea65fca896ef7931ba3dd1b34593faa88d5a76e07a036ec"
+  },
+  "useCaseHashes": {
+    "UC-001": "c4035fbe4d55cba4181a9e963f3002fecdaa504fc74ba9fcdea428067d4abe96",
+    "UC-002": "747e541b34b9d728b8f1b709c4965506153bc898c04c8e3e4a51ebe74125eeb4",
+    "UC-003": "4962597a99ae663db37b8764705f3b8e10e326d8d456edc47360e69a8544480e",
+    "UC-004": "9bd9ea2029207a9cf9087a85067a878df2e43cac2f68738449811b3d4807a7db",
+    "UC-005": "962ac7d265f8ed87a5b205d11f57beb0892f4e105adae41036281ca4c397a31e",
+    "SEQ-001": "dd8f7d9bcebe4a1a73b8d18b76d6e472f1384f7240f2e33f101274a440983fe9",
+    "SEQ-002": "3f12382fb0b3edff8725a08ac7248bc8770867f5b68efaa5dc768c6befc5fb39",
+    "SEQ-003": "d830354c98807673ac6f45164df7ced47995c987b2a67dffbecd463a63a875eb",
+    "SEQ-004": "8fdbd1feb45596fff26de09f23495281a6c21db75e7bfab34935377ad7901d21",
+    "SEQ-005": "aa4215cb9707dd51981deb0c2c09188a91216f74a38e81de97f4e6330ae82f22"
+  },
+  "ticketId": "TCK-001",
+  "prevTicket": {
+    "status": "in_progress",
+    "plan": {
+      "entry": "P1",
+      "affectedIds": [
+        "REQ-001",
+        "REQ-005",
+        "REQ-007",
+        "REQ-003",
+        "UC-001",
+        "UC-002",
+        "UC-004",
+        "SEQ-001",
+        "SEQ-002",
+        "SEQ-004",
+        "DSN-003",
+        "DSN-005",
+        "DSN-006",
+        "DSN-007",
+        "DSN-008"
+      ],
+      "files": [
+        "docs/requirements.md",
+        "docs/design.md",
+        "src/tasks-app/Task.ts",
+        "src/tasks-app/TaskController.ts",
+        "src/tasks-app/TaskService.ts",
+        "src/tasks-app/TaskStore.ts",
+        "src/app/app.ts",
+        "public/index.html",
+        "test/UC-001.test.ts",
+        "test/UC-002.test.ts",
+        "test/UC-004.test.ts"
+      ],
+      "steps": [
+        "P1: Remove 'Due dates' from the out-of-scope list (keep priorities and categories out of scope).",
+        "P1: Add a new requirement 'Task due date': a task may have an optional calendar due date (date only, no time), set when adding and set, changed or cleared when editing; an invalid date is rejected; the due date is stored on the server and kept after reopening.",
+        "P1: Add a new requirement 'Due date display and overdue': the list shows the due date next to a task that has one; an open task whose due date is before today (user's local date) is visibly marked overdue; a done task or a task without a due date is never marked overdue; list order of REQ-007 stays unchanged.",
+        "P1: Update REQ-001 and REQ-005 texts and criteria to mention the optional due date on add and edit.",
+        "P2: Add optional attribute dueDate (ISO date string YYYY-MM-DD or null) to Task DSN-005.",
+        "P2: Extend TaskController DSN-006 create body with dueDate and update body with dueDate (null clears it).",
+        "P2: Extend TaskService DSN-007 add and add a setDueDate (or edit) operation with date validation; update SEQ-002 and SEQ-004 accordingly.",
+        "P2: Extend TaskStore DSN-008 to persist dueDate (new nullable column with migration of existing databases).",
+        "P2: Update UC-001, UC-002, UC-004 descriptions and Browser page DSN-003 for due date input, display and overdue marking; link the new requirements.",
+        "P3: Add tests for the new requirements' acceptance criteria and adjust UC-001, UC-002, UC-004 tests.",
+        "P4: Implement dueDate in Task, TaskStore (column and migration), TaskService validation, TaskController and app routes, and the date input, display and overdue marker in public/index.html.",
+        "P5: Run all tests and check that existing tasks without due date still load and behave as before."
+      ]
+    }
+  }
+}

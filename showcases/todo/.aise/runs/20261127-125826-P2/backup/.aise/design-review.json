@@ -1,0 +1,437 @@
+{
+  "designHash": "22edfbd8832ef2403f34200733acb67373b84f268b10fc88098064889d3724b7",
+  "rows": [
+    {
+      "reqId": "REQ-001",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "sequenceId": "SEQ-002",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "add"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "normalizeText"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "normalizeText"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 5,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "normalizeText"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 6,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "normalizeText"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 7,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "normalizeText"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 8,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "normalizeDueDate"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 9,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "add"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-002",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "setDone"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-002",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "setDone"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-002",
+      "criterion": 3,
+      "coveredBy": [],
+      "note": "Visual only, in the browser page; described in UC-003 and UC-001."
+    },
+    {
+      "reqId": "REQ-003",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-008",
+          "method": "update"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-003",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-008",
+          "method": "findAll"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-004",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-006",
+          "method": "page"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-005",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "editText"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-005",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-008",
+          "method": "update"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-005",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "normalizeText"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-005",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "normalizeText"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-005",
+      "criterion": 5,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "editText"
+        },
+        {
+          "classId": "DSN-007",
+          "method": "normalizeDueDate"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-005",
+      "criterion": 6,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "editText"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-006",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "remove"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-006",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-008",
+          "method": "delete"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-007",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "list"
+        }
+      ],
+      "note": "Strike-through is rendered by the page."
+    },
+    {
+      "reqId": "REQ-007",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "list"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-007",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "list"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-007",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "list"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-007",
+      "criterion": 5,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "list"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-008",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-006",
+          "method": "page"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-009",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "normalizeDueDate"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-009",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "add"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-009",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "editText"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-009",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "normalizeDueDate"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-009",
+      "criterion": 5,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "normalizeDueDate"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-009",
+      "criterion": 6,
+      "coveredBy": [
+        {
+          "classId": "DSN-008",
+          "method": "update"
+        },
+        {
+          "classId": "DSN-008",
+          "method": "insert"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-009",
+      "criterion": 7,
+      "coveredBy": [
+        {
+          "classId": "DSN-008",
+          "method": "findAll"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "list"
+        }
+      ],
+      "note": "Task carries dueDate; the page renders it."
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "list"
+        }
+      ],
+      "note": "Page renders no date when null."
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 3,
+      "coveredBy": [],
+      "note": "Overdue marking uses the user's local date in the browser page; described in UC-001."
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 4,
+      "coveredBy": [],
+      "note": "Browser page rule, UC-001."
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 5,
+      "coveredBy": [],
+      "note": "Browser page rule, UC-001."
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 6,
+      "coveredBy": [],
+      "note": "Browser page rule, UC-001."
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 7,
+      "coveredBy": [
+        {
+          "sequenceId": "SEQ-003",
+          "step": 2
+        }
+      ],
+      "note": "Page re-evaluates overdue on the returned Task, UC-003."
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 8,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "list"
+        }
+      ]
+    }
+  ]
+}

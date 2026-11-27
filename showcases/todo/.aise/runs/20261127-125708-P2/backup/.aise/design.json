@@ -1,0 +1,520 @@
+{
+  "actors": [
+    {
+      "id": "ACT-001",
+      "name": "User",
+      "description": "The single user of the task list, no login."
+    }
+  ],
+  "useCases": [
+    {
+      "id": "UC-001",
+      "name": "View task list",
+      "description": "Open the app and see tasks, open first then done, oldest first in each group. The Browser page shows each done task with a ticked checkbox and struck-through text, and each open task with an empty checkbox and plain text.",
+      "actorIds": [
+        "ACT-001"
+      ],
+      "reqIds": [
+        "REQ-003",
+        "REQ-004",
+        "REQ-007",
+        "REQ-008"
+      ]
+    },
+    {
+      "id": "UC-002",
+      "name": "Add task",
+      "description": "Enter a description (trimmed, 1-200 chars) to add a not-done task.",
+      "actorIds": [
+        "ACT-001"
+      ],
+      "reqIds": [
+        "REQ-001",
+        "REQ-003"
+      ]
+    },
+    {
+      "id": "UC-003",
+      "name": "Mark task done or not done",
+      "description": "Tick or untick a task. The Browser page sends PATCH /api/tasks/:id with done true or false, then re-renders that task from the returned Task: done shows a ticked checkbox and struck-through text, not done shows an empty checkbox and plain text, so the two states look different. The task moves to its place in the open or done group.",
+      "actorIds": [
+        "ACT-001"
+      ],
+      "reqIds": [
+        "REQ-002",
+        "REQ-003",
+        "REQ-007"
+      ]
+    },
+    {
+      "id": "UC-004",
+      "name": "Edit task",
+      "description": "Change the text of a task with the same rules as adding.",
+      "actorIds": [
+        "ACT-001"
+      ],
+      "reqIds": [
+        "REQ-005",
+        "REQ-003"
+      ]
+    },
+    {
+      "id": "UC-005",
+      "name": "Delete task",
+      "description": "Remove a task permanently.",
+      "actorIds": [
+        "ACT-001"
+      ],
+      "reqIds": [
+        "REQ-006",
+        "REQ-003"
+      ]
+    }
+  ],
+  "classes": [
+    {
+      "id": "DSN-005",
+      "name": "Task",
+      "kind": "interface",
+      "description": "Task data record.",
+      "attributes": [
+        {
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "name": "text",
+          "type": "string"
+        },
+        {
+          "name": "done",
+          "type": "boolean"
+        },
+        {
+          "name": "createdAt",
+          "type": "number"
+        }
+      ],
+      "methods": [],
+      "values": [],
+      "relations": [],
+      "reqIds": [
+        "REQ-001",
+        "REQ-002",
+        "REQ-007"
+      ]
+    },
+    {
+      "id": "DSN-006",
+      "name": "TaskController",
+      "kind": "class",
+      "description": "HTTP routes: GET /, GET /api/tasks, POST /api/tasks, PATCH /api/tasks/:id, DELETE /api/tasks/:id. Serves the single page without login. PATCH returns the updated Task so the page can re-render it.",
+      "attributes": [],
+      "methods": [
+        {
+          "name": "page",
+          "params": [],
+          "returnType": "Promise<string>"
+        },
+        {
+          "name": "list",
+          "params": [],
+          "returnType": "Promise<Task[]>"
+        },
+        {
+          "name": "create",
+          "params": [
+            {
+              "name": "body",
+              "type": "{ text: string; }"
+            }
+          ],
+          "returnType": "Promise<Task>"
+        },
+        {
+          "name": "update",
+          "params": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "body",
+              "type": "{ text?: string; done?: boolean; }"
+            }
+          ],
+          "returnType": "Promise<Task>"
+        },
+        {
+          "name": "remove",
+          "params": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "returnType": "Promise<void>"
+        }
+      ],
+      "values": [],
+      "relations": [
+        {
+          "kind": "dependency",
+          "targetId": "DSN-007"
+        }
+      ],
+      "reqIds": [
+        "REQ-001",
+        "REQ-002",
+        "REQ-004",
+        "REQ-005",
+        "REQ-006",
+        "REQ-007",
+        "REQ-008"
+      ]
+    },
+    {
+      "id": "DSN-007",
+      "name": "TaskService",
+      "kind": "class",
+      "description": "Validates text (trim, 1-200 chars), applies rules and orders the list.",
+      "attributes": [],
+      "methods": [
+        {
+          "name": "list",
+          "params": [],
+          "returnType": "Promise<Task[]>"
+        },
+        {
+          "name": "add",
+          "params": [
+            {
+              "name": "text",
+              "type": "string"
+            }
+          ],
+          "returnType": "Promise<Task>"
+        },
+        {
+          "name": "setDone",
+          "params": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "done",
+              "type": "boolean"
+            }
+          ],
+          "returnType": "Promise<Task>"
+        },
+        {
+          "name": "editText",
+          "params": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "text",
+              "type": "string"
+            }
+          ],
+          "returnType": "Promise<Task>"
+        },
+        {
+          "name": "remove",
+          "params": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "returnType": "Promise<void>"
+        },
+        {
+          "name": "normalizeText",
+          "params": [
+            {
+              "name": "text",
+              "type": "string"
+            }
+          ],
+          "returnType": "string"
+        }
+      ],
+      "values": [],
+      "relations": [
+        {
+          "kind": "dependency",
+          "targetId": "DSN-008"
+        }
+      ],
+      "reqIds": [
+        "REQ-001",
+        "REQ-002",
+        "REQ-005",
+        "REQ-006",
+        "REQ-007"
+      ]
+    },
+    {
+      "id": "DSN-008",
+      "name": "TaskStore",
+      "kind": "class",
+      "description": "SQLite persistence of tasks inside the service process.",
+      "attributes": [],
+      "methods": [
+        {
+          "name": "findAll",
+          "params": [],
+          "returnType": "Promise<Task[]>"
+        },
+        {
+          "name": "findById",
+          "params": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "returnType": "Promise<Task | null>"
+        },
+        {
+          "name": "insert",
+          "params": [
+            {
+              "name": "task",
+              "type": "Task"
+            }
+          ],
+          "returnType": "Promise<void>"
+        },
+        {
+          "name": "update",
+          "params": [
+            {
+              "name": "task",
+              "type": "Task"
+            }
+          ],
+          "returnType": "Promise<void>"
+        },
+        {
+          "name": "delete",
+          "params": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "returnType": "Promise<void>"
+        }
+      ],
+      "values": [],
+      "relations": [],
+      "reqIds": [
+        "REQ-003",
+        "REQ-006"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "id": "DSN-003",
+      "name": "Browser page",
+      "classIds": [],
+      "nodeId": "DSN-001",
+      "reqIds": [
+        "REQ-004",
+        "REQ-007",
+        "REQ-008",
+        "REQ-002"
+      ]
+    },
+    {
+      "id": "DSN-004",
+      "name": "Tasks app",
+      "classIds": [
+        "DSN-005",
+        "DSN-006",
+        "DSN-007",
+        "DSN-008"
+      ],
+      "nodeId": "DSN-002",
+      "reqIds": [
+        "REQ-001",
+        "REQ-002",
+        "REQ-003",
+        "REQ-005",
+        "REQ-006",
+        "REQ-007",
+        "REQ-008"
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "DSN-001",
+      "name": "Browser",
+      "kind": "client",
+      "reqIds": [
+        "REQ-004"
+      ]
+    },
+    {
+      "id": "DSN-002",
+      "name": "Tasks",
+      "kind": "service",
+      "reqIds": [
+        "REQ-003",
+        "REQ-004",
+        "REQ-008"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "from": "DSN-001",
+      "to": "DSN-002",
+      "protocol": "http",
+      "label": "page and task API"
+    }
+  ],
+  "sequences": [
+    {
+      "id": "SEQ-001",
+      "name": "View task list",
+      "useCaseId": "UC-001",
+      "messages": [
+        {
+          "fromId": "ACT-001",
+          "toId": "DSN-006",
+          "method": "list"
+        },
+        {
+          "fromId": "DSN-006",
+          "toId": "DSN-007",
+          "method": "list"
+        },
+        {
+          "fromId": "DSN-007",
+          "toId": "DSN-008",
+          "method": "findAll",
+          "label": "then sort open first, oldest first"
+        }
+      ]
+    },
+    {
+      "id": "SEQ-002",
+      "name": "Add task",
+      "useCaseId": "UC-002",
+      "messages": [
+        {
+          "fromId": "ACT-001",
+          "toId": "DSN-006",
+          "method": "create"
+        },
+        {
+          "fromId": "DSN-006",
+          "toId": "DSN-007",
+          "method": "add"
+        },
+        {
+          "fromId": "DSN-007",
+          "toId": "DSN-007",
+          "method": "normalizeText"
+        },
+        {
+          "fromId": "DSN-007",
+          "toId": "DSN-008",
+          "method": "insert"
+        }
+      ]
+    },
+    {
+      "id": "SEQ-003",
+      "name": "Mark task done or not done",
+      "useCaseId": "UC-003",
+      "messages": [
+        {
+          "fromId": "ACT-001",
+          "toId": "DSN-006",
+          "method": "update",
+          "label": "PATCH with done true or false"
+        },
+        {
+          "fromId": "DSN-006",
+          "toId": "DSN-007",
+          "method": "setDone"
+        },
+        {
+          "fromId": "DSN-007",
+          "toId": "DSN-008",
+          "method": "findById"
+        },
+        {
+          "fromId": "DSN-007",
+          "toId": "DSN-008",
+          "method": "update",
+          "label": "returned Task is re-rendered by the page"
+        }
+      ]
+    },
+    {
+      "id": "SEQ-004",
+      "name": "Edit task",
+      "useCaseId": "UC-004",
+      "messages": [
+        {
+          "fromId": "ACT-001",
+          "toId": "DSN-006",
+          "method": "update"
+        },
+        {
+          "fromId": "DSN-006",
+          "toId": "DSN-007",
+          "method": "editText"
+        },
+        {
+          "fromId": "DSN-007",
+          "toId": "DSN-007",
+          "method": "normalizeText"
+        },
+        {
+          "fromId": "DSN-007",
+          "toId": "DSN-008",
+          "method": "findById"
+        },
+        {
+          "fromId": "DSN-007",
+          "toId": "DSN-008",
+          "method": "update"
+        }
+      ]
+    },
+    {
+      "id": "SEQ-005",
+      "name": "Delete task",
+      "useCaseId": "UC-005",
+      "messages": [
+        {
+          "fromId": "ACT-001",
+          "toId": "DSN-006",
+          "method": "remove"
+        },
+        {
+          "fromId": "DSN-006",
+          "toId": "DSN-007",
+          "method": "remove"
+        },
+        {
+          "fromId": "DSN-007",
+          "toId": "DSN-008",
+          "method": "delete"
+        }
+      ]
+    }
+  ]
+}

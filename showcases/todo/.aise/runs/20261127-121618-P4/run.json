@@ -1,0 +1,31 @@
+{
+  "id": "20261127-121618-P4",
+  "phase": "P4",
+  "agent": "code",
+  "status": "done",
+  "startedAt": "2026-11-27T12:16:18.233Z",
+  "finishedAt": "2026-11-27T12:16:57.325Z",
+  "usage": {
+    "input": 845,
+    "output": 9178,
+    "cacheRead": 75084,
+    "cacheWrite": 39885
+  },
+  "costUsd": 0.09820583000000001,
+  "summary": "Phase P4 (code generation) wrote `src/app/app.ts`, `src/app/main.ts` and `public/index.html`, and typecheck, drift detection and `start_app` all succeeded, with `GET /health` returning 200. Before approving, check that `GET /` serving `public/index.html` rather than the controller's embedded `page` method is the intended behaviour, since that method is now unused. No tool calls failed.",
+  "prevPhase": {
+    "status": "not_started"
+  },
+  "prevArtefactHash": null,
+  "postArtefactHash": "5ec2c025c93c1272d76ffaedf4298373e1657edf4820f353bfdc10d057ad1fcd",
+  "designHashes": {
+    "DSN-005": "c94459b6053aac99e520971e86cda8c59ef12d70d470d4bb544e953c5ca5e31c",
+    "DSN-006": "ac910026ed198677d2b2772728d0f7fb50ffe400c0b4cbf3959be72e8707e458",
+    "DSN-007": "a4db7c4b59be8b0ab2984ddc6e585afdc91dbb2fd441ebd9695b813ff8848c11",
+    "DSN-008": "319c016b2e756716c3494cb2ec5340e81be403572aced060b0634d0083ad4d24",
+    "DSN-003": "ef68c1afa77c96b9569776cc628dbffc1b53da6c215e3c1d577c7cd5f8b2f46d",
+    "DSN-004": "9f41fc238897f1e57fd8a3d570ce896ac781f931d30de48995e92140b93173c8",
+    "DSN-001": "597488c14b5303d7e7f1933958608e6196bf6ed33ad375d2d9a55a639163b1fa",
+    "DSN-002": "281af52c9317d5e11bd90b75f9ceb522cdb02f2e52c3cafa2b4044fe77032112"
+  }
+}

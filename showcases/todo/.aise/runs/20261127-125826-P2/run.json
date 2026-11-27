@@ -1,0 +1,84 @@
+{
+  "id": "20261127-125826-P2",
+  "phase": "P2",
+  "agent": "design",
+  "status": "done",
+  "startedAt": "2026-11-27T12:58:26.002Z",
+  "finishedAt": "2026-11-27T12:59:07.235Z",
+  "usage": {
+    "input": 722,
+    "output": 7921,
+    "cacheRead": 51057,
+    "cacheWrite": 15504
+  },
+  "costUsd": 0.1208869,
+  "summary": "The agent added the server-side overdue rule (`TaskService.isOverdue`), the `overdue` flag on `GET /api/tasks`, and a new `TaskView` type, and updated the design docs to match, so all five REQ-010 overdue criteria are now covered by methods. Two criteria remain uncovered because they are visual and depend on browser CSS the agent has not added yet: REQ-002 criterion 3 (done state styling) and REQ-007 criterion 1 (struck-through done tasks). Before approving, check whether you want PATCH to return the overdue flag as well, since the agent left it out and the page currently reloads the list after unticking, and decide whether the two visual criteria should block P2 or move to a later phase.",
+  "prevPhase": {
+    "status": "awaiting_approval"
+  },
+  "prevArtefactHash": "22edfbd8832ef2403f34200733acb67373b84f268b10fc88098064889d3724b7",
+  "postArtefactHash": "53e21b0d47d4b111bb27b9f21f831599b57b9f1f3661aa04621eb7afef9a0f83",
+  "reqHashes": {
+    "REQ-001": "4df7ca82e7249b0f16dfc6d0b84b43c5a931d2dd4d7754d8e856b95cf0262660",
+    "REQ-002": "8194c9f5f5ec51c3c6141cd9da26e60519043b8ea81af4a0d44df6cbacb1b73f",
+    "REQ-003": "ea117479352a811725da3deb218a6479510c32f9c4468969640ce907f31a5817",
+    "REQ-004": "fbb008e714fd25c3d816038213b387e9db937782e7c89e380eeb090ac3dca4c6",
+    "REQ-005": "ee15c8dc4a0ff8efb63b8c92ea93c0774a77c56ff35c6a5c873f5f1c92128989",
+    "REQ-006": "4da07fea6bebed336b08d51838fa9734d6af4ceddef62d266084b9600f751143",
+    "REQ-007": "594572812fba023d410326cc9819df731303ac1ceee9a5fbf3b992b8c0c3ea5f",
+    "REQ-008": "914a6219c5fe0adfeb81eca4c5239baf19626241f9132561f51f7ade81534ff2",
+    "REQ-009": "49073fe9bd94e13f6e82fc0f1d25b7e13158e5ddf3682ab5d3f2950fc64565ce",
+    "REQ-010": "59d8a0f8fbe5fd6e6ea65fca896ef7931ba3dd1b34593faa88d5a76e07a036ec"
+  },
+  "ticketId": "TCK-001",
+  "prevTicket": {
+    "status": "in_progress",
+    "plan": {
+      "entry": "P1",
+      "affectedIds": [
+        "REQ-001",
+        "REQ-005",
+        "REQ-007",
+        "REQ-003",
+        "UC-001",
+        "UC-002",
+        "UC-004",
+        "SEQ-001",
+        "SEQ-002",
+        "SEQ-004",
+        "DSN-003",
+        "DSN-005",
+        "DSN-006",
+        "DSN-007",
+        "DSN-008"
+      ],
+      "files": [
+        "docs/requirements.md",
+        "docs/design.md",
+        "src/tasks-app/Task.ts",
+        "src/tasks-app/TaskController.ts",
+        "src/tasks-app/TaskService.ts",
+        "src/tasks-app/TaskStore.ts",
+        "src/app/app.ts",
+        "public/index.html",
+        "test/UC-001.test.ts",
+        "test/UC-002.test.ts",
+        "test/UC-004.test.ts"
+      ],
+      "steps": [
+        "P1: Remove 'Due dates' from the out-of-scope list (keep priorities and categories out of scope).",
+        "P1: Add a new requirement 'Task due date': a task may have an optional calendar due date (date only, no time), set when adding and set, changed or cleared when editing; an invalid date is rejected; the due date is stored on the server and kept after reopening.",
+        "P1: Add a new requirement 'Due date display and overdue': the list shows the due date next to a task that has one; an open task whose due date is before today (user's local date) is visibly marked overdue; a done task or a task without a due date is never marked overdue; list order of REQ-007 stays unchanged.",
+        "P1: Update REQ-001 and REQ-005 texts and criteria to mention the optional due date on add and edit.",
+        "P2: Add optional attribute dueDate (ISO date string YYYY-MM-DD or null) to Task DSN-005.",
+        "P2: Extend TaskController DSN-006 create body with dueDate and update body with dueDate (null clears it).",
+        "P2: Extend TaskService DSN-007 add and add a setDueDate (or edit) operation with date validation; update SEQ-002 and SEQ-004 accordingly.",
+        "P2: Extend TaskStore DSN-008 to persist dueDate (new nullable column with migration of existing databases).",
+        "P2: Update UC-001, UC-002, UC-004 descriptions and Browser page DSN-003 for due date input, display and overdue marking; link the new requirements.",
+        "P3: Add tests for the new requirements' acceptance criteria and adjust UC-001, UC-002, UC-004 tests.",
+        "P4: Implement dueDate in Task, TaskStore (column and migration), TaskService validation, TaskController and app routes, and the date input, display and overdue marker in public/index.html.",
+        "P5: Run all tests and check that existing tasks without due date still load and behave as before."
+      ]
+    }
+  }
+}

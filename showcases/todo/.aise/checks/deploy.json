@@ -1,0 +1,13 @@
+{
+  "at": "2026-11-27T13:03:14.607Z",
+  "filesHash": "4ef344efd0048a70ba9806fb82f4d49d18012d1cbb3627f4c2d775609fa6adbe",
+  "passed": true,
+  "services": [
+    {
+      "url": "http://localhost:8080/health",
+      "status": 200
+    }
+  ],
+  "logTail": "tasks-1  | \ntasks-1  | > start\ntasks-1  | > tsx src/app/main.ts\ntasks-1  | \ntasks-1  | (node:30) ExperimentalWarning: SQLite is an experimental feature and might change at any time\ntasks-1  | (Use `node --trace-warnings ...` to show where the warning was created)\ntasks-1  | Listening on port 8080",
+  "durationMs": 2973
+}

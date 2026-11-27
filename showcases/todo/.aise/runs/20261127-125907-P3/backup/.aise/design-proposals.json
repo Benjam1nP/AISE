@@ -1,0 +1,41 @@
+{
+  "designHash": "22edfbd8832ef2403f34200733acb67373b84f268b10fc88098064889d3724b7",
+  "proposals": [
+    {
+      "kind": "uncovered_criterion",
+      "title": "Overdue rule for open tasks",
+      "change": "Add a TaskPresenter class to the Browser page component (DSN-003) with isOverdue(task, todayLocal): boolean. It returns true only when done is false, dueDate is not null and dueDate is before the user's local YYYY-MM-DD date. Done tasks, tasks without a due date and tasks due today or later return false. Add a message in SEQ-001 where the page calls it for each task.",
+      "elementIds": [
+        "DSN-003",
+        "DSN-005",
+        "UC-001",
+        "SEQ-001"
+      ],
+      "reqIds": [
+        "REQ-010"
+      ],
+      "id": "PRP-002",
+      "status": "rejected",
+      "resolvedAt": "2026-11-27T12:58:17.789Z"
+    },
+    {
+      "kind": "uncovered_criterion",
+      "title": "Visible done and overdue rendering",
+      "change": "Add a renderTask(task, isOverdue) method to the Browser page's TaskPresenter. It shows a ticked checkbox with struck-through text for done tasks and an empty checkbox with plain text for open tasks, and adds an overdue marker when isOverdue is true. Add a re-render message to SEQ-003 after the PATCH response, which also covers unticking a task whose due date is past.",
+      "elementIds": [
+        "DSN-003",
+        "UC-003",
+        "SEQ-003",
+        "UC-001"
+      ],
+      "reqIds": [
+        "REQ-002",
+        "REQ-010"
+      ],
+      "id": "PRP-003",
+      "status": "rejected",
+      "resolvedAt": "2026-11-27T12:58:18.847Z"
+    }
+  ],
+  "lastId": "PRP-003"
+}
