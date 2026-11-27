@@ -1,0 +1,20 @@
+{
+  "id": "20261127-132640-P7",
+  "phase": "P7",
+  "agent": "maintenance",
+  "status": "done",
+  "startedAt": "2026-11-27T13:26:40.852Z",
+  "finishedAt": "2026-11-27T13:26:53.706Z",
+  "usage": {
+    "input": 597,
+    "output": 1281,
+    "cacheRead": 27242,
+    "cacheWrite": 18548
+  },
+  "costUsd": 0.1203113,
+  "summary": "The agent saved a P7 maintenance plan that updates the Item design (DSN-015) to list `timeLeftMs`, an undocumented read-only method in `src/auction-api/Item.ts`, and leaves the code unchanged. Before approving, check that the agent's reasoning holds, since no designed flow calls the method and the drift check found nothing else. All five tool calls succeeded, so there are no failures to act on. Rerun the drift check to confirm it comes back clean, and rerun the tests, because the agent says the saved results predate the latest code changes.",
+  "ticketId": "TCK-002",
+  "prevTicket": {
+    "status": "open"
+  }
+}

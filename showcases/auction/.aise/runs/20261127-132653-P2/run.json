@@ -1,0 +1,71 @@
+{
+  "id": "20261127-132653-P2",
+  "phase": "P2",
+  "agent": "design",
+  "status": "done",
+  "startedAt": "2026-11-27T13:26:53.770Z",
+  "finishedAt": "2026-11-27T13:28:09.947Z",
+  "usage": {
+    "input": 614,
+    "output": 15507,
+    "cacheRead": 147526,
+    "cacheWrite": 47366
+  },
+  "costUsd": 0.2869063,
+  "summary": "Summarise the agent's work at this review gate in at most three plain-prose sentences, with no lists or markdown. The agent added the timeLeftMs method (DSN-015) to Item, left the description and sequences alone, and reported three uncovered acceptance criteria it did not change. One report_coverage call failed before a retry succeeded, and the drift check and test suite have not been run. The developer should decide whether to accept the uncovered criteria and then run P5.",
+  "prevPhase": {
+    "status": "approved",
+    "approvedAt": "2026-11-27T11:14:16.520Z",
+    "reqHashes": {
+      "REQ-001": "ef33a72b58ea700070fb52b051f5136c788d68b1d9aa571bd16c84fd4bbed344",
+      "REQ-002": "1262b59c481c383acc492c14093d6f8d101fc492d98166b8d349c5b53bc1d92c",
+      "REQ-003": "6c9a28f26ce86be2f91f6de41bce46ab01855280ac081797e9cfe7b22b408a39",
+      "REQ-004": "1fa0902b3493b324d9011de3cbb8cb6977ff3236081b852304209f4e2e91bce6",
+      "REQ-005": "90b696170dc13d4d08e292d266ff1cd48e429f2b5526d7ddd3be02a5b1c43f1f",
+      "REQ-006": "0331c2404eb5d011086e21ab09ad6ac741f0011e5f6467824fcc7fb990855dfb",
+      "REQ-007": "589c22d570bc2de03b10e78f83f97f2c185478efc6dbf271e7865232dd9a3747",
+      "REQ-008": "b147e0ff55a8b35cc25e5906f63a4ca7038de123ff7e5bc46a60d07188d0c8ba",
+      "REQ-009": "aedd4cb1a2b573399d5b65739c3d171db599533590cf204a51c389a76a9f25d9",
+      "REQ-010": "671f8a54a33d23c034676468da33dfa93281f179748976c863a3db2c530721f6",
+      "REQ-011": "96426242e8b8a67da5bf31673c5ca7177baefc1ff415187834e15dbf344452fe",
+      "REQ-012": "4e1f6de4f41bd048949a5cfc358228951529517d44d520b0618fad118152f84f"
+    }
+  },
+  "prevArtefactHash": "065b9491b8a87be816fd872c54c891f39910cc7343723e2c0600368907c394f7",
+  "postArtefactHash": "59b5e282f499456ab055848e32ea4d4886a6deffb24c8032a6200657f0f56970",
+  "reqHashes": {
+    "REQ-001": "ef33a72b58ea700070fb52b051f5136c788d68b1d9aa571bd16c84fd4bbed344",
+    "REQ-002": "1262b59c481c383acc492c14093d6f8d101fc492d98166b8d349c5b53bc1d92c",
+    "REQ-003": "6c9a28f26ce86be2f91f6de41bce46ab01855280ac081797e9cfe7b22b408a39",
+    "REQ-004": "1fa0902b3493b324d9011de3cbb8cb6977ff3236081b852304209f4e2e91bce6",
+    "REQ-005": "90b696170dc13d4d08e292d266ff1cd48e429f2b5526d7ddd3be02a5b1c43f1f",
+    "REQ-006": "0331c2404eb5d011086e21ab09ad6ac741f0011e5f6467824fcc7fb990855dfb",
+    "REQ-007": "589c22d570bc2de03b10e78f83f97f2c185478efc6dbf271e7865232dd9a3747",
+    "REQ-008": "b147e0ff55a8b35cc25e5906f63a4ca7038de123ff7e5bc46a60d07188d0c8ba",
+    "REQ-009": "aedd4cb1a2b573399d5b65739c3d171db599533590cf204a51c389a76a9f25d9",
+    "REQ-010": "671f8a54a33d23c034676468da33dfa93281f179748976c863a3db2c530721f6",
+    "REQ-011": "96426242e8b8a67da5bf31673c5ca7177baefc1ff415187834e15dbf344452fe",
+    "REQ-012": "4e1f6de4f41bd048949a5cfc358228951529517d44d520b0618fad118152f84f"
+  },
+  "ticketId": "TCK-002",
+  "entry": true,
+  "prevTicket": {
+    "status": "triaged",
+    "plan": {
+      "entry": "P2",
+      "affectedIds": [
+        "DSN-015"
+      ],
+      "files": [
+        "src/auction-api/Item.ts"
+      ],
+      "steps": [
+        "P2: Add method timeLeftMs(now: Date): number to class Item (DSN-015) in the design, described as the milliseconds left until the end time at the given time, never below 0.",
+        "P2: Keep the Item description, relations, REQ links (REQ-001, REQ-002, REQ-004, REQ-009, REQ-012) and sequences SEQ-003 and SEQ-005 unchanged, because timeLeftMs is not called in any designed flow.",
+        "P4: No code change. Item.ts already has timeLeftMs with its @trace DSN-015 tag.",
+        "P5: Run detect_drift to confirm it is clean, then rerun the test suite because the stored results are out of date."
+      ],
+      "direction": "design"
+    }
+  }
+}

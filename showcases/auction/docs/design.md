@@ -71,6 +71,7 @@ classDiagram
     +winnerId : string | null
     +isOpen(now: Date) boolean
     +minimumBid() number
+    +timeLeftMs(now: Date) number
     +extendIfLate(now: Date) boolean
     +recordBid(bidderId: string, amount: number) void
     +isReserveMet() boolean | null
@@ -357,6 +358,11 @@ flowchart TB
   DSN_006 -->|"WS"| DSN_002
   DSN_002 -->|"WS: internal event feed"| DSN_001
   DSN_001 -->|"HTTPS"| DSN_005
+  click DSN_007 call aiseSelect("DSN-007")
+  click DSN_008 call aiseSelect("DSN-008")
+  click DSN_009 call aiseSelect("DSN-009")
+  click DSN_042 call aiseSelect("DSN-042")
+  click DSN_005 call aiseSelect("DSN-005")
 ```
 
 ## Elements

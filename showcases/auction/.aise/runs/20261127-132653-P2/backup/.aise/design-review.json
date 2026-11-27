@@ -1,0 +1,508 @@
+{
+  "designHash": "065b9491b8a87be816fd872c54c891f39910cc7343723e2c0600368907c394f7",
+  "rows": [
+    {
+      "reqId": "REQ-001",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-022",
+          "method": "listItem"
+        },
+        {
+          "classId": "DSN-029",
+          "method": "saveItem"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-022",
+          "method": "listItem"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-022",
+          "method": "listItem"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-022",
+          "method": "listItem"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 5,
+      "coveredBy": [
+        {
+          "classId": "DSN-022",
+          "method": "listItem"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-002",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-023",
+          "method": "placeBid"
+        },
+        {
+          "classId": "DSN-015",
+          "method": "isOpen"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-002",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-015",
+          "method": "isOpen"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-002",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-015",
+          "method": "minimumBid"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-002",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-015",
+          "method": "minimumBid"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-002",
+      "criterion": 5,
+      "coveredBy": [
+        {
+          "classId": "DSN-023",
+          "method": "placeBid"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-003",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-033",
+          "method": "broadcast"
+        },
+        {
+          "classId": "DSN-032",
+          "method": "onEvent"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-003",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-033",
+          "method": "watch"
+        },
+        {
+          "classId": "DSN-033",
+          "method": "broadcast"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-003",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-033",
+          "method": "broadcast"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-003",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-032",
+          "method": "connect"
+        }
+      ],
+      "note": "Browser retry behaviour lives in WebClient."
+    },
+    {
+      "reqId": "REQ-004",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-015",
+          "method": "isOpen"
+        },
+        {
+          "classId": "DSN-022",
+          "method": "closeDueAuctions"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-004",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-015",
+          "method": "close"
+        },
+        {
+          "classId": "DSN-019",
+          "method": "getItem"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-004",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-015",
+          "method": "close"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-004",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-015",
+          "method": "close"
+        },
+        {
+          "classId": "DSN-030",
+          "method": "publishAuctionClosed"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-004",
+      "criterion": 5,
+      "coveredBy": [
+        {
+          "classId": "DSN-030",
+          "method": "publishAuctionClosed"
+        },
+        {
+          "classId": "DSN-033",
+          "method": "broadcast"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-004",
+      "criterion": 6,
+      "coveredBy": [
+        {
+          "classId": "DSN-015",
+          "method": "close"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-005",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-025",
+          "method": "convert"
+        },
+        {
+          "classId": "DSN-026",
+          "method": "fetchRates"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-005",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-019",
+          "method": "getItem"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-005",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-019",
+          "method": "getItem"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-005",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-025",
+          "method": "convert"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-008",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-021",
+          "method": "register"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-008",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-021",
+          "method": "register"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-008",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-028",
+          "method": "findByName"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-008",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-028",
+          "method": "save"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-008",
+      "criterion": 5,
+      "coveredBy": [
+        {
+          "classId": "DSN-022",
+          "method": "listItem"
+        },
+        {
+          "classId": "DSN-023",
+          "method": "placeBid"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-008",
+      "criterion": 6,
+      "coveredBy": [],
+      "note": "Property of the design: no admin role exists."
+    },
+    {
+      "reqId": "REQ-008",
+      "criterion": 7,
+      "coveredBy": [
+        {
+          "classId": "DSN-021",
+          "method": "register"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-009",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-015",
+          "method": "extendIfLate"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-009",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-015",
+          "method": "extendIfLate"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-009",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-033",
+          "method": "broadcast"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-025",
+          "method": "convert"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-025",
+          "method": "convert"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-025",
+          "method": "convert"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-012",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-022",
+          "method": "listItem"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-012",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-022",
+          "method": "listItem"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-012",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-022",
+          "method": "listItem"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-012",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-015",
+          "method": "close"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-012",
+      "criterion": 5,
+      "coveredBy": [
+        {
+          "classId": "DSN-015",
+          "method": "close"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-012",
+      "criterion": 6,
+      "coveredBy": [
+        {
+          "classId": "DSN-015",
+          "method": "isReserveMet"
+        },
+        {
+          "classId": "DSN-022",
+          "method": "getItem"
+        },
+        {
+          "classId": "DSN-022",
+          "method": "listOpenItems"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-012",
+      "criterion": 7,
+      "coveredBy": [
+        {
+          "classId": "DSN-022",
+          "method": "getItem"
+        },
+        {
+          "classId": "DSN-019",
+          "method": "listOpenItems"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-012",
+      "criterion": 8,
+      "coveredBy": [
+        {
+          "classId": "DSN-031",
+          "method": "publishBidAccepted"
+        },
+        {
+          "classId": "DSN-030",
+          "method": "publishAuctionClosed"
+        }
+      ]
+    }
+  ]
+}

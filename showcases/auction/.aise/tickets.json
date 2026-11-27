@@ -234,6 +234,121 @@
           "outOfDate": false
         }
       }
+    },
+    {
+      "id": "TCK-002",
+      "kind": "drift",
+      "title": "Drift between code and design",
+      "description": "changed DSN-015 src/auction-api/Item.ts:11: method timeLeftMs: in code, not in design",
+      "status": "done",
+      "createdAt": "2026-11-27T13:26:40.850Z",
+      "plan": {
+        "entry": "P2",
+        "affectedIds": [
+          "DSN-015"
+        ],
+        "files": [
+          "src/auction-api/Item.ts"
+        ],
+        "steps": [
+          "P2: Add method timeLeftMs(now: Date): number to class Item (DSN-015) in the design, described as the milliseconds left until the end time at the given time, never below 0.",
+          "P2: Keep the Item description, relations, REQ links (REQ-001, REQ-002, REQ-004, REQ-009, REQ-012) and sequences SEQ-003 and SEQ-005 unchanged, because timeLeftMs is not called in any designed flow.",
+          "P4: No code change. Item.ts already has timeLeftMs with its @trace DSN-015 tag.",
+          "P5: Run detect_drift to confirm it is clean, then rerun the test suite because the stored results are out of date."
+        ],
+        "direction": "design"
+      },
+      "report": {
+        "at": "2026-11-27T13:28:34.512Z",
+        "text": "This drift ticket found that Item in src/auction-api/Item.ts has a method timeLeftMs, but the design element DSN-015 didn't list it. The plan was to update the design to match the code.\n\nIn P2 (design), docs/design.md was changed: timeLeftMs(now: Date) returning a number was added to the Item class in DSN-015. The element's description and the sequences were not changed. The same diff also added five click links (DSN-007, DSN-008, DSN-009, DSN-042 and DSN-005) to the overview diagram in docs/design.md. They only make those nodes selectable and don't change the design. During this phase one coverage report call failed and then worked on retry. The agent also reported three acceptance criteria with no coverage, which it left unchanged.\n\nIn P4 (code), no files were changed. The existing method in Item.ts already matched the new design entry. The drift check and the typecheck both passed.\n\nTests: 57 passed, 0 failed (2026-11-27T13:28:28Z).\n\nStill open: the three acceptance criteria with no coverage, which the developer should either accept or handle in a new ticket. Also, nothing in this run confirmed that timeLeftMs returns 0 rather than a negative number once the auction has ended. A quick look at the method or a test would settle that.",
+        "steps": [
+          {
+            "runId": "20261127-132653-P2",
+            "phase": "P2",
+            "agent": "design",
+            "status": "done",
+            "summary": "The agent added the timeLeftMs method (DSN-015) to Item, left the description and sequences alone, and reported three uncovered acceptance criteria it did not change. One report_coverage call failed before a retry succeeded, and the drift check and test suite have not been run. The developer should decide whether to accept the uncovered criteria and then run P5.",
+            "files": [
+              "docs/design.md"
+            ]
+          },
+          {
+            "runId": "20261127-132810-P4",
+            "phase": "P4",
+            "agent": "code",
+            "status": "done",
+            "summary": "The agent changed no files in P4 because `Item.timeLeftMs(now: Date): number` already existed in `src/auction-api/Item.ts` and matched the new shape, so the phase is effectively a verification pass. The read, drift check and typecheck all succeeded, and the agent did not start the app since nothing changed. Before approving, confirm that the existing `timeLeftMs` clamps at 0 as the reply says, since that behaviour is what the phase depends on and the tool results don't show it.",
+            "files": []
+          }
+        ],
+        "changedIds": [
+          "DSN-015"
+        ],
+        "files": [
+          {
+            "path": "docs/design.md",
+            "diff": "Index: docs/design.md\n===================================================================\n--- docs/design.md\n+++ docs/design.md\n@@ -70,8 +70,9 @@\n     +highestBidderId : string | null\n     +winnerId : string | null\n     +isOpen(now: Date) boolean\n     +minimumBid() number\n+    +timeLeftMs(now: Date) number\n     +extendIfLate(now: Date) boolean\n     +recordBid(bidderId: string, amount: number) void\n     +isReserveMet() boolean | null\n     +close() void\n@@ -356,8 +357,13 @@\n   DSN_006 -->|\"HTTP\"| DSN_001\n   DSN_006 -->|\"WS\"| DSN_002\n   DSN_002 -->|\"WS: internal event feed\"| DSN_001\n   DSN_001 -->|\"HTTPS\"| DSN_005\n+  click DSN_007 call aiseSelect(\"DSN-007\")\n+  click DSN_008 call aiseSelect(\"DSN-008\")\n+  click DSN_009 call aiseSelect(\"DSN-009\")\n+  click DSN_042 call aiseSelect(\"DSN-042\")\n+  click DSN_005 call aiseSelect(\"DSN-005\")\n ```\n \n ## Elements\n "
+          }
+        ],
+        "tests": {
+          "at": "2026-11-27T13:28:28.466Z",
+          "passed": 57,
+          "failed": 0,
+          "outOfDate": false
+        }
+      }
+    },
+    {
+      "id": "TCK-003",
+      "kind": "drift",
+      "title": "Drift between code and design",
+      "description": "changed DSN-015 src/auction-api/Item.ts:11: method isOpen: parameters (now: Date) in design, (at: Date) in code",
+      "status": "done",
+      "createdAt": "2026-11-27T13:28:43.682Z",
+      "plan": {
+        "entry": "P4",
+        "affectedIds": [
+          "DSN-015"
+        ],
+        "files": [
+          "src/auction-api/Item.ts"
+        ],
+        "steps": [
+          "P4: In src/auction-api/Item.ts rename the isOpen parameter from 'at' to 'now' (signature and body), as the design has it for DSN-015 and as timeLeftMs and extendIfLate already use it; behaviour stays the same.",
+          "P4: Run detect_drift again to confirm the DSN-015 drift is gone.",
+          "P5: Run the existing tests for UC-002, UC-003, UC-004, UC-005 and UC-006 (marked out of date) and check that they still pass."
+        ],
+        "direction": "code"
+      },
+      "report": {
+        "at": "2026-11-27T13:29:26.176Z",
+        "text": "TCK-003 reported drift on DSN-015: the design gives Item.isOpen the parameter name \"now\", but the code in src/auction-api/Item.ts used \"at\". The ticket was handled in the code direction (P4), so the code was changed to match the design and the design was left as it is.\n\nIn P4 the parameter of isOpen in src/auction-api/Item.ts was renamed from \"at\" to \"now\" in the signature and in the method body. This is only a rename: the method still returns true when the auction status is open and the given time is before the end time. No requirement, use case or design element changed. After the edit, the agent reported that drift detection found no differences and that the typecheck passed.\n\nThe agent could not run tests during the P4 run. The test result recorded afterwards (2026-11-27 13:29) shows 57 passed and 0 failed. That covers the tests the agent flagged as still to run, so nothing is open for this ticket.",
+        "steps": [
+          {
+            "runId": "20261127-132856-P4",
+            "phase": "P4",
+            "agent": "code",
+            "status": "done",
+            "summary": "The agent renamed the `isOpen` parameter in `src/auction-api/Item.ts` from `at` to `now` in both the signature and the body, and reports that behaviour is unchanged, drift detection now comes back clean, and the typecheck passes. It did not run the UC-002 to UC-006 tests scheduled for P5 because it has no test-running tool, so those tests are still outstanding and need to be run before this phase can be considered verified. All tool calls succeeded, so there are no failures to chase.",
+            "files": [
+              "src/auction-api/Item.ts"
+            ]
+          }
+        ],
+        "changedIds": [],
+        "files": [
+          {
+            "path": "src/auction-api/Item.ts",
+            "diff": "Index: src/auction-api/Item.ts\n===================================================================\n--- src/auction-api/Item.ts\n+++ src/auction-api/Item.ts\n@@ -24,10 +24,10 @@\n     }\n   }\n \n   /** Returns true when the auction is open and its end time has not been reached at the given time. */\n-  isOpen(at: Date): boolean {\n-    return this.status === AuctionStatus.open && at.getTime() < this.endTime.getTime();\n+  isOpen(now: Date): boolean {\n+    return this.status === AuctionStatus.open && now.getTime() < this.endTime.getTime();\n   }\n \n   /** Returns the lowest amount a new bid must reach: the starting price, or one unit above the highest bid. */\n   minimumBid(): number {"
+          }
+        ],
+        "tests": {
+          "at": "2026-11-27T13:29:22.094Z",
+          "passed": 57,
+          "failed": 0,
+          "outOfDate": false
+        }
+      }
     }
   ]
 }

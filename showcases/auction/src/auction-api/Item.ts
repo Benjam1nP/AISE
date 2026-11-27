@@ -34,6 +34,11 @@ export class Item {
     return this.highestBidAmount === null ? this.startingPrice : this.highestBidAmount + 1;
   }
 
+  /** Returns the milliseconds left until the end time at the given time, never below 0. */
+  timeLeftMs(now: Date): number {
+    return Math.max(0, this.endTime.getTime() - now.getTime());
+  }
+
   /** Moves the end time 2 minutes later when the auction is open and now is within the last 2 minutes; returns whether it did. */
   extendIfLate(now: Date): boolean {
     if (!this.isOpen(now)) {

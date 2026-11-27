@@ -1,0 +1,37 @@
+{
+  "id": "20261127-132828-P7",
+  "phase": "P7",
+  "agent": "maintenance",
+  "status": "done",
+  "startedAt": "2026-11-27T13:28:28.499Z",
+  "finishedAt": "2026-11-27T13:28:39.684Z",
+  "usage": {
+    "input": 525,
+    "output": 1153,
+    "cacheRead": 7106,
+    "cacheWrite": 1648
+  },
+  "costUsd": 0.0285071,
+  "summary": "The agent closed TCK-002 by writing its change report, after adding the `timeLeftMs(now: Date)` method to the Item design entry (DSN-015) in `docs/design.md`; the code in `src/auction-api/Item.ts` already matched, so no source files changed, and the drift check, typecheck and 57 tests all passed. Before you approve, decide whether the three acceptance criteria the agent reported as uncovered are acceptable or need a new ticket, and check that `timeLeftMs` returns 0 rather than a negative number after the auction ends, since nothing in this run confirmed it. The write_ticket_report call succeeded and no tool calls failed.",
+  "ticketId": "TCK-002",
+  "report": true,
+  "prevTicket": {
+    "status": "in_progress",
+    "plan": {
+      "entry": "P2",
+      "affectedIds": [
+        "DSN-015"
+      ],
+      "files": [
+        "src/auction-api/Item.ts"
+      ],
+      "steps": [
+        "P2: Add method timeLeftMs(now: Date): number to class Item (DSN-015) in the design, described as the milliseconds left until the end time at the given time, never below 0.",
+        "P2: Keep the Item description, relations, REQ links (REQ-001, REQ-002, REQ-004, REQ-009, REQ-012) and sequences SEQ-003 and SEQ-005 unchanged, because timeLeftMs is not called in any designed flow.",
+        "P4: No code change. Item.ts already has timeLeftMs with its @trace DSN-015 tag.",
+        "P5: Run detect_drift to confirm it is clean, then rerun the test suite because the stored results are out of date."
+      ],
+      "direction": "design"
+    }
+  }
+}

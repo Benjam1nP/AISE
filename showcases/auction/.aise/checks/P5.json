@@ -1,6 +1,6 @@
 {
-  "at": "2026-11-27T11:43:38.850Z",
-  "codeHash": "4613160a81986b0e1d48a0128dae4e711069a78ba43a757a9d7341ca782ed324",
+  "at": "2026-11-27T13:29:39.205Z",
+  "codeHash": "d2fb73d122de9e04fd795a86bd632322fabdbd8d480c019e287be598a0b7fa5a",
   "testHash": "122e78e5b908c2ee4a6e14f2d776bab38beda69fe6119eb2e7f68d569715767b",
   "typecheck": {
     "ok": true,
@@ -462,7 +462,7 @@
       }
     ],
     "timedOut": false,
-    "logTail": "JSON report written to /opt/aise/out/report.json\n(node:22) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:53) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:29) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:28) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:21) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:41) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    "logTail": "JSON report written to /opt/aise/out/report.json\n(node:21) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:33) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:41) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:49) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:65) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:73) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
   },
   "findings": [
     {

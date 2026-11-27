@@ -1,7 +1,8 @@
 // Drives the committed auction showcase (showcases/auction) through P4 and P5 approval, P6 and one
 // P7 change ticket, in place, through the same orchestrator calls the UI makes. Costs API credit and
-// needs Docker. Not run in CI. Steps run in order; pass one to run only that step.
-// Run: npx tsx scripts/run-auction.ts [approve|p6|p7|check] [--override P4] [--anyway]
+// needs Docker. Not run in CI. Steps run in order; pass one to run only that step. The drift step
+// (two hand edits in src/, one drift ticket per repair direction) runs only when named.
+// Run: npx tsx scripts/run-auction.ts [approve|p6|p7|drift|check] [--override P4] [--anyway]
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { DEPLOY_FILES } from '../src/lib/server/core/deploy-state';
@@ -10,9 +11,9 @@ import { subscribe, type WorkspaceEvent } from '../src/lib/server/orchestrator/b
 import { Orchestrator } from '../src/lib/server/orchestrator/orchestrator';
 
 if (existsSync('.env')) process.loadEnvFile('.env');
-const STEPS = ['approve', 'p6', 'p7', 'check'] as const;
+const STEPS = ['approve', 'p6', 'p7', 'drift', 'check'] as const;
 const USAGE =
-	'usage: npx tsx scripts/run-auction.ts [approve|p6|p7|check] [--override P4] [--anyway]';
+	'usage: npx tsx scripts/run-auction.ts [approve|p6|p7|drift|check] [--override P4] [--anyway]';
 const args = process.argv.slice(2);
 // Phases the walk may approve over a failing gate: --override P4
 const at = args.indexOf('--override');
@@ -112,6 +113,54 @@ async function approve(phase: 'P4' | 'P5' | 'P6') {
 	console.log(`${phase} approved`);
 }
 
+/** Walks every phase the ticket made stale or left awaiting approval back to approved, then closes it. */
+async function walkAndClose(ticketId: string): Promise<void> {
+	const ticket = async () => (await orch.snapshot(name)).tickets.find((t) => t.id === ticketId)!;
+	const ORDER = ['P1', 'P2', 'P4', 'P5', 'P6'] as const;
+	const pending = async () => {
+		await idle();
+		const { state: s } = await orch.snapshot(name);
+		return ORDER.find((p) => s.phases[p].status !== 'approved');
+	};
+	for (let step = 0; step < 15; step++) {
+		const phase = await pending();
+		if (!phase) break;
+		const { state: s, requirements } = await orch.snapshot(name);
+		const status = s.phases[phase].status;
+		console.log(`\n${phase} is ${status}`);
+		if (status === 'awaiting_approval') {
+			try {
+				// P4 may only fail on tests that call a changed signature; P5 updates them next, so
+				// that P4 approval is an override, recorded in the state like one made in the UI.
+				const questions = requirements?.openQuestions ?? [];
+				if (phase === 'P1' && questions.length > 0 && !anyway) {
+					for (const q of questions) console.log(`  ${q.id} ${q.text}`);
+					await stop('P1 has open questions; answer them in the UI, or pass --anyway to assume');
+				}
+				const opts =
+					phase === 'P1' ? { anyway } : overrides.includes(phase) ? { override: true } : {};
+				await orch.approve(name, phase, opts);
+			} catch (e) {
+				await gates('P4', 'P5', 'P6');
+				await stop(`approving ${phase} failed: ${e instanceof Error ? e.message : String(e)}`);
+			}
+			console.log(`${phase} approved`);
+		} else if (status === 'stale' && phase !== 'P1') {
+			await watch(`update ${phase}`, () => orch.updateStale(name, phase));
+		} else await stop(`${phase} is ${status}; the walk cannot go on`);
+	}
+	const left = await pending();
+	if (left) await stop(`${left} is still not approved after 15 steps`);
+	await orch.checkTests(name);
+	const before = await ticket();
+	if (before.closeBlocked) await stop(`ticket cannot close: ${before.closeBlocked}`);
+	await watch('report', () => orch.closeTicket(name, ticketId));
+	const done = await ticket();
+	console.log(`\n${done.id} is ${done.status}\n${done.report?.text ?? 'no report'}`);
+	const t = done.report?.tests;
+	if (t) console.log(`tests: ${t.passed} passed, ${t.failed} failed`);
+}
+
 if (!only || only === 'approve') {
 	console.log('--- P4 and P5: checks, then approve ---');
 	await orch.checkCode(name);
@@ -176,54 +225,74 @@ if (!only || only === 'p7') {
 		await stop(`${open.id} is ${open.status}; answer its questions in the UI, then run p7 again`);
 	}
 
-	const ORDER = ['P1', 'P2', 'P4', 'P5', 'P6'] as const;
-	const pending = async () => {
-		await idle();
-		const { state: s } = await orch.snapshot(name);
-		return ORDER.find((p) => s.phases[p].status !== 'approved');
-	};
-	for (let step = 0; step < 15; step++) {
-		const phase = await pending();
-		if (!phase) break;
-		const { state: s, requirements } = await orch.snapshot(name);
-		const status = s.phases[phase].status;
-		console.log(`\n${phase} is ${status}`);
-		if (status === 'awaiting_approval') {
-			try {
-				// P4 may only fail on tests that call a changed signature; P5 updates them next, so
-				// that P4 approval is an override, recorded in the state like one made in the UI.
-				const questions = requirements?.openQuestions ?? [];
-				if (phase === 'P1' && questions.length > 0 && !anyway) {
-					for (const q of questions) console.log(`  ${q.id} ${q.text}`);
-					await stop('P1 has open questions; answer them in the UI, or pass --anyway to assume');
-				}
-				const opts =
-					phase === 'P1' ? { anyway } : overrides.includes(phase) ? { override: true } : {};
-				await orch.approve(name, phase, opts);
-			} catch (e) {
-				await gates('P4', 'P5', 'P6');
-				await stop(`approving ${phase} failed: ${e instanceof Error ? e.message : String(e)}`);
-			}
-			console.log(`${phase} approved`);
-		} else if (status === 'stale' && phase !== 'P1') {
-			await watch(`update ${phase}`, () => orch.updateStale(name, phase));
-		} else await stop(`${phase} is ${status}; the walk cannot go on`);
-	}
-	const left = await pending();
-	if (left) await stop(`${left} is still not approved after 15 steps`);
-	await orch.checkTests(name);
-	const before = await ticket();
-	if (before.closeBlocked) await stop(`ticket cannot close: ${before.closeBlocked}`);
-	await watch('report', () => orch.closeTicket(name, ticketId));
-	const done = await ticket();
-	console.log(`\n${done.id} is ${done.status}\n${done.report?.text ?? 'no report'}`);
-	const t = done.report?.tests;
-	if (t) console.log(`tests: ${t.passed} passed, ${t.failed} failed`);
+	await walkAndClose(ticketId);
 }
 
-// P6 is not marked stale when only code changes, so the walk keeps the old deploy check; rerun all
-// checks at the end so the stored results describe the final code.
-if (!only || only === 'check') {
+// Two hand edits in src/, each found by the drift check and taken through its own drift ticket: the
+// first is adopted into the design (direction design, entry P2), the second is undone in the code
+// (direction code, entry P4). A done drift ticket counts as one edit handled; an open one resumes.
+const DRIFTS = [
+	{
+		direction: 'design',
+		file: 'src/auction-api/Item.ts',
+		from: '  /** Moves the end time 2 minutes later',
+		to: '  /** Returns the milliseconds left until the end time at the given time, never below 0. */\n  timeLeftMs(now: Date): number {\n    return Math.max(0, this.endTime.getTime() - now.getTime());\n  }\n\n  /** Moves the end time 2 minutes later'
+	},
+	{
+		direction: 'code',
+		file: 'src/auction-api/Item.ts',
+		from: '  isOpen(now: Date): boolean {\n    return this.status === AuctionStatus.open && now.getTime()',
+		to: '  isOpen(at: Date): boolean {\n    return this.status === AuctionStatus.open && at.getTime()'
+	}
+] as const;
+
+if (only === 'drift') {
+	for (const [i, d] of DRIFTS.entries()) {
+		const drifts = (await orch.snapshot(name)).tickets.filter((t) => t.kind === 'drift');
+		if (drifts.filter((t) => t.status === 'done').length > i) continue;
+		console.log(
+			`\n--- drift ${i + 1}: hand edit in ${d.file}, repair direction ${d.direction} ---`
+		);
+		const open = drifts.find((t) => t.status !== 'done' && t.status !== 'rejected');
+		let ticketId = open?.id ?? '';
+		if (!open) {
+			const text = (await store.readText(d.file)) ?? '';
+			// A rerun after the edit was written but before its ticket opened keeps the edit as is.
+			if (!text.includes(d.to)) {
+				if (!text.includes(d.from)) await stop(`the hand edit does not apply to ${d.file}`);
+				// No run ID: a hand edit, not a run, so Discard last run never restores it.
+				await store.writeFile(d.file, text.replace(d.from, d.to));
+			}
+			await orch.checkCode(name);
+			await gates('P4');
+			await watch('triage', async () => {
+				const r = await orch.openDriftTicket(name);
+				ticketId = r.ticketId;
+				return r;
+			});
+		} else if (open.status === 'in_progress') {
+			await walkAndClose(open.id);
+			continue;
+		} else if (open.status !== 'triaged') {
+			await stop(
+				`${open.id} is ${open.status}; answer its questions in the UI, then run drift again`
+			);
+		}
+		await idle();
+		const t = (await orch.snapshot(name)).tickets.find((x) => x.id === ticketId)!;
+		if (t.status !== 'triaged' || !t.plan) await stop(`triage left ${t.status}`);
+		console.log(`${t.id}: ${t.description}`);
+		for (const [n, s] of t.plan!.steps.entries()) console.log(`  ${n + 1}. ${s}`);
+		await watch(`entry ${d.direction}`, () =>
+			orch.approvePlan(name, ticketId, { direction: d.direction })
+		);
+		await walkAndClose(ticketId);
+	}
+}
+
+// Rerun all checks at the end, also after the drift hand edits and their repairs, so the stored
+// results describe the final code.
+if (!only || only === 'check' || only === 'drift') {
 	console.log('\n--- final checks ---');
 	await orch.checkCode(name);
 	await orch.checkTests(name);

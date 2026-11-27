@@ -1,0 +1,82 @@
+{
+  "id": "20261127-132856-P4",
+  "phase": "P4",
+  "agent": "code",
+  "status": "done",
+  "startedAt": "2026-11-27T13:28:56.906Z",
+  "finishedAt": "2026-11-27T13:29:17.090Z",
+  "usage": {
+    "input": 341,
+    "output": 2039,
+    "cacheRead": 23432,
+    "cacheWrite": 4232
+  },
+  "costUsd": 0.0317855,
+  "summary": "The agent renamed the `isOpen` parameter in `src/auction-api/Item.ts` from `at` to `now` in both the signature and the body, and reports that behaviour is unchanged, drift detection now comes back clean, and the typecheck passes. It did not run the UC-002 to UC-006 tests scheduled for P5 because it has no test-running tool, so those tests are still outstanding and need to be run before this phase can be considered verified. All tool calls succeeded, so there are no failures to chase.",
+  "prevPhase": {
+    "status": "approved",
+    "approvedAt": "2026-11-27T11:16:36.736Z",
+    "override": {
+      "at": "2026-11-27T11:16:36.736Z",
+      "failed": [
+        "Typecheck passes",
+        "App starts"
+      ]
+    },
+    "designHashes": {
+      "DSN-012": "dd673261e1ec4a19b85a56a9c87b5865160a4904ced23b50dabb07f1e58bda20",
+      "DSN-013": "a476ce378845ad5ce352eb2cd7d86c07607c45988001266743551ab8bfadd030",
+      "DSN-014": "5539642379fcb403c2bb1eed9febfb51009694f1eda2327a7dcac0e5d457d537",
+      "DSN-015": "dca0e67f848aa649931b66c917122cfed9d51ecd12ce942b6bf91fae69c6dcb1",
+      "DSN-016": "0c127350e08fa5c60b007a227f3a5499a03e1e38f62a03d54ad1aa59507df37a",
+      "DSN-017": "aea1d4dc2093ff74c52fc88f77686d237ca2ca0b902ec447d263954e6812899f",
+      "DSN-044": "ce3e1ccfb11b4108cf1ca58abfd5c28a32595d24db77c76389d797d2e67f0aef",
+      "DSN-018": "e1619892537daa9af0c8a0b0ad2c870395f6b53933e97eb6a4cca377f86dde65",
+      "DSN-019": "1022a49161edfd3dc5260ef78906388b29e30306ea211cea75f687e3e2a2ab5f",
+      "DSN-020": "3458afc6abea224730833efd56aa4dded7942ca05c142230b55a74fc97ee5418",
+      "DSN-021": "127dc722377f52e878c81ce80c984cbc51562d3bfdd2384795072bb78dc59183",
+      "DSN-022": "6ba5de6cdd68015257d23e625b3554d893be60a91fe929caa6a9000f1c12bc86",
+      "DSN-023": "d762249ab25a1e4ffdb4d1663a4d7106c07a00001baff554872fc9347090adac",
+      "DSN-024": "2b2e1d11ba3e112875e5c035bcf2e15b03a5a40221669b1d8ed0f7ad93eaf2dc",
+      "DSN-025": "7ab6eb8085b0ba5c926a041ad21005dc38925438ffcdf9bb87453a073e952c22",
+      "DSN-026": "74ae0c9de1a92aa3a3f8530829e68c6a21a516801d43777df0b007fdfdf0603c",
+      "DSN-028": "0d3b6de6110320cb89f629d0480a46cf5f277d6a3140f468fb2615b87d5828ba",
+      "DSN-029": "f102b8e0b11b444649349e0a248fedb389b97edacfa4e5961dbea066b714f6cd",
+      "DSN-030": "a67d654d44511f1b3b06d0eeb810f19883c1b34af19d7f498cd99d335771bfdb",
+      "DSN-031": "0f4f8b8a849c675830a5d5d5128e92ad98b93ec65d83e32750a5df823a97c2ad",
+      "DSN-032": "ea061f76318005bd01c2919f9f8efa19831e3f8e8b1d4351f2c66ed5624be794",
+      "DSN-033": "3f227705c47a11b0b62225238a0e0caf93f4a4d05cb086b16ff64f3bf60cbfe3",
+      "DSN-034": "f70de426bbe694f2ff4f40fd3d71836c66ebbd7c51757241182db4d9fdec79ff",
+      "DSN-007": "420aeabde70d3f4c9d228e77ab70ccd04654bf6354ee342013a2deb618cc11e8",
+      "DSN-008": "b29612629206e3eb711763cd490a9760c1560da9d3d851ece0dfaf5ff40264b8",
+      "DSN-009": "2867996f11852a954f15b756af8ceb1340c2c44218607c823c92a568dd3bafe7",
+      "DSN-042": "70bb6877b52e041e04bbfae777eb1b02a55434b82dc63faf46e2c77380b2a0f9",
+      "DSN-001": "97477ccea6495800e6ff8b15477a6d6e184f3527228ac3130c2629ed67c295e1",
+      "DSN-002": "cbebb181f3c6183e5716b5e77720223e67776f9bcdb4867ac26a104601fc45ac",
+      "DSN-005": "cebf794828c3188c424bb42e98f29aa99540c0e85c16629c1fd6000ab615c8fa",
+      "DSN-006": "7d93e605520eaf08b9986a533e1b3a8dfba70881c47883209c4b8e46f7b14f29"
+    }
+  },
+  "prevArtefactHash": "3d600f0717eb7b907d5d4350a379c2818a49592ec0bc2b7d5e4ba0aaa709699e",
+  "postArtefactHash": "d2fb73d122de9e04fd795a86bd632322fabdbd8d480c019e287be598a0b7fa5a",
+  "ticketId": "TCK-003",
+  "entry": true,
+  "prevTicket": {
+    "status": "triaged",
+    "plan": {
+      "entry": "P4",
+      "affectedIds": [
+        "DSN-015"
+      ],
+      "files": [
+        "src/auction-api/Item.ts"
+      ],
+      "steps": [
+        "P4: In src/auction-api/Item.ts rename the isOpen parameter from 'at' to 'now' (signature and body), as the design has it for DSN-015 and as timeLeftMs and extendIfLate already use it; behaviour stays the same.",
+        "P4: Run detect_drift again to confirm the DSN-015 drift is gone.",
+        "P5: Run the existing tests for UC-002, UC-003, UC-004, UC-005 and UC-006 (marked out of date) and check that they still pass."
+      ],
+      "direction": "code"
+    }
+  }
+}

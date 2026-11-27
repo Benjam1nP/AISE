@@ -6,7 +6,7 @@
     },
     "P2": {
       "status": "approved",
-      "approvedAt": "2026-11-27T11:14:16.520Z",
+      "approvedAt": "2026-11-27T13:28:10.041Z",
       "reqHashes": {
         "REQ-001": "ef33a72b58ea700070fb52b051f5136c788d68b1d9aa571bd16c84fd4bbed344",
         "REQ-002": "1262b59c481c383acc492c14093d6f8d101fc492d98166b8d349c5b53bc1d92c",
@@ -27,19 +27,12 @@
     },
     "P4": {
       "status": "approved",
-      "approvedAt": "2026-11-27T11:16:36.736Z",
-      "override": {
-        "at": "2026-11-27T11:16:36.736Z",
-        "failed": [
-          "Typecheck passes",
-          "App starts"
-        ]
-      },
+      "approvedAt": "2026-11-27T13:29:17.200Z",
       "designHashes": {
         "DSN-012": "dd673261e1ec4a19b85a56a9c87b5865160a4904ced23b50dabb07f1e58bda20",
         "DSN-013": "a476ce378845ad5ce352eb2cd7d86c07607c45988001266743551ab8bfadd030",
         "DSN-014": "5539642379fcb403c2bb1eed9febfb51009694f1eda2327a7dcac0e5d457d537",
-        "DSN-015": "1b8bb912189d5294444c3629563d24e55b6766bc31ab864306a47bd17a67f5e4",
+        "DSN-015": "dca0e67f848aa649931b66c917122cfed9d51ecd12ce942b6bf91fae69c6dcb1",
         "DSN-016": "0c127350e08fa5c60b007a227f3a5499a03e1e38f62a03d54ad1aa59507df37a",
         "DSN-017": "aea1d4dc2093ff74c52fc88f77686d237ca2ca0b902ec447d263954e6812899f",
         "DSN-044": "ce3e1ccfb11b4108cf1ca58abfd5c28a32595d24db77c76389d797d2e67f0aef",
