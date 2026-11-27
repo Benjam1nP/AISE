@@ -1,7 +1,7 @@
 import path from 'node:path';
 
 export type AgentName =
-	'requirements' | 'design' | 'code' | 'test' | 'deploy' | 'maintenance' | 'mcp';
+	'requirements' | 'design' | 'review' | 'code' | 'test' | 'deploy' | 'maintenance' | 'mcp';
 
 /**
  * Tools per agent, from section 5 of the design spec. Names of tools that are not in TOOLS yet are
@@ -12,6 +12,7 @@ export type AgentName =
 export const TOOLS_BY_AGENT: Record<AgentName, string[]> = {
 	requirements: ['read_requirements', 'write_requirements'],
 	design: ['read_requirements', 'read_design', 'update_design', 'report_coverage', 'code_model'],
+	review: ['read_requirements', 'read_design', 'report_design_proposals'],
 	code: [
 		'read_requirements',
 		'read_design',
@@ -53,13 +54,14 @@ export const TOOLS_BY_AGENT: Record<AgentName, string[]> = {
 	mcp: []
 };
 
-/** Tools that need an in process run to attach to (the test agent's reports, the code agent's fix result, the ticket plan and report); no MCP session is offered them, whatever its agent. */
+/** Tools that need an in process run to attach to (the test agent's reports, the code agent's fix result, the ticket plan and report, the design review's proposals); no MCP session is offered them, whatever its agent. */
 export const RUN_ONLY_TOOLS = [
 	'report_test_fix',
 	'report_code_bug',
 	'report_fix_result',
 	'write_ticket_plan',
-	'write_ticket_report'
+	'write_ticket_report',
+	'report_design_proposals'
 ];
 
 /** What the code agent may write and what the P4 code hash covers; a trailing slash is a folder. */
@@ -72,6 +74,7 @@ export const DOC_FILES = ['README.md'];
 const AGENT_WRITES: Record<Exclude<AgentName, 'mcp'>, readonly string[]> = {
 	requirements: [],
 	design: [],
+	review: [],
 	maintenance: [],
 	code: CODE_ROOTS,
 	test: ['test/'],

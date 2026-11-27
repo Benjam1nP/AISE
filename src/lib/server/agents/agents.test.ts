@@ -9,6 +9,8 @@ import {
 	dbFile,
 	designAgent,
 	requirementsAgent,
+	reviewAgent,
+	reviewBrief,
 	summariseRun,
 	updateBrief,
 	wiringBrief,
@@ -1420,5 +1422,24 @@ describe('maintenance agent and ticket briefs', () => {
 		expect(text).not.toContain('Class499');
 		expect(text).toMatch(/\.\.\. \(\d+ more drift items; run detect_drift\)$/);
 		expect(Ticket.shape.description.safeParse(text).success).toBe(true);
+	});
+});
+
+describe('review agent', () => {
+	it('is Sonnet 5.5 at medium effort with the read tools and report_design_proposals only', () => {
+		expect(AGENTS.review).toBe(reviewAgent);
+		expect(reviewAgent).toMatchObject({ model: 'claude-sonnet-5-5', effort: 'medium' });
+		expect(reviewAgent.tools).toEqual([
+			'read_requirements',
+			'read_design',
+			'report_design_proposals'
+		]);
+	});
+
+	it('briefs the computed uncovered criteria, or says there is no coverage', () => {
+		const brief = reviewBrief([{ reqId: 'REQ-002', n: 1, text: 'Tasks are listed' }]);
+		expect(brief).toContain('- REQ-002 AC1: Tasks are listed');
+		expect(reviewBrief([])).toContain('covers every acceptance criterion');
+		expect(reviewBrief(null)).toContain('no coverage record');
 	});
 });

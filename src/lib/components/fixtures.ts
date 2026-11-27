@@ -18,7 +18,7 @@ export function snapshotOf(over: Record<string, unknown> = {}): ProjectSnapshot 
 		requirements: null,
 		design: null,
 		diagrams: null,
-		chat: { P1: [], P2: [], P4: [], P5: [], P6: [] },
+		chat: { P1: [], P2: [], P3: [], P4: [], P5: [], P6: [] },
 		gates: {
 			P1: { passed: true, checks: [{ label: 'At least one requirement', ok: true }] },
 			P2: { passed: false, checks: [{ label: 'Design exists', ok: false }] },
@@ -36,6 +36,7 @@ export function snapshotOf(over: Record<string, unknown> = {}): ProjectSnapshot 
 		codegen: null,
 		checks: null,
 		testChecks: null,
+		proposals: null,
 		staleTestIds: [],
 		deployCheck: null,
 		deployCheckRunning: false,
