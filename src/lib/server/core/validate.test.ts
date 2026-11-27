@@ -78,17 +78,19 @@ describe('validateDesign', () => {
 describe('committed designs', () => {
 	const root = new URL('../../../../', import.meta.url);
 	const read = (file: string): unknown => JSON.parse(readFileSync(new URL(file, root), 'utf8'));
-	it.each(['showcases/fixture', 'showcases/booking', 'showcases/auction', 'test/fixtures/p4'])(
-		'%s validates with no issues or warnings',
-		(dir) => {
-			const reqFile = `${dir}/.aise/requirements.json`;
-			const r = existsSync(new URL(reqFile, root)) ? RequirementsDoc.parse(read(reqFile)) : null;
-			const d = DesignDoc.parse(read(`${dir}/.aise/design.json`));
-			const { issues, warnings } = validateDesign(d, r);
-			expect(issues).toEqual([]);
-			expect(warnings).toEqual([]);
-		}
-	);
+	it.each([
+		'test/fixtures/projects/todo',
+		'showcases/booking',
+		'showcases/auction',
+		'test/fixtures/p4'
+	])('%s validates with no issues or warnings', (dir) => {
+		const reqFile = `${dir}/.aise/requirements.json`;
+		const r = existsSync(new URL(reqFile, root)) ? RequirementsDoc.parse(read(reqFile)) : null;
+		const d = DesignDoc.parse(read(`${dir}/.aise/design.json`));
+		const { issues, warnings } = validateDesign(d, r);
+		expect(issues).toEqual([]);
+		expect(warnings).toEqual([]);
+	});
 });
 
 describe('validateDesign component membership', () => {

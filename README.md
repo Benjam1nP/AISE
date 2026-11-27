@@ -80,4 +80,7 @@ Tools: `read_requirements`, `write_requirements`, `read_design`, `update_design`
 - [docs/superpowers/specs/2026-11-04-ai-se-environment-design.md](docs/superpowers/specs/2026-11-04-ai-se-environment-design.md): the frozen design
 - [AGENTS.md](AGENTS.md): every command and convention (also read by coding agents)
 - [CHANGELOG.md](CHANGELOG.md), [docs/decisions.md](docs/decisions.md), [docs/design-system.md](docs/design-system.md)
+- [showcases/](showcases/README.md): the three showcase projects with all their artefacts
+- [evidence/](evidence/README.md): the evidence for each grading criterion
+- [presentation/](presentation/INSTRUCTIONS.md): slides and demo script
 - [docs/context/INDEX.md](docs/context/INDEX.md): course material and requirements as Markdown

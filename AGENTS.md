@@ -37,13 +37,16 @@ C1 phases beyond coding, C2 artefact alignment under change, C3 usability, C4 do
 ## Repository layout
 
 - `docs/superpowers/specs/2026-11-04-ai-se-environment-design.md` the design. Read it before architectural work.
-- `docs/pdf/` course slides and the requirements PDF. Reference material only; do not modify.
+- `docs/pdf/` the requirements PDF; the course slides in `docs/pdf/slides/` are gitignored (local copy only). Reference material only; do not modify.
 - `docs/context/` structured Markdown translations and master cross-reference index (`docs/context/INDEX.md`) for AI agents.
 - `docs/assets/` README banner. `docs/questions/` kickoff questions and answers; `docs/diagrams/` overview diagram and visual design summary (`design-summary.html`).
 
 - `src/` one TypeScript package: SvelteKit UI and server code. Server code goes in `src/lib/server/` (`core/`, `agents/`, `orchestrator/`, `mcp/`) as it lands.
 - `test/` tests outside `src/`.
-- `showcases/<name>/` generated projects (to-do, booking, auction) with their `.aise/` artefacts (booking and auction committed through P4). Tickets (`.aise/tickets.json` and the ticket chats) are committed with the showcase they belong to. Any other folder under `showcases/` is gitignored scratch.
+- `showcases/<name>/` the three hand in projects (todo, booking, auction) with their `.aise/` artefacts; index in `showcases/README.md`. Tickets (`.aise/tickets.json` and the ticket chats) are committed with the showcase they belong to. Any other folder under `showcases/` is gitignored scratch.
+- `evidence/` the evidence per grading criterion (index in `evidence/README.md`): scaling comparison, change propagation, injected bug, artefact quality.
+- `presentation/` slide and demo instructions.
+- `test/fixtures/projects/todo/` a to do project at P2 (requirements and design) for tests.
 
 ## Commands
 
