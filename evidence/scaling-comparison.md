@@ -13,7 +13,7 @@ findings they produced.
 | auction | 12 requirements, 23 classes, 4 nodes, 26 files, 1193 lines | 42   | 6.99       | 43.3 min   |
 
 Totals are every run in `.aise/runs/` (`costUsd`, `finishedAt` minus `startedAt`); lines count
-`src/**/*.ts`. Per phase, the first build up to the first P7 run, then P7 as all runs of the change
+`src/**/*.ts`. Costs are rounded per row, so rows can differ from the total by $0.01. Per phase, the first build up to the first P7 run, then P7 as all runs of the change
 tickets:
 
 | Project | Phase | Runs | Cost (USD) | Agent time | Gate at approval                 | Manual help                                                                          |
@@ -42,34 +42,41 @@ tickets:
 
 Booking's 20 runs include 2 P5 runs of the injected bug ([injected-bug.md](injected-bug.md)),
 $0.11, not in the table. Auction's P7 row is TCK-001 (7 runs, $1.65) and the two drift tickets
-TCK-002 and TCK-003 (6 runs, $0.60, [change-propagation.md](change-propagation.md)). P3 ran on the
+TCK-002 and TCK-003 (6 runs, $0.60, [change-propagation.md](change-propagation.md)); through
+TCK-001, before the drift tickets, auction stood at 35 runs and $6.33 (the figure in the deck).
+Findings 1 to 17 are in the first log below, 18 to 23 in the P5 to P7 logs. P3 ran on the
 to do project only; the showcase script keeps the automatic review off.
 
 ## Where it breaks as the project grows
 
-- **Deployment nodes, not classes, drive the cost.** Booking has almost three times the classes of to do
-  and cost 1.5 times as much. Auction has 23 classes like booking's 14, but 4 nodes instead of 2,
-  and cost 2.7 times booking: 14 P4 runs instead of 2 or 3, $2.77 in P4 alone. Relations across
+- **Cost tracked deployment nodes and P4 fix rounds more than classes.** An observation from three
+  projects with different domains, not a controlled result. Booking has almost three times the
+  classes of to do and cost 1.5 times as much. Auction has 23 classes against booking's 14, but 4
+  nodes instead of 2, and cost 2.7 times booking: 14 P4 runs instead of 2 or 3, $2.77 in P4 alone. Relations across
   nodes became constructor injection (finding 2) and the design schema cannot draw node to node
   links (finding 7, #12, #14).
 - **Green gates stop meaning working code.** On to do, P5 found one wrong status code.
   On booking and auction, per class workers broke contracts between classes (ids, enum values,
-  store semantics) that typecheck and drift accept (findings 1, 4). P5 tests from the acceptance
-  criteria are what caught them; without P5 the larger project would ship broken.
+  store semantics) that typecheck and drift accept (findings 1, 4). A hand smoke test and PR review
+  caught them before P5 existed on these projects; P5 tests from the acceptance criteria are the
+  automatic check for this, so the larger the project, the less the P4 gate alone says.
 - **Design coverage drifts from the criteria.** The P2 gate checks that each requirement links to
   some element, not that every criterion has a method or sequence step. Gaps appeared on booking
   (finding 9, REQ-008 in finding 23) and on to do's overdue rule in P7; they grow with the number
   of criteria and only a human review or a P3 run finds them.
 - **Diagrams get hard to read.** The auction class diagram has 23 classes in one view (finding 14);
   to do and booking fit on a screen.
-- **Change tickets scale well.** A change costs about the same on every size: $1.14 on to do,
-  $1.06 on booking, $1.65 on auction, 5 to 7 minutes each, because triage limits each phase to the
-  affected IDs. The manual help in P7 came from product gaps (#18, #19, finding 21), all fixed or
+- **Change tickets grew slower than the projects.** One change cost $1.14 on to do, $1.06 on
+  booking and $1.65 on auction, 5 to 7 minutes each, while the build cost grew about eightfold ($0.60 to $4.74);
+  triage limits each phase to the affected IDs. The tickets are different changes, so this is a
+  range, not a like for like comparison. The manual help in P7 came from product gaps (#18, #19, finding 21), all fixed or
   worked around, not from project size.
 
 ## Booking and auction through P1 to P4
 
-Run on 2026-11-21 on branch `showcases/booking-auction` (from `main` at 5c81f06).
+Run on 2026-11-21 on branch `showcases/booking-auction` (from `main` at 5c81f06). A snapshot of
+that day: the numbers below predate the later P4 fix runs (findings 15 to 17 and the 2026-11-22 to
+24 runs), which the summary above includes.
 Artefacts: `showcases/booking/`, `showcases/auction/`.
 
 ### How it was run
