@@ -25,6 +25,8 @@
 	/** Bumped when `data-theme` changes or a failed render is retried. */
 	let revision = $state(0);
 	let renders = 0;
+	/** The source the view was last set for; the same source drawn again keeps the view. */
+	let shownSource: string | undefined;
 
 	const message = (e: unknown) => (e instanceof Error ? e.message : String(e));
 	const token = (name: string) =>
@@ -86,7 +88,9 @@
 				naturalSize(host.querySelector('svg'));
 				result.bindFunctions?.(host);
 				// A new mark in a diagram of the same size resizes nothing, so the view is set here too.
-				panzoom?.show();
+				// A theme change draws the same source again and keeps the developer's view.
+				if (text !== shownSource) panzoom?.show();
+				shownSource = text;
 			} catch (e) {
 				document.getElementById(`d${id}`)?.remove();
 				if (!current) return;

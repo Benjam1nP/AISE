@@ -8,10 +8,14 @@ import type { Trace } from './server/core/trace';
 export class TraceStore {
 	traces = $state.raw<Record<string, Trace>>({});
 	#key: string | undefined;
+	#project: string | undefined;
 
 	async load(project: string, key: string): Promise<void> {
 		if (key === this.#key) return;
 		this.#key = key;
+		// Another project's traces would link to files and IDs this one does not have.
+		if (project !== this.#project) this.traces = {};
+		this.#project = project;
 		try {
 			const res = await fetch(`/p/${project}/trace`);
 			if (!res.ok || key !== this.#key) return;

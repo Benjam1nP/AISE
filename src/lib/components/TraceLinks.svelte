@@ -84,7 +84,7 @@
 			<span class="none">No test result yet.</span>
 		{:else}
 			<ul class="links">
-				{#each trace.tests as t (t.file + t.name)}
+				{#each trace.tests as t, i (i)}
 					<li>
 						<button
 							type="button"

@@ -14,6 +14,11 @@ export const GET: RequestHandler = async ({ params }) => {
 	if (!(await orch.listProjects()).includes(params.name)) {
 		error(404, `No project named "${params.name}"`);
 	}
-	const { input, tests } = await loadTraceInput(new ProjectStore(orch.projectDir(params.name)));
-	return json({ traces: traceAll(input), testsOutOfDate: tests?.outOfDate ?? false });
+	try {
+		const { input, tests } = await loadTraceInput(new ProjectStore(orch.projectDir(params.name)));
+		return json({ traces: traceAll(input), testsOutOfDate: tests?.outOfDate ?? false });
+	} catch {
+		// An artefact that does not parse yet (mid edit, older format) means no links, not a 500.
+		return json({ traces: {}, testsOutOfDate: false });
+	}
 };

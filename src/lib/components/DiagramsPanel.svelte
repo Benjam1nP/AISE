@@ -73,6 +73,12 @@
 	const sequence = $derived(sequences.find((s) => s.id === picked) ?? sequences[0]);
 	const trace = $derived(selected ? traces[selected] : undefined);
 
+	/** Another diagram drops the card: its element is not on screen anymore. */
+	function choose(k: string) {
+		kind = k;
+		selected = undefined;
+	}
+
 	function select(id: string) {
 		selected = id;
 		oninsert(`${id} `);
@@ -89,7 +95,7 @@
 		/>
 	{:else}
 		<Stack>
-			<Tabs tabs={KINDS} bind:active={kind}>
+			<Tabs tabs={KINDS} bind:active={() => kind, choose}>
 				{#snippet children(active)}
 					{#if active === 'sequence'}
 						{#if sequence}
@@ -97,7 +103,7 @@
 								<Select
 									label="Sequence diagram"
 									options={sequences.map((s) => ({ value: s.id, label: `${s.id} ${s.name}` }))}
-									bind:value={() => sequence.id, (v) => (picked = v)}
+									bind:value={() => sequence.id, (v) => ((picked = v), (selected = undefined))}
 								/>
 								<Mermaid
 									source={sequence.mermaid}

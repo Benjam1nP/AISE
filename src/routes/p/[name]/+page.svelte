@@ -60,6 +60,11 @@
 	const traceStore = new TraceStore();
 	const traceKey = $derived(
 		JSON.stringify([
+			snapshot.name,
+			// A run can edit a file in place and a discard restores it; neither changes the list.
+			snapshot.lastRun?.id,
+			snapshot.lastRun?.status,
+			snapshot.discardedRunIds.length,
 			snapshot.files,
 			snapshot.checks?.at,
 			snapshot.testChecks?.at,
