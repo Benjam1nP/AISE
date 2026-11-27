@@ -11,6 +11,7 @@ import {
 	driftDescription,
 	entryBrief,
 	fixBrief,
+	reviewBrief,
 	summariseRun,
 	testUpdateBrief,
 	ticketMessage,
@@ -49,6 +50,7 @@ import {
 	appendRunEvent,
 	createRun,
 	listRuns,
+	readBackup,
 	restoreChecksBefore,
 	restoreRun,
 	saveChecksBefore,
@@ -87,9 +89,17 @@ import {
 	unexplainedFailures,
 	type TestChecks
 } from '../core/test-state';
+import { readDesignReview, uncoveredCriteria } from '../core/tools/coverage';
 import { DESIGN_PATH } from '../core/tools/design';
 import { deployCheck, type DeployCheckResult } from '../core/tools/deploy';
 import { ToolError, type ToolContext } from '../core/tools/index';
+import {
+	DesignProposals,
+	p3Status,
+	PROPOSALS_PATH,
+	readDesignProposals,
+	resolveProposal
+} from '../core/tools/proposals';
 import { REQUIREMENTS_PATH, saveRequirements } from '../core/tools/requirements';
 import { reportData } from '../core/ticket-report';
 import { failureOf, fixLoop as runFixLoop, type AgentMessage } from '../testgen/fix-loop';
@@ -163,8 +173,11 @@ export class NotFoundError extends Error {
 
 type ChatPhase = 'P1' | 'P2' | 'P4' | 'P5' | 'P6';
 const ChatPhase = z.enum(['P1', 'P2', 'P4', 'P5', 'P6']);
-/** The phases a run belongs to: a chat phase, or P7 for a ticket run of the maintenance agent. */
-type RunPhase = ChatPhase | 'P7';
+/**
+ * The phases a run belongs to: a chat phase, P3 for a design review run, or P7 for a ticket run of
+ * the maintenance agent. P3 and P7 write no phase state: both are derived in the snapshot.
+ */
+type RunPhase = ChatPhase | 'P3' | 'P7';
 const isChatPhase = (p: string): p is ChatPhase => ChatPhase.safeParse(p).success;
 /** The phases with staleness: Still valid and Update. */
 const StalePhase = z.enum(['P2', 'P4', 'P5', 'P6']);
@@ -174,9 +187,15 @@ const CHAT_PHASES = ChatPhase.options;
  * Turn limits per agent: the code agent in P4 chat, Update and Apply fix runs, the test agent in
  * P5 (spec section 6), the deploy agent in P6 and the maintenance agent in a ticket.
  */
-const AGENT_TURNS: Record<string, number> = { code: 40, test: 30, deploy: 25, maintenance: 20 };
+const AGENT_TURNS: Record<string, number> = {
+	review: 8,
+	code: 40,
+	test: 30,
+	deploy: 25,
+	maintenance: 20
+};
 /** Cost guards per agent run in USD; the run fails with reason `cost_limit` above it. */
-const AGENT_COST_LIMIT: Record<string, number> = { deploy: 1, maintenance: 1 };
+const AGENT_COST_LIMIT: Record<string, number> = { review: 0.5, deploy: 1, maintenance: 1 };
 /** Deploy checks that reach `docker compose up` per deploy agent run. */
 const DEPLOY_CHECKS_PER_RUN = 3;
 const MessageText = z.string().trim().min(1, 'The message is empty');
@@ -204,7 +223,7 @@ export type ProjectSnapshot = {
 	requirements: RequirementsDoc | null;
 	design: DesignDoc | null;
 	diagrams: ReturnType<typeof renderAll> | null;
-	chat: Record<ChatPhase, ChatEntry[]>;
+	chat: Record<ChatPhase | 'P3', ChatEntry[]>;
 	gates: Record<ChatPhase, GateResult>;
 	costByPhase: Partial<Record<PhaseId, number>>;
 	activeRun: { runId: string; phase: PhaseId; ticketId?: string } | null;
@@ -224,6 +243,8 @@ export type ProjectSnapshot = {
 	testChecks: TestChecks | null;
 	/** REQ, UC and SEQ IDs that changed since the tests were made or confirmed. */
 	staleTestIds: string[];
+	/** The proposals of the design reviews (P3); null before the first review. */
+	proposals: DesignProposals | null;
 	/** The stored deploy check; null before any ran. */
 	deployCheck: DeployCheck | null;
 	/** The compose services the design plans (name and health url); empty without a design or a readable package.json. */
@@ -239,11 +260,13 @@ export type ProjectSnapshot = {
 	canOpenDriftTicket: boolean;
 };
 
-type AgentName = 'requirements' | 'design' | 'code' | 'test' | 'deploy' | 'maintenance';
+type AgentName = 'requirements' | 'design' | 'review' | 'code' | 'test' | 'deploy' | 'maintenance';
 
 type Deps = {
 	root: string;
 	agents?: Record<AgentName, AgentDef>;
+	/** Review the design after every P2 run that changed it; off by default until the UI shows proposals. */
+	autoReview?: boolean;
 	run?: typeof runAgent;
 	summarise?: typeof summariseRun;
 	generate?: typeof generateCode;
@@ -273,12 +296,14 @@ const DESIGN = DESIGN_PATH;
 const AGENT_OF = {
 	P1: 'requirements',
 	P2: 'design',
+	P3: 'review',
 	P4: 'code',
 	P5: 'test',
 	P6: 'deploy',
 	P7: 'maintenance'
 } as const;
 const AUTO_DESIGN = 'Create the design from the approved requirements.';
+const REVIEW_MESSAGE = 'Review the design and propose improvements.';
 /**
  * The stored checks a run rewrites; saved at its start so a discard brings them back: the P4 and
  * P5 checks with their findings for a P5 run, the deploy check for a P6 run.
@@ -292,6 +317,59 @@ const now = () => new Date().toISOString();
 const messageOf = (e: unknown) => (e instanceof Error ? e.message : String(e));
 const readReqs = (store: ProjectStore) => store.readJson(REQS, RequirementsDoc);
 const readDesign = (store: ProjectStore) => store.readJson(DESIGN, DesignDoc);
+const saveProposals = (store: ProjectStore, doc: DesignProposals, runId?: string) =>
+	store.writeJson(PROPOSALS_PATH, DesignProposals, doc, runId);
+
+/** The proposal, which must exist (NotFoundError) and be open (ConflictError), with its document. */
+async function openProposal(store: ProjectStore, id: string) {
+	const doc = await readDesignProposals(store);
+	const p = doc?.proposals.find((x) => x.id === id);
+	if (!doc || !p) throw new NotFoundError(`No proposal ${id}`);
+	if (p.status !== 'open') throw new ConflictError(`${id} is ${p.status} already`);
+	return { doc, p };
+}
+
+/**
+ * Puts a proposal back to open, a gone one stays gone. When the review sits at `movedTo` (the design
+ * an accept run left, see followDesign), it moves back to the design on disk. Other proposals keep
+ * their status, so discarding an accept run never undoes a later reject.
+ */
+async function reopenProposal(
+	store: ProjectStore,
+	id: string,
+	movedTo: string | null = null
+): Promise<void> {
+	const doc = await readDesignProposals(store);
+	if (!doc) return;
+	const reopened = doc.proposals.some((p) => p.id === id)
+		? resolveProposal(doc, id, 'open', now())
+		: doc;
+	const hash = doc.designHash === movedTo ? designHash(await readDesign(store)) : null;
+	await saveProposals(store, hash ? { ...reopened, designHash: hash } : reopened);
+}
+
+/** The design hash of a stored design text; null when it does not parse. */
+function hashOfText(text: string): string | null {
+	try {
+		return designHash(DesignDoc.parse(JSON.parse(text)));
+	} catch {
+		return null;
+	}
+}
+
+/**
+ * After an accept run that ended done: a review that matched the design before the run moves to
+ * the new design, so its other proposals stay current. A stale review stays stale, and a run that
+ * left the design unchanged (no backup of it) moves nothing.
+ */
+async function followDesign(store: ProjectStore, runId: string): Promise<void> {
+	const backup = await readBackup(store, runId, DESIGN);
+	if (backup === null) return;
+	const [doc, design] = await Promise.all([readDesignProposals(store), readDesign(store)]);
+	const hash = designHash(design);
+	if (doc && hash && doc.designHash === hashOfText(backup))
+		await saveProposals(store, { ...doc, designHash: hash });
+}
 
 /**
  * The phase chat as alternating text messages; tool calls are not replayed (ruling R15) and
@@ -482,11 +560,11 @@ type RunHashes = Pick<RunMeta, 'designHashes' | 'reqHashes' | 'useCaseHashes' | 
  * What a run records at its start besides its ticket: the hashes, `report` for a close run only
  * and `entry` for an entry run only.
  */
-type RunExtra = RunHashes & Pick<RunMeta, 'report' | 'entry' | 'fixLoop'>;
+type RunExtra = RunHashes & Pick<RunMeta, 'report' | 'entry' | 'fixLoop' | 'fromProposal'>;
 
 type RunOrigin = Pick<
 	RunMeta,
-	'phase' | 'prevPhase' | 'prevArtefactHash' | 'ticketId' | 'prevTicket' | 'report'
+	'phase' | 'prevPhase' | 'prevArtefactHash' | 'ticketId' | 'prevTicket' | 'report' | 'fromProposal'
 > &
 	RunHashes & {
 		id?: string;
@@ -680,6 +758,7 @@ export class Orchestrator {
 	private readonly testChecks: typeof runTestChecks;
 	private readonly loop: typeof runFixLoop;
 	private readonly deployCheck: NonNullable<Deps['deployCheck']>;
+	private readonly autoReview: boolean;
 	private readonly claims = new Map<string, Claim>();
 
 	constructor(deps: Deps) {
@@ -692,6 +771,7 @@ export class Orchestrator {
 		this.testgen = deps.generateTests ?? generateTests;
 		this.testChecks = deps.testChecks ?? runTestChecks;
 		this.loop = deps.fixLoop ?? runFixLoop;
+		this.autoReview = deps.autoReview ?? false;
 		this.deployCheck =
 			deps.deployCheck ??
 			((ctx, input) =>
@@ -725,6 +805,7 @@ export class Orchestrator {
 			design,
 			p1,
 			p2,
+			p3,
 			p4,
 			p5,
 			p6,
@@ -737,13 +818,15 @@ export class Orchestrator {
 			deployFiles,
 			deployCheck,
 			pkg,
-			tickets
+			tickets,
+			proposals
 		] = await Promise.all([
 			readState(store),
 			readReqs(store),
 			readDesign(store),
 			readChat(store, 'P1'),
 			readChat(store, 'P2'),
+			readChat(store, 'P3'),
 			readChat(store, 'P4'),
 			readChat(store, 'P5'),
 			readChat(store, 'P6'),
@@ -756,7 +839,8 @@ export class Orchestrator {
 			listDeployFiles(store),
 			readDeployCheck(store),
 			readPackageJson(store),
-			readTickets(store)
+			readTickets(store),
+			readDesignProposals(store)
 		]);
 		const costByPhase: Partial<Record<PhaseId, number>> = {};
 		for (const r of runs) costByPhase[r.phase] = (costByPhase[r.phase] ?? 0) + r.costUsd;
@@ -766,15 +850,22 @@ export class Orchestrator {
 		const code = await hashFiles(store, files);
 		return {
 			name,
-			// P7 is derived from the tickets (plan Deviation 4); state.json keeps its own entry.
+			// P3 is derived from the proposals and P7 from the tickets (plan Deviation 4); state.json
+			// keeps its own entries.
 			state: {
 				...state,
-				phases: { ...state.phases, P7: { status: p7Status(tickets, active ?? null) } }
+				phases: {
+					...state.phases,
+					P3: {
+						status: active?.phase === 'P3' ? 'running' : p3Status(proposals, designHash(design))
+					},
+					P7: { status: p7Status(tickets, active ?? null) }
+				}
 			},
 			requirements,
 			design,
 			diagrams: design && renderAll(design, name),
-			chat: { P1: p1, P2: p2, P4: p4, P5: p5, P6: p6 },
+			chat: { P1: p1, P2: p2, P3: p3, P4: p4, P5: p5, P6: p6 },
 			gates: {
 				P1: checkGate('P1', requirements, design),
 				P2: await designGate(store, requirements, design),
@@ -792,6 +883,7 @@ export class Orchestrator {
 			codegen: claim?.codegen ? { ...claim.codegen } : null,
 			checks,
 			testChecks,
+			proposals,
 			staleTestIds: staleTestIds(state, requirements, design),
 			deployCheck,
 			deployCheckRunning: claim?.deployCheck === true,
@@ -1415,6 +1507,44 @@ export class Orchestrator {
 		});
 	}
 
+	/** Starts a design review (P3): a run of the review agent on the current design. */
+	async reviewDesign(name: string): Promise<{ runId: string }> {
+		return this.exclusive(name, async (store, claim) => {
+			if (!(await readDesign(store).catch(() => null)))
+				throw new ConflictError('There is no design to review yet');
+			return { runId: await this.startReview(store, name, claim) };
+		});
+	}
+
+	/**
+	 * Accepts an open proposal: marks it accepted and hands it to the design agent in a P2 run with
+	 * `fromProposal`, which starts no review after it. Discarding that run reopens the proposal.
+	 */
+	async acceptProposal(name: string, id: string): Promise<{ runId: string }> {
+		return this.exclusive(name, async (store, claim) => {
+			requireP1Approved(await readState(store), 'changing the design');
+			const { doc, p } = await openProposal(store, id);
+			await saveProposals(store, resolveProposal(doc, id, 'accepted', now()));
+			const text = `Apply review proposal ${id}: ${p.title}. ${p.change}`;
+			try {
+				const extra = { fromProposal: id };
+				return { runId: await this.startRun(store, name, claim, 'P2', text, true, extra) };
+			} catch (e) {
+				await reopenProposal(store, id);
+				throw e;
+			}
+		});
+	}
+
+	/** Rejects an open proposal; no run. */
+	async rejectProposal(name: string, id: string): Promise<void> {
+		await this.exclusive(name, async (store) => {
+			const { doc } = await openProposal(store, id);
+			await saveProposals(store, resolveProposal(doc, id, 'rejected', now()));
+			publish(name, { type: 'changed' });
+		});
+	}
+
 	/** The folder of a project; throws PathError for a name that is not a valid project name. */
 	projectDir(name: string): string {
 		return this.storeFor(name).dir;
@@ -1469,6 +1599,8 @@ export class Orchestrator {
 			}
 			// A README rewrite alone leaves the files, and so the stored checks, as they were.
 			const touched = await touchedFiles(store, run.id, README);
+			// The design an accept run left, where followDesign may have moved the review.
+			const acceptedAt = run.fromProposal ? designHash(await readDesign(store)) : null;
 			await restoreRun(store, run.id);
 			// P5 runs rewrite the checks, findings included; restored files need the old ones. A run
 			// that changed no file leaves the current checks, which still describe the files.
@@ -1486,6 +1618,7 @@ export class Orchestrator {
 				await writeState(store, state);
 			}
 			if (run.ticketId && run.prevTicket) await this.putBack(store, run.ticketId, run.prevTicket);
+			if (run.fromProposal) await reopenProposal(store, run.fromProposal, acceptedAt);
 			publish(name, { type: 'changed' });
 		});
 	}
@@ -1665,7 +1798,7 @@ export class Orchestrator {
 				runId: run.id,
 				...(auto ? { auto } : {})
 			});
-			if (phase === 'P7') {
+			if (phase === 'P7' || phase === 'P3') {
 				run = await updateRun(store, run.id, { ...extra, ...ticketFields });
 			} else {
 				const state = await readState(store);
@@ -1739,7 +1872,11 @@ export class Orchestrator {
 			...(limit === undefined ? {} : { maxTurns: limit }),
 			...(cost === undefined ? {} : { costLimitUsd: cost })
 		};
-		void this.execute(store, name, claim, run, ctx, async (onEvent) => {
+		const review =
+			phase === 'P2' && this.autoReview && !hashes.fromProposal
+				? this.reviewAfter(store, name, claim, run)
+				: undefined;
+		const work: Work = async (onEvent) => {
 			if (!agent?.recordTestChanges) return this.run({ def, ctx, history, onEvent, ...opts });
 			const before = await snapshotTests(ctx);
 			try {
@@ -1747,8 +1884,34 @@ export class Orchestrator {
 			} finally {
 				await recordUnreportedFixes(ctx, before);
 			}
-		});
+		};
+		void this.execute(store, name, claim, run, ctx, work, review);
 		return run.id;
+	}
+
+	/** Starts the review agent on the current design, briefed with the computed uncovered criteria. */
+	private async startReview(store: ProjectStore, name: string, claim: Claim): Promise<string> {
+		const [reqs, design, coverage] = await Promise.all([
+			readReqs(store).catch(() => null),
+			readDesign(store).catch(() => null),
+			readDesignReview(store)
+		]);
+		const current = reqs && coverage && coverage.designHash === designHash(design);
+		const uncovered = current ? uncoveredCriteria(coverage.rows, reqs) : null;
+		const agent = { def: this.agents.review, brief: reviewBrief(uncovered) };
+		return this.startRun(store, name, claim, 'P3', REVIEW_MESSAGE, true, {}, agent);
+	}
+
+	/** After a P2 run that ended done and changed the design, a review follows on the same claim. */
+	private reviewAfter(store: ProjectStore, name: string, claim: Claim, run: RunMeta): FollowUp {
+		return async (status) => {
+			if (status !== 'done') return null;
+			const hash = await artefactHash(store, 'P2').catch(() => null);
+			if (!hash || hash === run.prevArtefactHash) return null;
+			return async () => {
+				await this.startReview(store, name, claim);
+			};
+		};
 	}
 
 	/**
@@ -2130,6 +2293,14 @@ export class Orchestrator {
 		// write_ticket_report sets done during the run; only a close run that finished keeps it.
 		if (run.report && run.status !== 'done' && run.ticketId && run.prevTicket)
 			await this.putBack(store, run.ticketId, run.prevTicket);
+		// An accept run: done moves the review along; otherwise, with the design unchanged, the
+		// proposal is open again.
+		if (run.fromProposal && run.status === 'done' && run.id) await followDesign(store, run.id);
+		else if (
+			run.fromProposal &&
+			(await artefactHash(store, 'P2').catch(() => undefined)) === run.prevArtefactHash
+		)
+			await reopenProposal(store, run.fromProposal);
 		if (!isChatPhase(run.phase)) return;
 		const state = await readState(store);
 		await afterRun(store, state, run);

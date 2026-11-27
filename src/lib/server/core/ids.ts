@@ -5,7 +5,8 @@ export const ID_PATTERNS = {
 	UC: /^UC-\d{3}$/,
 	DSN: /^DSN-\d{3}$/,
 	SEQ: /^SEQ-\d{3}$/,
-	TCK: /^TCK-\d{3}$/
+	TCK: /^TCK-\d{3}$/,
+	PRP: /^PRP-\d{3}$/
 } as const satisfies Record<string, RegExp>;
 
 export type IdPrefix = keyof typeof ID_PATTERNS;

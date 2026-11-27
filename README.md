@@ -27,7 +27,7 @@ AI-assisted software engineering environment, a group project for "Coding with A
 | P6 Deployment        | built  | Dockerfile, compose.yaml and RUN.md from the design, checked by starting the stack in Docker         |
 | P7 Maintenance       | built  | Every change goes through a ticket: triage, plan, the phases with their gates, a change report       |
 
-The agents are in [ARCHITECTURE.md](ARCHITECTURE.md): Sonnet 5.5 for requirements, design, code wiring, test triage and deployment, Haiku 5.5 for the file workers, Opus 5.5 (medium effort) for maintenance.
+The agents are in [ARCHITECTURE.md](ARCHITECTURE.md): Sonnet 5.5 for requirements, design, design review (P3 proposals), code wiring, test triage and deployment, Haiku 5.5 for the file workers, Opus 5.5 (medium effort) for maintenance.
 
 **P4 in short.** Approving the design starts code generation. Plain code plans one file per design class (`src/<component>/<Class>.ts`); Haiku workers write the files in parallel rounds, a type check and a drift check against the design decide which are done, failing files retry and the third attempt runs on Sonnet. A Sonnet code agent then writes the Express wiring in `src/app/` and a small page in `public/`. The gate shows typecheck and drift, goes out of date after a hand edit or a design change, and P4 turns stale when the design changes (Update or Still valid). The Code tab shows the files read only. The agents are listed in [ARCHITECTURE.md](ARCHITECTURE.md#agents).
 

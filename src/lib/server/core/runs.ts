@@ -1,6 +1,7 @@
 import { copyFile, mkdir, readdir, rm, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { z } from 'zod';
+import { ID_PATTERNS } from './ids';
 import { PathError } from './path-error';
 import { Ticket, TicketId } from './schemas/tickets';
 import { PhaseId, PhaseState } from './state';
@@ -48,6 +49,8 @@ export const RunMeta = z.object({
 	entry: z.literal(true).optional(),
 	/** True for a P5 fix loop run, in which the test agent and the code agent hand findings to each other. */
 	fixLoop: z.literal(true).optional(),
+	/** P2 runs that apply an accepted review proposal: its PRP ID; discard reopens it. */
+	fromProposal: z.string().regex(ID_PATTERNS.PRP).optional(),
 	/** The ticket before the run; discard puts it back. */
 	prevTicket: Ticket.pick({ status: true, plan: true, report: true })
 		.partial({ plan: true, report: true })

@@ -121,7 +121,7 @@ describe('Chat for P4', () => {
 	it('explains the empty chat before any code exists', () => {
 		const empty = {
 			...p4([], 'approved'),
-			chat: { P1: [], P2: [], P4: [], P5: [], P6: [] }
+			chat: { P1: [], P2: [], P3: [], P4: [], P5: [], P6: [] }
 		} as ProjectSnapshot;
 		render(Chat, { snapshot: empty, phase: 'P4', live: null, form: null });
 		expect(screen.getByText(/Generate the code first/)).toBeTruthy();
@@ -130,7 +130,7 @@ describe('Chat for P4', () => {
 	it('explains the empty chat when only the scaffold exists', () => {
 		const scaffold = {
 			...p4(['package.json', 'tsconfig.json'], 'approved'),
-			chat: { P1: [], P2: [], P4: [], P5: [], P6: [] }
+			chat: { P1: [], P2: [], P3: [], P4: [], P5: [], P6: [] }
 		} as ProjectSnapshot;
 		render(Chat, { snapshot: scaffold, phase: 'P4', live: null, form: null });
 		expect(screen.getByText(/Generate the code first/)).toBeTruthy();
@@ -139,7 +139,7 @@ describe('Chat for P4', () => {
 	it('asks for the design approval first when P2 is not approved', () => {
 		const open = {
 			...p4([], 'not_started'),
-			chat: { P1: [], P2: [], P4: [], P5: [], P6: [] }
+			chat: { P1: [], P2: [], P3: [], P4: [], P5: [], P6: [] }
 		} as ProjectSnapshot;
 		render(Chat, { snapshot: open, phase: 'P4', live: null, form: null });
 		expect(screen.getByText(/Approve the design first/)).toBeTruthy();

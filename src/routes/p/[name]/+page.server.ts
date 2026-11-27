@@ -1,6 +1,7 @@
 import { fail } from '@sveltejs/kit';
 import { actionFail, loadFail } from '#lib/action-errors.server.ts';
 import { getOrchestrator } from '#lib/server/index.ts';
+import { ID_PATTERNS } from '#lib/server/core/ids.ts';
 import type { RequirementsDoc } from '#lib/server/core/schemas/requirements.ts';
 import {
 	Direction,
@@ -40,6 +41,13 @@ function ticketField(data: FormData): string | null {
 	return parsed.success ? parsed.data : null;
 }
 const badTicket = (action: string) => fail(400, { action, message: 'Choose the ticket.' });
+
+/** The proposalId field: a trimmed PRP ID, or null when it is missing or malformed. */
+function proposalField(data: FormData): string | null {
+	const id = text(data, 'proposalId').trim();
+	return ID_PATTERNS.PRP.test(id) ? id : null;
+}
+const badProposal = (action: string) => fail(400, { action, message: 'Choose the proposal.' });
 
 /** The optional direction of a drift plan: {} when absent, null when sent but not design or code. */
 function directionField(data: FormData): { direction?: 'design' | 'code' } | null {
@@ -167,5 +175,17 @@ export const actions: Actions = {
 		return perform('closeTicket', () => getOrchestrator().closeTicket(params.name, ticketId));
 	},
 	openDriftTicket: ({ params }) =>
-		perform('openDriftTicket', () => getOrchestrator().openDriftTicket(params.name))
+		perform('openDriftTicket', () => getOrchestrator().openDriftTicket(params.name)),
+	reviewDesign: ({ params }) =>
+		perform('reviewDesign', () => getOrchestrator().reviewDesign(params.name)),
+	acceptProposal: async ({ request, params }) => {
+		const id = proposalField(await request.formData());
+		if (id === null) return badProposal('acceptProposal');
+		return perform('acceptProposal', () => getOrchestrator().acceptProposal(params.name, id));
+	},
+	rejectProposal: async ({ request, params }) => {
+		const id = proposalField(await request.formData());
+		if (id === null) return badProposal('rejectProposal');
+		return perform('rejectProposal', () => getOrchestrator().rejectProposal(params.name, id));
+	}
 };
