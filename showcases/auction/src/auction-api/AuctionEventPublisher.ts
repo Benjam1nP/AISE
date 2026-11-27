@@ -4,7 +4,7 @@ import { Item } from './Item.js';
 /**
  * Publishes auction closed events to the internal ws event feed.
  *
- * @trace DSN-030 REQ-003 REQ-004 REQ-007
+ * @trace DSN-030 REQ-003 REQ-004 REQ-007 REQ-012
  */
 export class AuctionEventPublisher {
   constructor(private readonly eventFeed: EventFeed) {}
@@ -20,6 +20,7 @@ export class AuctionEventPublisher {
       status: item.status,
       winnerId: item.winnerId,
       highestBidAmount: item.highestBidAmount,
+      reserveMet: item.isReserveMet(),
     });
     this.eventFeed.publish(`item:${item.id}`, payload);
   }

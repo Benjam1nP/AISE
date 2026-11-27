@@ -1,0 +1,20 @@
+{
+  "id": "20261127-111202-P7",
+  "phase": "P7",
+  "agent": "maintenance",
+  "status": "done",
+  "startedAt": "2026-11-27T11:12:02.841Z",
+  "finishedAt": "2026-11-27T11:12:35.227Z",
+  "usage": {
+    "input": 990,
+    "output": 3150,
+    "cacheRead": 69863,
+    "cacheWrite": 29005
+  },
+  "costUsd": 0.2277009,
+  "summary": "The agent saved a ticket plan for TCK-001 starting at P1, adding an optional seller reserve price that stays hidden from bidders, and changing REQ-004 so an unmet reserve leaves the item unsold. Before approving, check that the plan's changes to the item store, live events and `app.ts` routes are the ones you expect, since the reply says the code currently matches the design and no drift was found. The reply does not show the trace or file reads that led to that conclusion, so you may want to spot-check the routes in `app.ts` and the REQ-004 wording.",
+  "ticketId": "TCK-001",
+  "prevTicket": {
+    "status": "open"
+  }
+}

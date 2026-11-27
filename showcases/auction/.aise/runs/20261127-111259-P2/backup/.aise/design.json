@@ -1,0 +1,1450 @@
+{
+  "actors": [
+    {
+      "id": "ACT-001",
+      "name": "User",
+      "description": "Person identified by display name; can act as seller and bidder."
+    },
+    {
+      "id": "ACT-002",
+      "name": "Frankfurter API",
+      "description": "External exchange rate service."
+    },
+    {
+      "id": "ACT-003",
+      "name": "Scheduler",
+      "description": "Timer that triggers auction closing."
+    }
+  ],
+  "useCases": [
+    {
+      "id": "UC-001",
+      "name": "Register display name",
+      "description": "User picks a unique display name of 2-20 characters and receives a user id kept in the browser.",
+      "actorIds": [
+        "ACT-001"
+      ],
+      "reqIds": [
+        "REQ-008"
+      ]
+    },
+    {
+      "id": "UC-002",
+      "name": "List item",
+      "description": "Seller lists an item with starting price, end time and currency.",
+      "actorIds": [
+        "ACT-001"
+      ],
+      "reqIds": [
+        "REQ-001",
+        "REQ-008"
+      ]
+    },
+    {
+      "id": "UC-003",
+      "name": "Place bid",
+      "description": "Bidder places a bid; validated, stored in item currency, end time extended if late, pushed to watchers.",
+      "actorIds": [
+        "ACT-001"
+      ],
+      "reqIds": [
+        "REQ-002",
+        "REQ-009",
+        "REQ-003",
+        "REQ-011"
+      ]
+    },
+    {
+      "id": "UC-004",
+      "name": "Watch item live",
+      "description": "Client watches an item and receives bids, new end times and closing without reloading.",
+      "actorIds": [
+        "ACT-001"
+      ],
+      "reqIds": [
+        "REQ-003",
+        "REQ-009",
+        "REQ-011",
+        "REQ-007"
+      ]
+    },
+    {
+      "id": "UC-005",
+      "name": "Close auction",
+      "description": "At end time the auction closes, winner is recorded or item marked unsold, watchers are informed.",
+      "actorIds": [
+        "ACT-003",
+        "ACT-001"
+      ],
+      "reqIds": [
+        "REQ-004",
+        "REQ-003"
+      ]
+    },
+    {
+      "id": "UC-006",
+      "name": "View prices in display currency",
+      "description": "Bidder sees prices converted to chosen display currency using cached Frankfurter rates, with fallback to item currency only.",
+      "actorIds": [
+        "ACT-001",
+        "ACT-002"
+      ],
+      "reqIds": [
+        "REQ-005",
+        "REQ-010"
+      ]
+    }
+  ],
+  "classes": [
+    {
+      "id": "DSN-012",
+      "name": "Currency",
+      "kind": "enum",
+      "description": "Supported currencies.",
+      "attributes": [],
+      "methods": [],
+      "values": [
+        "CHF",
+        "EUR",
+        "USD"
+      ],
+      "relations": [],
+      "reqIds": [
+        "REQ-001",
+        "REQ-005"
+      ]
+    },
+    {
+      "id": "DSN-013",
+      "name": "AuctionStatus",
+      "kind": "enum",
+      "description": "Lifecycle state of an item auction.",
+      "attributes": [],
+      "methods": [],
+      "values": [
+        "open",
+        "closed",
+        "unsold"
+      ],
+      "relations": [],
+      "reqIds": [
+        "REQ-001",
+        "REQ-004"
+      ]
+    },
+    {
+      "id": "DSN-014",
+      "name": "User",
+      "kind": "class",
+      "description": "User identified by unique display name.",
+      "attributes": [
+        {
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "name": "displayName",
+          "type": "string"
+        }
+      ],
+      "methods": [],
+      "values": [],
+      "relations": [],
+      "reqIds": [
+        "REQ-008"
+      ]
+    },
+    {
+      "id": "DSN-015",
+      "name": "Item",
+      "kind": "class",
+      "description": "Auction item, prices in item currency.",
+      "attributes": [
+        {
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "name": "sellerId",
+          "type": "string"
+        },
+        {
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "name": "startingPrice",
+          "type": "number"
+        },
+        {
+          "name": "currency",
+          "type": "Currency"
+        },
+        {
+          "name": "endTime",
+          "type": "Date"
+        },
+        {
+          "name": "status",
+          "type": "AuctionStatus"
+        },
+        {
+          "name": "highestBidAmount",
+          "type": "number | null"
+        },
+        {
+          "name": "highestBidderId",
+          "type": "string | null"
+        },
+        {
+          "name": "winnerId",
+          "type": "string | null"
+        }
+      ],
+      "methods": [
+        {
+          "name": "isOpen",
+          "params": [
+            {
+              "name": "now",
+              "type": "Date"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        {
+          "name": "minimumBid",
+          "params": [],
+          "returnType": "number"
+        },
+        {
+          "name": "extendIfLate",
+          "params": [
+            {
+              "name": "now",
+              "type": "Date"
+            }
+          ],
+          "returnType": "boolean"
+        },
+        {
+          "name": "recordBid",
+          "params": [
+            {
+              "name": "bidderId",
+              "type": "string"
+            },
+            {
+              "name": "amount",
+              "type": "number"
+            }
+          ],
+          "returnType": "void"
+        }
+      ],
+      "values": [],
+      "relations": [
+        {
+          "kind": "association",
+          "targetId": "DSN-014",
+          "multiplicity": "1",
+          "label": "seller"
+        },
+        {
+          "kind": "association",
+          "targetId": "DSN-012"
+        },
+        {
+          "kind": "association",
+          "targetId": "DSN-013"
+        }
+      ],
+      "reqIds": [
+        "REQ-001",
+        "REQ-002",
+        "REQ-004",
+        "REQ-009"
+      ]
+    },
+    {
+      "id": "DSN-016",
+      "name": "Bid",
+      "kind": "class",
+      "description": "Accepted bid stored in item currency.",
+      "attributes": [
+        {
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "name": "itemId",
+          "type": "string"
+        },
+        {
+          "name": "bidderId",
+          "type": "string"
+        },
+        {
+          "name": "amount",
+          "type": "number"
+        },
+        {
+          "name": "placedAt",
+          "type": "Date"
+        }
+      ],
+      "methods": [],
+      "values": [],
+      "relations": [
+        {
+          "kind": "association",
+          "targetId": "DSN-015",
+          "multiplicity": "0..*"
+        },
+        {
+          "kind": "association",
+          "targetId": "DSN-014",
+          "multiplicity": "1",
+          "label": "bidder"
+        }
+      ],
+      "reqIds": [
+        "REQ-002"
+      ]
+    },
+    {
+      "id": "DSN-017",
+      "name": "ItemView",
+      "kind": "interface",
+      "description": "Item as shown to a client, with optional converted prices.",
+      "attributes": [
+        {
+          "name": "item",
+          "type": "Item"
+        },
+        {
+          "name": "displayCurrency",
+          "type": "Currency | null"
+        },
+        {
+          "name": "convertedStartingPrice",
+          "type": "number | null"
+        },
+        {
+          "name": "convertedHighestBid",
+          "type": "number | null"
+        }
+      ],
+      "methods": [],
+      "values": [],
+      "relations": [
+        {
+          "kind": "association",
+          "targetId": "DSN-015"
+        }
+      ],
+      "reqIds": [
+        "REQ-005",
+        "REQ-010"
+      ]
+    },
+    {
+      "id": "DSN-018",
+      "name": "UserController",
+      "kind": "class",
+      "description": "HTTP routes for users: POST /users.",
+      "attributes": [],
+      "methods": [
+        {
+          "name": "register",
+          "params": [
+            {
+              "name": "displayName",
+              "type": "string"
+            }
+          ],
+          "returnType": "Promise<User>"
+        }
+      ],
+      "values": [],
+      "relations": [
+        {
+          "kind": "dependency",
+          "targetId": "DSN-021"
+        }
+      ],
+      "reqIds": [
+        "REQ-008"
+      ]
+    },
+    {
+      "id": "DSN-019",
+      "name": "ItemController",
+      "kind": "class",
+      "description": "HTTP routes for items: POST /items, GET /items, GET /items/:id.",
+      "attributes": [],
+      "methods": [
+        {
+          "name": "listItem",
+          "params": [
+            {
+              "name": "userId",
+              "type": "string"
+            },
+            {
+              "name": "title",
+              "type": "string"
+            },
+            {
+              "name": "startingPrice",
+              "type": "number"
+            },
+            {
+              "name": "endTime",
+              "type": "string"
+            },
+            {
+              "name": "currency",
+              "type": "string"
+            }
+          ],
+          "returnType": "Promise<Item>"
+        },
+        {
+          "name": "getItem",
+          "params": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "displayCurrency",
+              "type": "string | undefined"
+            }
+          ],
+          "returnType": "Promise<ItemView>"
+        },
+        {
+          "name": "listOpenItems",
+          "params": [],
+          "returnType": "Promise<Item[]>"
+        }
+      ],
+      "values": [],
+      "relations": [
+        {
+          "kind": "dependency",
+          "targetId": "DSN-022"
+        },
+        {
+          "kind": "dependency",
+          "targetId": "DSN-025"
+        }
+      ],
+      "reqIds": [
+        "REQ-001",
+        "REQ-005",
+        "REQ-004"
+      ]
+    },
+    {
+      "id": "DSN-020",
+      "name": "BidController",
+      "kind": "class",
+      "description": "HTTP route POST /items/:id/bids.",
+      "attributes": [],
+      "methods": [
+        {
+          "name": "placeBid",
+          "params": [
+            {
+              "name": "itemId",
+              "type": "string"
+            },
+            {
+              "name": "userId",
+              "type": "string"
+            },
+            {
+              "name": "amount",
+              "type": "number"
+            }
+          ],
+          "returnType": "Promise<Bid>"
+        }
+      ],
+      "values": [],
+      "relations": [
+        {
+          "kind": "dependency",
+          "targetId": "DSN-023"
+        }
+      ],
+      "reqIds": [
+        "REQ-002"
+      ]
+    },
+    {
+      "id": "DSN-021",
+      "name": "UserService",
+      "kind": "class",
+      "description": "Validates display names and issues one user id per name.",
+      "attributes": [],
+      "methods": [
+        {
+          "name": "register",
+          "params": [
+            {
+              "name": "displayName",
+              "type": "string"
+            }
+          ],
+          "returnType": "Promise<User>"
+        }
+      ],
+      "values": [],
+      "relations": [
+        {
+          "kind": "dependency",
+          "targetId": "DSN-028"
+        }
+      ],
+      "reqIds": [
+        "REQ-008"
+      ]
+    },
+    {
+      "id": "DSN-022",
+      "name": "ItemService",
+      "kind": "class",
+      "description": "Creates and reads items, closes due auctions.",
+      "attributes": [],
+      "methods": [
+        {
+          "name": "listItem",
+          "params": [
+            {
+              "name": "sellerId",
+              "type": "string"
+            },
+            {
+              "name": "title",
+              "type": "string"
+            },
+            {
+              "name": "startingPrice",
+              "type": "number"
+            },
+            {
+              "name": "endTime",
+              "type": "Date"
+            },
+            {
+              "name": "currency",
+              "type": "string"
+            }
+          ],
+          "returnType": "Promise<Item>"
+        },
+        {
+          "name": "getItem",
+          "params": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "returnType": "Promise<Item>"
+        },
+        {
+          "name": "listOpenItems",
+          "params": [],
+          "returnType": "Promise<Item[]>"
+        },
+        {
+          "name": "closeDueAuctions",
+          "params": [
+            {
+              "name": "now",
+              "type": "Date"
+            }
+          ],
+          "returnType": "Promise<void>"
+        }
+      ],
+      "values": [],
+      "relations": [
+        {
+          "kind": "dependency",
+          "targetId": "DSN-029"
+        },
+        {
+          "kind": "dependency",
+          "targetId": "DSN-028"
+        },
+        {
+          "kind": "dependency",
+          "targetId": "DSN-030"
+        }
+      ],
+      "reqIds": [
+        "REQ-001",
+        "REQ-004"
+      ]
+    },
+    {
+      "id": "DSN-023",
+      "name": "BidService",
+      "kind": "class",
+      "description": "Validates and stores bids, extends end time, publishes events to the event feed.",
+      "attributes": [],
+      "methods": [
+        {
+          "name": "placeBid",
+          "params": [
+            {
+              "name": "itemId",
+              "type": "string"
+            },
+            {
+              "name": "bidderId",
+              "type": "string"
+            },
+            {
+              "name": "amount",
+              "type": "number"
+            }
+          ],
+          "returnType": "Promise<Bid>"
+        }
+      ],
+      "values": [],
+      "relations": [
+        {
+          "kind": "dependency",
+          "targetId": "DSN-029"
+        },
+        {
+          "kind": "dependency",
+          "targetId": "DSN-031"
+        },
+        {
+          "kind": "dependency",
+          "targetId": "DSN-028"
+        }
+      ],
+      "reqIds": [
+        "REQ-002",
+        "REQ-009",
+        "REQ-003",
+        "REQ-011"
+      ]
+    },
+    {
+      "id": "DSN-024",
+      "name": "AuctionCloser",
+      "kind": "class",
+      "description": "Periodic job that closes auctions whose end time was reached. intervalMs must be a positive integer; the constructor throws otherwise.",
+      "attributes": [
+        {
+          "name": "intervalMs",
+          "type": "number"
+        }
+      ],
+      "methods": [
+        {
+          "name": "tick",
+          "params": [],
+          "returnType": "Promise<void>"
+        }
+      ],
+      "values": [],
+      "relations": [
+        {
+          "kind": "dependency",
+          "targetId": "DSN-022"
+        }
+      ],
+      "reqIds": [
+        "REQ-004"
+      ]
+    },
+    {
+      "id": "DSN-025",
+      "name": "ExchangeRateService",
+      "kind": "class",
+      "description": "Converts prices for display using rates cached 1 hour; returns null when unavailable.",
+      "attributes": [
+        {
+          "name": "cacheTtlMs",
+          "type": "number"
+        }
+      ],
+      "methods": [
+        {
+          "name": "convert",
+          "params": [
+            {
+              "name": "amount",
+              "type": "number"
+            },
+            {
+              "name": "from",
+              "type": "Currency"
+            },
+            {
+              "name": "to",
+              "type": "Currency"
+            }
+          ],
+          "returnType": "Promise<number | null>"
+        }
+      ],
+      "values": [],
+      "relations": [
+        {
+          "kind": "dependency",
+          "targetId": "DSN-026"
+        }
+      ],
+      "reqIds": [
+        "REQ-005",
+        "REQ-010"
+      ]
+    },
+    {
+      "id": "DSN-026",
+      "name": "FrankfurterClient",
+      "kind": "class",
+      "description": "The only caller of the Frankfurter API: fetches rates over HTTPS from api.frankfurter.app.",
+      "attributes": [],
+      "methods": [
+        {
+          "name": "fetchRates",
+          "params": [
+            {
+              "name": "base",
+              "type": "Currency"
+            }
+          ],
+          "returnType": "Promise<Record<string, number>>"
+        }
+      ],
+      "values": [],
+      "relations": [],
+      "reqIds": [
+        "REQ-005",
+        "REQ-010"
+      ]
+    },
+    {
+      "id": "DSN-028",
+      "name": "UserStore",
+      "kind": "class",
+      "description": "Persistence of users with unique display name, in the API server's SQLite database.",
+      "attributes": [],
+      "methods": [
+        {
+          "name": "findByName",
+          "params": [
+            {
+              "name": "displayName",
+              "type": "string"
+            }
+          ],
+          "returnType": "Promise<User | null>"
+        },
+        {
+          "name": "save",
+          "params": [
+            {
+              "name": "user",
+              "type": "User"
+            }
+          ],
+          "returnType": "Promise<User>"
+        },
+        {
+          "name": "findById",
+          "params": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "returnType": "Promise<User | null>"
+        }
+      ],
+      "values": [],
+      "relations": [],
+      "reqIds": [
+        "REQ-008"
+      ]
+    },
+    {
+      "id": "DSN-029",
+      "name": "ItemStore",
+      "kind": "class",
+      "description": "Persistence of items and bids, in the API server's SQLite database. Dates are stored as ISO 8601 TEXT columns.",
+      "attributes": [],
+      "methods": [
+        {
+          "name": "saveItem",
+          "params": [
+            {
+              "name": "item",
+              "type": "Item"
+            }
+          ],
+          "returnType": "Promise<Item>"
+        },
+        {
+          "name": "findItem",
+          "params": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "returnType": "Promise<Item | null>"
+        },
+        {
+          "name": "findOpenItems",
+          "params": [],
+          "returnType": "Promise<Item[]>"
+        },
+        {
+          "name": "findDueItems",
+          "params": [
+            {
+              "name": "now",
+              "type": "Date"
+            }
+          ],
+          "returnType": "Promise<Item[]>"
+        },
+        {
+          "name": "saveBid",
+          "params": [
+            {
+              "name": "bid",
+              "type": "Bid"
+            }
+          ],
+          "returnType": "Promise<Bid>"
+        }
+      ],
+      "values": [],
+      "relations": [
+        {
+          "kind": "association",
+          "targetId": "DSN-015",
+          "multiplicity": "0..*"
+        },
+        {
+          "kind": "association",
+          "targetId": "DSN-016",
+          "multiplicity": "0..*"
+        }
+      ],
+      "reqIds": [
+        "REQ-001",
+        "REQ-002",
+        "REQ-004"
+      ]
+    },
+    {
+      "id": "DSN-030",
+      "name": "AuctionEventPublisher",
+      "kind": "class",
+      "description": "Publishes auction closed events to the internal ws event feed.",
+      "attributes": [],
+      "methods": [
+        {
+          "name": "publishAuctionClosed",
+          "params": [
+            {
+              "name": "item",
+              "type": "Item"
+            }
+          ],
+          "returnType": "Promise<void>"
+        }
+      ],
+      "values": [],
+      "relations": [
+        {
+          "kind": "dependency",
+          "targetId": "DSN-034"
+        }
+      ],
+      "reqIds": [
+        "REQ-003",
+        "REQ-004",
+        "REQ-007"
+      ]
+    },
+    {
+      "id": "DSN-031",
+      "name": "BidEventPublisher",
+      "kind": "class",
+      "description": "Publishes accepted bid events to the internal ws event feed.",
+      "attributes": [],
+      "methods": [
+        {
+          "name": "publishBidAccepted",
+          "params": [
+            {
+              "name": "bid",
+              "type": "Bid"
+            },
+            {
+              "name": "item",
+              "type": "Item"
+            }
+          ],
+          "returnType": "Promise<void>"
+        }
+      ],
+      "values": [],
+      "relations": [
+        {
+          "kind": "dependency",
+          "targetId": "DSN-034"
+        }
+      ],
+      "reqIds": [
+        "REQ-003",
+        "REQ-007",
+        "REQ-011"
+      ]
+    },
+    {
+      "id": "DSN-032",
+      "name": "EventFeedClient",
+      "kind": "class",
+      "description": "Client of the API server's internal ws event feed. Each live server instance opens the ws (URL read from the environment in its own code), so every instance receives every event; handles incoming events and hands them to the gateway.",
+      "attributes": [],
+      "methods": [
+        {
+          "name": "connect",
+          "params": [],
+          "returnType": "void"
+        },
+        {
+          "name": "onEvent",
+          "params": [
+            {
+              "name": "topic",
+              "type": "string"
+            },
+            {
+              "name": "payload",
+              "type": "string"
+            }
+          ],
+          "returnType": "void"
+        }
+      ],
+      "values": [],
+      "relations": [
+        {
+          "kind": "dependency",
+          "targetId": "DSN-033"
+        }
+      ],
+      "reqIds": [
+        "REQ-003",
+        "REQ-007",
+        "REQ-011"
+      ]
+    },
+    {
+      "id": "DSN-033",
+      "name": "LiveGateway",
+      "kind": "class",
+      "description": "WebSocket gateway for browsers; holds the open browser sockets by client id and the watchers per item, and sends each broadcast only to the sockets watching that item.",
+      "attributes": [
+        {
+          "name": "sockets",
+          "type": "Map<string, WebSocket>"
+        }
+      ],
+      "methods": [
+        {
+          "name": "watch",
+          "params": [
+            {
+              "name": "clientId",
+              "type": "string"
+            },
+            {
+              "name": "itemId",
+              "type": "string"
+            }
+          ],
+          "returnType": "void"
+        },
+        {
+          "name": "unwatch",
+          "params": [
+            {
+              "name": "clientId",
+              "type": "string"
+            },
+            {
+              "name": "itemId",
+              "type": "string"
+            }
+          ],
+          "returnType": "void"
+        },
+        {
+          "name": "broadcast",
+          "params": [
+            {
+              "name": "itemId",
+              "type": "string"
+            },
+            {
+              "name": "message",
+              "type": "string"
+            }
+          ],
+          "returnType": "void"
+        }
+      ],
+      "values": [],
+      "relations": [],
+      "reqIds": [
+        "REQ-003",
+        "REQ-009",
+        "REQ-011",
+        "REQ-004"
+      ]
+    },
+    {
+      "id": "DSN-034",
+      "name": "EventFeed",
+      "kind": "class",
+      "description": "Internal ws endpoint on the API server. Holds the sockets of the connected live server instances; the API server entry adds each socket on upgrade of the internal path (the live server opens the ws). Every published event is sent to all held sockets.",
+      "attributes": [
+        {
+          "name": "clients",
+          "type": "Set<WebSocket>"
+        }
+      ],
+      "methods": [
+        {
+          "name": "publish",
+          "params": [
+            {
+              "name": "topic",
+              "type": "string"
+            },
+            {
+              "name": "payload",
+              "type": "string"
+            }
+          ],
+          "returnType": "void"
+        }
+      ],
+      "values": [],
+      "relations": [],
+      "reqIds": [
+        "REQ-003",
+        "REQ-007",
+        "REQ-011"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "id": "DSN-007",
+      "name": "AuctionApi",
+      "classIds": [
+        "DSN-014",
+        "DSN-015",
+        "DSN-016",
+        "DSN-017",
+        "DSN-018",
+        "DSN-019",
+        "DSN-020",
+        "DSN-021",
+        "DSN-022",
+        "DSN-023",
+        "DSN-024",
+        "DSN-028",
+        "DSN-029",
+        "DSN-030",
+        "DSN-031",
+        "DSN-034",
+        "DSN-012",
+        "DSN-013"
+      ],
+      "nodeId": "DSN-001",
+      "reqIds": [
+        "REQ-001",
+        "REQ-002",
+        "REQ-004",
+        "REQ-006",
+        "REQ-007",
+        "REQ-008",
+        "REQ-009"
+      ]
+    },
+    {
+      "id": "DSN-008",
+      "name": "ExchangeRates",
+      "classIds": [
+        "DSN-025",
+        "DSN-026"
+      ],
+      "nodeId": "DSN-001",
+      "reqIds": [
+        "REQ-005",
+        "REQ-010"
+      ]
+    },
+    {
+      "id": "DSN-009",
+      "name": "LiveUpdates",
+      "classIds": [
+        "DSN-032",
+        "DSN-033"
+      ],
+      "nodeId": "DSN-002",
+      "reqIds": [
+        "REQ-003",
+        "REQ-006",
+        "REQ-007",
+        "REQ-011"
+      ]
+    },
+    {
+      "id": "DSN-042",
+      "name": "WebClient",
+      "classIds": [],
+      "nodeId": "DSN-006",
+      "reqIds": [
+        "REQ-001",
+        "REQ-002",
+        "REQ-003",
+        "REQ-004",
+        "REQ-005",
+        "REQ-008",
+        "REQ-009"
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "DSN-001",
+      "name": "API Server",
+      "kind": "service",
+      "reqIds": [
+        "REQ-002",
+        "REQ-006",
+        "REQ-007",
+        "REQ-008"
+      ]
+    },
+    {
+      "id": "DSN-002",
+      "name": "Live Update Server",
+      "kind": "service",
+      "reqIds": [
+        "REQ-006",
+        "REQ-007",
+        "REQ-011"
+      ]
+    },
+    {
+      "id": "DSN-005",
+      "name": "Frankfurter API",
+      "kind": "external",
+      "reqIds": [
+        "REQ-005",
+        "REQ-010"
+      ]
+    },
+    {
+      "id": "DSN-006",
+      "name": "Browser",
+      "kind": "client",
+      "reqIds": [
+        "REQ-003",
+        "REQ-005",
+        "REQ-008"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "from": "DSN-006",
+      "to": "DSN-001",
+      "protocol": "http"
+    },
+    {
+      "from": "DSN-006",
+      "to": "DSN-002",
+      "protocol": "ws"
+    },
+    {
+      "from": "DSN-002",
+      "to": "DSN-001",
+      "protocol": "ws",
+      "label": "internal event feed"
+    },
+    {
+      "from": "DSN-001",
+      "to": "DSN-005",
+      "protocol": "https"
+    }
+  ],
+  "sequences": [
+    {
+      "id": "SEQ-001",
+      "name": "Register display name",
+      "useCaseId": "UC-001",
+      "messages": [
+        {
+          "fromId": "ACT-001",
+          "toId": "DSN-018",
+          "method": "register"
+        },
+        {
+          "fromId": "DSN-018",
+          "toId": "DSN-021",
+          "method": "register"
+        },
+        {
+          "fromId": "DSN-021",
+          "toId": "DSN-028",
+          "method": "findByName"
+        },
+        {
+          "fromId": "DSN-021",
+          "toId": "DSN-028",
+          "method": "save"
+        }
+      ]
+    },
+    {
+      "id": "SEQ-002",
+      "name": "List item",
+      "useCaseId": "UC-002",
+      "messages": [
+        {
+          "fromId": "ACT-001",
+          "toId": "DSN-019",
+          "method": "listItem"
+        },
+        {
+          "fromId": "DSN-019",
+          "toId": "DSN-022",
+          "method": "listItem"
+        },
+        {
+          "fromId": "DSN-022",
+          "toId": "DSN-028",
+          "method": "findById",
+          "label": "seller must exist"
+        },
+        {
+          "fromId": "DSN-022",
+          "toId": "DSN-029",
+          "method": "saveItem"
+        }
+      ]
+    },
+    {
+      "id": "SEQ-003",
+      "name": "Place bid",
+      "useCaseId": "UC-003",
+      "messages": [
+        {
+          "fromId": "ACT-001",
+          "toId": "DSN-020",
+          "method": "placeBid"
+        },
+        {
+          "fromId": "DSN-020",
+          "toId": "DSN-023",
+          "method": "placeBid"
+        },
+        {
+          "fromId": "DSN-023",
+          "toId": "DSN-029",
+          "method": "findItem"
+        },
+        {
+          "fromId": "DSN-023",
+          "toId": "DSN-028",
+          "method": "findById",
+          "label": "bidder must exist"
+        },
+        {
+          "fromId": "DSN-023",
+          "toId": "DSN-015",
+          "method": "isOpen"
+        },
+        {
+          "fromId": "DSN-023",
+          "toId": "DSN-015",
+          "method": "minimumBid"
+        },
+        {
+          "fromId": "DSN-023",
+          "toId": "DSN-015",
+          "method": "extendIfLate"
+        },
+        {
+          "fromId": "DSN-023",
+          "toId": "DSN-015",
+          "method": "recordBid",
+          "label": "sets highestBidAmount and highestBidderId"
+        },
+        {
+          "fromId": "DSN-023",
+          "toId": "DSN-029",
+          "method": "saveBid"
+        },
+        {
+          "fromId": "DSN-023",
+          "toId": "DSN-029",
+          "method": "saveItem"
+        },
+        {
+          "fromId": "DSN-023",
+          "toId": "DSN-031",
+          "method": "publishBidAccepted"
+        },
+        {
+          "fromId": "DSN-031",
+          "toId": "DSN-034",
+          "method": "publish"
+        },
+        {
+          "fromId": "DSN-034",
+          "toId": "DSN-032",
+          "method": "onEvent",
+          "label": "ws event feed (opened by the live server)"
+        },
+        {
+          "fromId": "DSN-032",
+          "toId": "DSN-033",
+          "method": "broadcast",
+          "label": "pushes the accepted bid to watching browsers over ws"
+        }
+      ]
+    },
+    {
+      "id": "SEQ-004",
+      "name": "Watch item live",
+      "useCaseId": "UC-004",
+      "messages": [
+        {
+          "fromId": "ACT-001",
+          "toId": "DSN-033",
+          "method": "watch"
+        },
+        {
+          "fromId": "DSN-034",
+          "toId": "DSN-032",
+          "method": "onEvent",
+          "label": "event from ws feed"
+        },
+        {
+          "fromId": "DSN-032",
+          "toId": "DSN-033",
+          "method": "broadcast",
+          "label": "pushes the event to watching browsers over ws"
+        },
+        {
+          "fromId": "ACT-001",
+          "toId": "DSN-033",
+          "method": "unwatch"
+        }
+      ]
+    },
+    {
+      "id": "SEQ-005",
+      "name": "Close auction",
+      "useCaseId": "UC-005",
+      "messages": [
+        {
+          "fromId": "ACT-003",
+          "toId": "DSN-024",
+          "method": "tick"
+        },
+        {
+          "fromId": "DSN-024",
+          "toId": "DSN-022",
+          "method": "closeDueAuctions"
+        },
+        {
+          "fromId": "DSN-022",
+          "toId": "DSN-029",
+          "method": "findDueItems"
+        },
+        {
+          "fromId": "DSN-022",
+          "toId": "DSN-029",
+          "method": "saveItem"
+        },
+        {
+          "fromId": "DSN-022",
+          "toId": "DSN-030",
+          "method": "publishAuctionClosed"
+        },
+        {
+          "fromId": "DSN-030",
+          "toId": "DSN-034",
+          "method": "publish"
+        },
+        {
+          "fromId": "DSN-034",
+          "toId": "DSN-032",
+          "method": "onEvent",
+          "label": "ws event feed"
+        },
+        {
+          "fromId": "DSN-032",
+          "toId": "DSN-033",
+          "method": "broadcast",
+          "label": "pushes the closed state and winner to watching browsers over ws"
+        }
+      ]
+    },
+    {
+      "id": "SEQ-006",
+      "name": "View prices in display currency",
+      "useCaseId": "UC-006",
+      "messages": [
+        {
+          "fromId": "ACT-001",
+          "toId": "DSN-019",
+          "method": "getItem"
+        },
+        {
+          "fromId": "DSN-019",
+          "toId": "DSN-022",
+          "method": "getItem"
+        },
+        {
+          "fromId": "DSN-019",
+          "toId": "DSN-025",
+          "method": "convert"
+        },
+        {
+          "fromId": "DSN-025",
+          "toId": "DSN-026",
+          "method": "fetchRates",
+          "label": "only if cache older than 1 hour"
+        }
+      ]
+    }
+  ]
+}

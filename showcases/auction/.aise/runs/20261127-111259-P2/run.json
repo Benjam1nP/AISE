@@ -1,0 +1,98 @@
+{
+  "id": "20261127-111259-P2",
+  "phase": "P2",
+  "agent": "design",
+  "status": "done",
+  "startedAt": "2026-11-27T11:12:59.774Z",
+  "finishedAt": "2026-11-27T11:14:16.443Z",
+  "usage": {
+    "input": 805,
+    "output": 14872,
+    "cacheRead": 103679,
+    "cacheWrite": 39613
+  },
+  "costUsd": 0.2656072,
+  "summary": "The design phase P2 now covers the reserve price and close rules, and the design saved with coverage recorded after one failed report_coverage call that was retried successfully. The one uncovered criterion, REQ-008 AC6 (\"no admin role\"), is a design-level property rather than a method, so the reviewer should decide whether it can be accepted as covered by the design or needs another mapping. Check the assumption that reserves are entered and stored in the item currency, and note that sellers cannot see their own reserve amount because PublicItem hides it from everyone.",
+  "prevPhase": {
+    "status": "stale",
+    "approvedAt": "2026-11-24T13:20:33.905Z",
+    "reqHashes": {
+      "REQ-001": "f8c70bf18f448cf36036473310249368b29af3548c6362f9e9b15e2e84e27c59",
+      "REQ-002": "1262b59c481c383acc492c14093d6f8d101fc492d98166b8d349c5b53bc1d92c",
+      "REQ-003": "6c9a28f26ce86be2f91f6de41bce46ab01855280ac081797e9cfe7b22b408a39",
+      "REQ-004": "5b1c4d4005d65a6e466b46476fa897828981f6668e12a2a20479d30b198b687a",
+      "REQ-005": "90b696170dc13d4d08e292d266ff1cd48e429f2b5526d7ddd3be02a5b1c43f1f",
+      "REQ-006": "0331c2404eb5d011086e21ab09ad6ac741f0011e5f6467824fcc7fb990855dfb",
+      "REQ-007": "589c22d570bc2de03b10e78f83f97f2c185478efc6dbf271e7865232dd9a3747",
+      "REQ-008": "b147e0ff55a8b35cc25e5906f63a4ca7038de123ff7e5bc46a60d07188d0c8ba",
+      "REQ-009": "aedd4cb1a2b573399d5b65739c3d171db599533590cf204a51c389a76a9f25d9",
+      "REQ-010": "671f8a54a33d23c034676468da33dfa93281f179748976c863a3db2c530721f6",
+      "REQ-011": "96426242e8b8a67da5bf31673c5ca7177baefc1ff415187834e15dbf344452fe"
+    }
+  },
+  "prevArtefactHash": "d0db3fe88996b4f246fa4c4068fba626902f8b1a290f6c4d4bc0b3b0489241e3",
+  "postArtefactHash": "065b9491b8a87be816fd872c54c891f39910cc7343723e2c0600368907c394f7",
+  "reqHashes": {
+    "REQ-001": "ef33a72b58ea700070fb52b051f5136c788d68b1d9aa571bd16c84fd4bbed344",
+    "REQ-002": "1262b59c481c383acc492c14093d6f8d101fc492d98166b8d349c5b53bc1d92c",
+    "REQ-003": "6c9a28f26ce86be2f91f6de41bce46ab01855280ac081797e9cfe7b22b408a39",
+    "REQ-004": "1fa0902b3493b324d9011de3cbb8cb6977ff3236081b852304209f4e2e91bce6",
+    "REQ-005": "90b696170dc13d4d08e292d266ff1cd48e429f2b5526d7ddd3be02a5b1c43f1f",
+    "REQ-006": "0331c2404eb5d011086e21ab09ad6ac741f0011e5f6467824fcc7fb990855dfb",
+    "REQ-007": "589c22d570bc2de03b10e78f83f97f2c185478efc6dbf271e7865232dd9a3747",
+    "REQ-008": "b147e0ff55a8b35cc25e5906f63a4ca7038de123ff7e5bc46a60d07188d0c8ba",
+    "REQ-009": "aedd4cb1a2b573399d5b65739c3d171db599533590cf204a51c389a76a9f25d9",
+    "REQ-010": "671f8a54a33d23c034676468da33dfa93281f179748976c863a3db2c530721f6",
+    "REQ-011": "96426242e8b8a67da5bf31673c5ca7177baefc1ff415187834e15dbf344452fe",
+    "REQ-012": "4e1f6de4f41bd048949a5cfc358228951529517d44d520b0618fad118152f84f"
+  },
+  "ticketId": "TCK-001",
+  "prevTicket": {
+    "status": "in_progress",
+    "plan": {
+      "entry": "P1",
+      "affectedIds": [
+        "REQ-001",
+        "REQ-004",
+        "UC-002",
+        "UC-003",
+        "UC-005",
+        "SEQ-002",
+        "SEQ-005",
+        "DSN-015",
+        "DSN-017",
+        "DSN-019",
+        "DSN-022",
+        "DSN-029",
+        "DSN-030",
+        "DSN-031",
+        "DSN-042"
+      ],
+      "files": [
+        "src/auction-api/Item.ts",
+        "src/auction-api/ItemView.ts",
+        "src/auction-api/ItemController.ts",
+        "src/auction-api/ItemService.ts",
+        "src/auction-api/ItemStore.ts",
+        "src/auction-api/AuctionEventPublisher.ts",
+        "src/auction-api/BidEventPublisher.ts",
+        "src/app/app.ts",
+        "public/index.html",
+        "test/UC-002.test.ts",
+        "test/UC-003.test.ts",
+        "test/UC-005.test.ts",
+        "test/DSN-029.test.ts"
+      ],
+      "steps": [
+        "P1: Add a new requirement 'Reserve price': optional reserve when listing, must be at least the starting price (else rejected); auction ending with highest bid below reserve is unsold with no winner; bidders see only whether the reserve is met, never its amount. Add acceptance criteria for each rule.",
+        "P1: Amend REQ-001 to mention the optional reserve price, and REQ-004 so the highest bidder wins only if the reserve (when set) is met, otherwise the item is unsold.",
+        "P2: Item (DSN-015) gets reservePrice (number | null) and a reserveMet() method; ItemView (DSN-017) gets a reserveMet flag (boolean | null) and must not carry the reserve amount; list views of open items must also hide it.",
+        "P2: ItemController.listItem and ItemService.listItem take an optional reservePrice and validate it against the starting price; update UC-002 and SEQ-002.",
+        "P2: ItemService.closeDueAuctions marks the item unsold with no winner when the reserve is not met; update UC-005 and SEQ-005. ItemStore (DSN-029) persists the reserve column.",
+        "P2: BidEventPublisher and AuctionEventPublisher payloads carry reserveMet, never the reserve amount; WebClient (DSN-042) shows a reserve field in the listing form and 'reserve met / not met' on the item page; reflect in UC-003.",
+        "P4: Implement the changes in Item, ItemView, ItemController, ItemService, ItemStore (schema column), both publishers, the routes in app.ts (strip the reserve amount from GET /api/items and GET /api/items/:id) and public/index.html.",
+        "P5: Add tests: reserve below starting price rejected; listing without reserve still works; close below reserve gives unsold without winner; close at or above reserve gives winner; item views and live events expose reserveMet but no reserve amount; ItemStore round-trips the reserve."
+      ]
+    }
+  }
+}

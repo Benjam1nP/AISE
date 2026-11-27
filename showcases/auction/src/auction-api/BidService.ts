@@ -8,7 +8,7 @@ import { BidEventPublisher } from './BidEventPublisher.js';
 /**
  * Validates and stores bids, extends end time, and publishes accepted bids to the event feed.
  *
- * @trace DSN-023 REQ-002 REQ-009 REQ-003 REQ-011
+ * @trace DSN-023 REQ-002 REQ-009 REQ-003 REQ-011 REQ-012
  */
 export class BidService {
   constructor(

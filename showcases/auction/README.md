@@ -29,20 +29,21 @@ Data is stored in `./data/auction.db`. `DB_PATH` changes the file; `DB_PATH=:mem
 | Currency | `src/auction-api/Currency.ts` | DSN-012 | REQ-001, REQ-005 | Supported currencies. |
 | AuctionStatus | `src/auction-api/AuctionStatus.ts` | DSN-013 | REQ-001, REQ-004 | Lifecycle state of an item auction. |
 | User | `src/auction-api/User.ts` | DSN-014 | REQ-008 | User identified by unique display name. |
-| Item | `src/auction-api/Item.ts` | DSN-015 | REQ-001, REQ-002, REQ-004, REQ-009 | Auction item, prices in item currency. |
+| Item | `src/auction-api/Item.ts` | DSN-015 | REQ-001, REQ-002, REQ-004, REQ-009, REQ-012 | Auction item, prices in item currency. The optional reserve price is internal and never sent to clients. close() makes the highest bidder the winner if there is no reserve or the highest bid meets it, otherwise sets status unsold with no winner (also when there are no bids). |
 | Bid | `src/auction-api/Bid.ts` | DSN-016 | REQ-002 | Accepted bid stored in item currency. |
-| ItemView | `src/auction-api/ItemView.ts` | DSN-017 | REQ-005, REQ-010 | Item as shown to a client, with optional converted prices. |
+| ItemView | `src/auction-api/ItemView.ts` | DSN-017 | REQ-005, REQ-010, REQ-012 | Item as shown to a client, with optional converted prices. Never contains the reserve amount. |
+| PublicItem | `src/auction-api/PublicItem.ts` | DSN-044 | REQ-012 | Item data sent to bidders in API responses and lists. Has the reserve-met state (null when the item has no reserve) and never the reserve amount. |
 | UserController | `src/auction-api/UserController.ts` | DSN-018 | REQ-008 | HTTP routes for users: POST /users. |
-| ItemController | `src/auction-api/ItemController.ts` | DSN-019 | REQ-001, REQ-005, REQ-004 | HTTP routes for items: POST /items, GET /items, GET /items/:id. |
+| ItemController | `src/auction-api/ItemController.ts` | DSN-019 | REQ-001, REQ-005, REQ-004, REQ-012 | HTTP routes for items: POST /items, GET /items, GET /items/:id. Responses use PublicItem and never contain the reserve amount. |
 | BidController | `src/auction-api/BidController.ts` | DSN-020 | REQ-002 | HTTP route POST /items/:id/bids. |
 | UserService | `src/auction-api/UserService.ts` | DSN-021 | REQ-008 | Validates display names and issues one user id per name. |
-| ItemService | `src/auction-api/ItemService.ts` | DSN-022 | REQ-001, REQ-004 | Creates and reads items, closes due auctions. |
-| BidService | `src/auction-api/BidService.ts` | DSN-023 | REQ-002, REQ-009, REQ-003, REQ-011 | Validates and stores bids, extends end time, publishes events to the event feed. |
+| ItemService | `src/auction-api/ItemService.ts` | DSN-022 | REQ-001, REQ-004, REQ-012 | Creates and reads items, closes due auctions. Rejects a listing without starting price, end time or currency, with a currency outside CHF/EUR/USD, or with a reserve below the starting price (no item is created). Converts items to PublicItem without the reserve amount. |
+| BidService | `src/auction-api/BidService.ts` | DSN-023 | REQ-002, REQ-009, REQ-003, REQ-011, REQ-012 | Validates and stores bids, extends end time, publishes events (carrying the reserve-met state) to the event feed. |
 | AuctionCloser | `src/auction-api/AuctionCloser.ts` | DSN-024 | REQ-004 | Periodic job that closes auctions whose end time was reached. intervalMs must be a positive integer; the constructor throws otherwise. |
 | UserStore | `src/auction-api/UserStore.ts` | DSN-028 | REQ-008 | Persistence of users with unique display name, in the API server's SQLite database. |
-| ItemStore | `src/auction-api/ItemStore.ts` | DSN-029 | REQ-001, REQ-002, REQ-004 | Persistence of items and bids, in the API server's SQLite database. Dates are stored as ISO 8601 TEXT columns. |
-| AuctionEventPublisher | `src/auction-api/AuctionEventPublisher.ts` | DSN-030 | REQ-003, REQ-004, REQ-007 | Publishes auction closed events to the internal ws event feed. |
-| BidEventPublisher | `src/auction-api/BidEventPublisher.ts` | DSN-031 | REQ-003, REQ-007, REQ-011 | Publishes accepted bid events to the internal ws event feed. |
+| ItemStore | `src/auction-api/ItemStore.ts` | DSN-029 | REQ-001, REQ-002, REQ-004, REQ-012 | Persistence of items (including the optional reserve price) and bids, in the API server's SQLite database. Dates are stored as ISO 8601 TEXT columns. |
+| AuctionEventPublisher | `src/auction-api/AuctionEventPublisher.ts` | DSN-030 | REQ-003, REQ-004, REQ-007, REQ-012 | Publishes auction closed events (closed or unsold state, winner if any, reserve-met state, never the reserve amount) to the internal ws event feed. |
+| BidEventPublisher | `src/auction-api/BidEventPublisher.ts` | DSN-031 | REQ-003, REQ-007, REQ-011, REQ-012 | Publishes accepted bid events (with the reserve-met state, never the reserve amount) to the internal ws event feed. |
 | EventFeed | `src/auction-api/EventFeed.ts` | DSN-034 | REQ-003, REQ-007, REQ-011 | Internal ws endpoint on the API server. Holds the sockets of the connected live server instances; the API server entry adds each socket on upgrade of the internal path (the live server opens the ws). Every published event is sent to all held sockets. |
 
 ## ExchangeRates (DSN-008)
@@ -57,4 +58,4 @@ Data is stored in `./data/auction.db`. `DB_PATH` changes the file; `DB_PATH=:mem
 | Class | File | Design | Requirements | Purpose |
 | --- | --- | --- | --- | --- |
 | EventFeedClient | `src/live-updates/EventFeedClient.ts` | DSN-032 | REQ-003, REQ-007, REQ-011 | Client of the API server's internal ws event feed. Each live server instance opens the ws (URL read from the environment in its own code), so every instance receives every event; handles incoming events and hands them to the gateway. |
-| LiveGateway | `src/live-updates/LiveGateway.ts` | DSN-033 | REQ-003, REQ-009, REQ-011, REQ-004 | WebSocket gateway for browsers; holds the open browser sockets by client id and the watchers per item, and sends each broadcast only to the sockets watching that item. |
+| LiveGateway | `src/live-updates/LiveGateway.ts` | DSN-033 | REQ-003, REQ-009, REQ-011, REQ-004, REQ-012 | WebSocket gateway for browsers; holds the open browser sockets by client id and the watchers per item, and sends each broadcast only to the sockets watching that item. |

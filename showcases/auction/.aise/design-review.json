@@ -1,17 +1,17 @@
 {
-  "designHash": "52a7f5040a6b434f72d5a7b6bf94325471075fb4c46b2c142c75e3131741572e",
+  "designHash": "065b9491b8a87be816fd872c54c891f39910cc7343723e2c0600368907c394f7",
   "rows": [
     {
       "reqId": "REQ-001",
       "criterion": 1,
       "coveredBy": [
         {
-          "classId": "DSN-019",
+          "classId": "DSN-022",
           "method": "listItem"
         },
         {
-          "classId": "DSN-022",
-          "method": "listItem"
+          "classId": "DSN-029",
+          "method": "saveItem"
         }
       ]
     },
@@ -28,6 +28,26 @@
     {
       "reqId": "REQ-001",
       "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-022",
+          "method": "listItem"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-022",
+          "method": "listItem"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 5,
       "coveredBy": [
         {
           "classId": "DSN-022",
@@ -94,8 +114,12 @@
       "criterion": 1,
       "coveredBy": [
         {
-          "sequenceId": "SEQ-003",
-          "step": 12
+          "classId": "DSN-033",
+          "method": "broadcast"
+        },
+        {
+          "classId": "DSN-032",
+          "method": "onEvent"
         }
       ]
     },
@@ -105,14 +129,43 @@
       "coveredBy": [
         {
           "classId": "DSN-033",
+          "method": "watch"
+        },
+        {
+          "classId": "DSN-033",
           "method": "broadcast"
         }
       ]
     },
     {
+      "reqId": "REQ-003",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-033",
+          "method": "broadcast"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-003",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-032",
+          "method": "connect"
+        }
+      ],
+      "note": "Browser retry behaviour lives in WebClient."
+    },
+    {
       "reqId": "REQ-004",
       "criterion": 1,
       "coveredBy": [
+        {
+          "classId": "DSN-015",
+          "method": "isOpen"
+        },
         {
           "classId": "DSN-022",
           "method": "closeDueAuctions"
@@ -124,8 +177,8 @@
       "criterion": 2,
       "coveredBy": [
         {
-          "classId": "DSN-022",
-          "method": "closeDueAuctions"
+          "classId": "DSN-015",
+          "method": "close"
         },
         {
           "classId": "DSN-019",
@@ -138,8 +191,8 @@
       "criterion": 3,
       "coveredBy": [
         {
-          "sequenceId": "SEQ-005",
-          "step": 8
+          "classId": "DSN-015",
+          "method": "close"
         }
       ]
     },
@@ -148,8 +201,36 @@
       "criterion": 4,
       "coveredBy": [
         {
-          "classId": "DSN-022",
-          "method": "closeDueAuctions"
+          "classId": "DSN-015",
+          "method": "close"
+        },
+        {
+          "classId": "DSN-030",
+          "method": "publishAuctionClosed"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-004",
+      "criterion": 5,
+      "coveredBy": [
+        {
+          "classId": "DSN-030",
+          "method": "publishAuctionClosed"
+        },
+        {
+          "classId": "DSN-033",
+          "method": "broadcast"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-004",
+      "criterion": 6,
+      "coveredBy": [
+        {
+          "classId": "DSN-015",
+          "method": "close"
         }
       ]
     },
@@ -160,6 +241,10 @@
         {
           "classId": "DSN-025",
           "method": "convert"
+        },
+        {
+          "classId": "DSN-026",
+          "method": "fetchRates"
         }
       ]
     },
@@ -171,8 +256,7 @@
           "classId": "DSN-019",
           "method": "getItem"
         }
-      ],
-      "note": "Currency enum limits choices"
+      ]
     },
     {
       "reqId": "REQ-005",
@@ -189,44 +273,8 @@
       "criterion": 4,
       "coveredBy": [
         {
-          "classId": "DSN-023",
-          "method": "placeBid"
-        }
-      ]
-    },
-    {
-      "reqId": "REQ-006",
-      "criterion": 1,
-      "coveredBy": [],
-      "note": "Separate service nodes"
-    },
-    {
-      "reqId": "REQ-006",
-      "criterion": 2,
-      "coveredBy": [],
-      "note": "Separate service nodes"
-    },
-    {
-      "reqId": "REQ-007",
-      "criterion": 1,
-      "coveredBy": [
-        {
-          "classId": "DSN-032",
-          "method": "connect"
-        },
-        {
-          "classId": "DSN-034",
-          "method": "publish"
-        }
-      ]
-    },
-    {
-      "reqId": "REQ-007",
-      "criterion": 2,
-      "coveredBy": [
-        {
-          "classId": "DSN-032",
-          "method": "connect"
+          "classId": "DSN-025",
+          "method": "convert"
         }
       ]
     },
@@ -275,11 +323,11 @@
       "criterion": 5,
       "coveredBy": [
         {
-          "classId": "DSN-019",
+          "classId": "DSN-022",
           "method": "listItem"
         },
         {
-          "classId": "DSN-020",
+          "classId": "DSN-023",
           "method": "placeBid"
         }
       ]
@@ -291,6 +339,16 @@
       "note": "Property of the design: no admin role exists."
     },
     {
+      "reqId": "REQ-008",
+      "criterion": 7,
+      "coveredBy": [
+        {
+          "classId": "DSN-021",
+          "method": "register"
+        }
+      ]
+    },
+    {
       "reqId": "REQ-009",
       "criterion": 1,
       "coveredBy": [
@@ -314,54 +372,6 @@
       "reqId": "REQ-009",
       "criterion": 3,
       "coveredBy": [
-        {
-          "sequenceId": "SEQ-003",
-          "step": 12
-        }
-      ]
-    },
-    {
-      "reqId": "REQ-010",
-      "criterion": 1,
-      "coveredBy": [
-        {
-          "classId": "DSN-025",
-          "method": "convert"
-        }
-      ]
-    },
-    {
-      "reqId": "REQ-010",
-      "criterion": 2,
-      "coveredBy": [
-        {
-          "classId": "DSN-025",
-          "method": "convert"
-        },
-        {
-          "classId": "DSN-026",
-          "method": "fetchRates"
-        }
-      ]
-    },
-    {
-      "reqId": "REQ-010",
-      "criterion": 3,
-      "coveredBy": [
-        {
-          "classId": "DSN-025",
-          "method": "convert"
-        }
-      ]
-    },
-    {
-      "reqId": "REQ-011",
-      "criterion": 1,
-      "coveredBy": [
-        {
-          "classId": "DSN-032",
-          "method": "onEvent"
-        },
         {
           "classId": "DSN-033",
           "method": "broadcast"
@@ -369,12 +379,128 @@
       ]
     },
     {
-      "reqId": "REQ-011",
+      "reqId": "REQ-010",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-025",
+          "method": "convert"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-010",
       "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-025",
+          "method": "convert"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-010",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-025",
+          "method": "convert"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-012",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-022",
+          "method": "listItem"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-012",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-022",
+          "method": "listItem"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-012",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-022",
+          "method": "listItem"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-012",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-015",
+          "method": "close"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-012",
+      "criterion": 5,
+      "coveredBy": [
+        {
+          "classId": "DSN-015",
+          "method": "close"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-012",
+      "criterion": 6,
+      "coveredBy": [
+        {
+          "classId": "DSN-015",
+          "method": "isReserveMet"
+        },
+        {
+          "classId": "DSN-022",
+          "method": "getItem"
+        },
+        {
+          "classId": "DSN-022",
+          "method": "listOpenItems"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-012",
+      "criterion": 7,
+      "coveredBy": [
+        {
+          "classId": "DSN-022",
+          "method": "getItem"
+        },
+        {
+          "classId": "DSN-019",
+          "method": "listOpenItems"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-012",
+      "criterion": 8,
       "coveredBy": [
         {
           "classId": "DSN-031",
           "method": "publishBidAccepted"
+        },
+        {
+          "classId": "DSN-030",
+          "method": "publishAuctionClosed"
         }
       ]
     }

@@ -30,7 +30,11 @@ function makeInstance(clientId: string) {
 }
 
 // Produces a real bid event (topic and payload) by running the API server's publisher.
-async function makeBidEvent(bidId: string, amount: number): Promise<{ topic: string; payload: string }> {
+async function makeBidEvent(
+  bidId: string,
+  amount: number,
+  reservePrice: number | null = null,
+): Promise<{ topic: string; payload: string }> {
   const events: Array<{ topic: string; payload: string }> = [];
   const feed = new EventFeed(new Set());
   feed.publish = (topic: string, payload: string): void => {
@@ -42,6 +46,7 @@ async function makeBidEvent(bidId: string, amount: number): Promise<{ topic: str
     'seller-1',
     'Vase',
     100,
+    reservePrice,
     'USD' as unknown as Item['currency'],
     new Date('2030-01-01T12:00:00Z'),
     'open' as unknown as Item['status'],
@@ -77,6 +82,15 @@ describe('UC-004 Watch item live', () => {
     for (const inst of instances) {
       expect(inst.received.length).toBe(1);
     }
+  });
+
+  it('REQ-012 AC8: Live bid and close events carry the reserve-met state, so watchers see it update without reloading.', async () => {
+    const inst = makeInstance('client-r');
+    const event = await makeBidEvent('bid-1', 1000, 987);
+    inst.feedClient.onEvent(event.topic, event.payload);
+    expect(inst.received.length).toBe(1);
+    expect(inst.received[0]).toMatch(/reserveMet\W+true/);
+    expect(inst.received[0]).not.toContain('987');
   });
 
   it('SEQ-004 scenario: Watch item live', async () => {

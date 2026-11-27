@@ -1,0 +1,66 @@
+{
+  "id": "20261127-111900-P7",
+  "phase": "P7",
+  "agent": "maintenance",
+  "status": "done",
+  "startedAt": "2026-11-27T11:19:00.655Z",
+  "finishedAt": "2026-11-27T11:19:19.715Z",
+  "usage": {
+    "input": 860,
+    "output": 2090,
+    "cacheRead": 32603,
+    "cacheWrite": 27747
+  },
+  "costUsd": 0.182875,
+  "summary": "The agent saved the change report and closed TCK-001 at phase P7 with all 57 tests passing, though the write_ticket_report call was the only tool it used and it succeeded. Before approving, decide on the three open requirement assumptions (currency, whether sellers can see their reserve, and the missing reserve label), whether the design covers REQ-008's \"no admin role\" requirement, and whether the live bid event's `reserveMet` field belongs in the design. Also check by hand that the renumbered REQ-004 tests and the updated SEQ-002, SEQ-005 and SEQ-006 scenarios still match the requirements, since nothing covers the web page's reserve display.",
+  "ticketId": "TCK-001",
+  "report": true,
+  "prevTicket": {
+    "status": "in_progress",
+    "plan": {
+      "entry": "P1",
+      "affectedIds": [
+        "REQ-001",
+        "REQ-004",
+        "UC-002",
+        "UC-003",
+        "UC-005",
+        "SEQ-002",
+        "SEQ-005",
+        "DSN-015",
+        "DSN-017",
+        "DSN-019",
+        "DSN-022",
+        "DSN-029",
+        "DSN-030",
+        "DSN-031",
+        "DSN-042"
+      ],
+      "files": [
+        "src/auction-api/Item.ts",
+        "src/auction-api/ItemView.ts",
+        "src/auction-api/ItemController.ts",
+        "src/auction-api/ItemService.ts",
+        "src/auction-api/ItemStore.ts",
+        "src/auction-api/AuctionEventPublisher.ts",
+        "src/auction-api/BidEventPublisher.ts",
+        "src/app/app.ts",
+        "public/index.html",
+        "test/UC-002.test.ts",
+        "test/UC-003.test.ts",
+        "test/UC-005.test.ts",
+        "test/DSN-029.test.ts"
+      ],
+      "steps": [
+        "P1: Add a new requirement 'Reserve price': optional reserve when listing, must be at least the starting price (else rejected); auction ending with highest bid below reserve is unsold with no winner; bidders see only whether the reserve is met, never its amount. Add acceptance criteria for each rule.",
+        "P1: Amend REQ-001 to mention the optional reserve price, and REQ-004 so the highest bidder wins only if the reserve (when set) is met, otherwise the item is unsold.",
+        "P2: Item (DSN-015) gets reservePrice (number | null) and a reserveMet() method; ItemView (DSN-017) gets a reserveMet flag (boolean | null) and must not carry the reserve amount; list views of open items must also hide it.",
+        "P2: ItemController.listItem and ItemService.listItem take an optional reservePrice and validate it against the starting price; update UC-002 and SEQ-002.",
+        "P2: ItemService.closeDueAuctions marks the item unsold with no winner when the reserve is not met; update UC-005 and SEQ-005. ItemStore (DSN-029) persists the reserve column.",
+        "P2: BidEventPublisher and AuctionEventPublisher payloads carry reserveMet, never the reserve amount; WebClient (DSN-042) shows a reserve field in the listing form and 'reserve met / not met' on the item page; reflect in UC-003.",
+        "P4: Implement the changes in Item, ItemView, ItemController, ItemService, ItemStore (schema column), both publishers, the routes in app.ts (strip the reserve amount from GET /api/items and GET /api/items/:id) and public/index.html.",
+        "P5: Add tests: reserve below starting price rejected; listing without reserve still works; close below reserve gives unsold without winner; close at or above reserve gives winner; item views and live events expose reserveMet but no reserve amount; ItemStore round-trips the reserve."
+      ]
+    }
+  }
+}

@@ -17,6 +17,7 @@ function makeItem(): Item {
     startingPrice: 100,
     currency: 'CHF',
     highestBidAmount: 150,
+    reserveMet: true,
   } as unknown as Item;
 }
 
@@ -97,11 +98,20 @@ describe('UC-006 View prices in display currency', () => {
     await expect(exchangeRateService.convert(100, Currency.CHF, Currency.EUR)).resolves.toBeNull();
   });
 
+  it('REQ-012 AC6: Item pages and lists of open items show whether the reserve is met (reserve met / not met) for items that have a reserve.', async () => {
+    const { controller } = makeFakes();
+    const view = await controller.getItem('item-1', 'EUR');
+    expect(view.item.reserveMet).toBe(true);
+    expect(JSON.stringify(view)).not.toContain('reservePrice');
+  });
+
   it('SEQ-006 scenario: View prices in display currency', async () => {
     const { controller, getItem, fetchRates } = makeFakes({ EUR: 0.5, USD: 2 });
     const view = await controller.getItem('item-1', 'EUR');
     expect(getItem).toHaveBeenCalledWith('item-1');
     expect(fetchRates).toHaveBeenCalledTimes(1);
     expect(view.displayCurrency).toBe(Currency.EUR);
+    expect(view.item.reserveMet).toBe(true);
+    expect(JSON.stringify(view)).not.toContain('reservePrice');
   });
 });

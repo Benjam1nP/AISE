@@ -1,0 +1,36 @@
+{
+  "findings": [],
+  "testFixes": [
+    {
+      "runId": "20261127-111636-P5",
+      "test": "REQ-004 AC5: Watchers of the item see the closed state and the winner, or the unsold state when there is no winner.",
+      "file": "test/UC-005.test.ts",
+      "reason": "requirement changed: REQ-004 (watcher criterion is now AC5 and also covers the unsold state)"
+    },
+    {
+      "runId": "20261127-111636-P5",
+      "test": "REQ-004 AC6: An auction that ends with no bids is shown as unsold and has no winner.",
+      "file": "test/UC-005.test.ts",
+      "reason": "requirement changed: REQ-004 (no-bids criterion moved from AC4 to AC6; ItemService.listItem and Item now take a reserve price)"
+    },
+    {
+      "runId": "20261127-111636-P5",
+      "test": "SEQ-005 scenario: Close auction",
+      "file": "test/UC-005.test.ts",
+      "reason": "requirement changed: REQ-004 and REQ-012 (sequence now closes an item with a reserve and checks publishAuctionClosed)"
+    },
+    {
+      "runId": "20261127-111636-P5",
+      "test": "SEQ-002 scenario: List item",
+      "file": "test/UC-002.test.ts",
+      "reason": "requirement changed: REQ-001 (listing with a reserve price; unknown seller rejected)"
+    },
+    {
+      "runId": "20261127-111636-P5",
+      "test": "SEQ-006 scenario: View prices in display currency",
+      "file": "test/UC-006.test.ts",
+      "reason": "requirement changed: REQ-012 (item has reserve-met state and no reserve amount)"
+    }
+  ],
+  "fixResults": []
+}
