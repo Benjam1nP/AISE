@@ -11,9 +11,14 @@
 		design: DesignDoc | null;
 		/** A test row was clicked: show its file at its line. */
 		onOpen: (path: string, line?: number) => void;
+		/** Shows the requirement or sequence a test traces to; without it there is no link. */
+		onopenid?: (id: string) => void;
 	};
 
-	let { checks, reqs, design, onOpen }: Props = $props();
+	let { checks, reqs, design, onOpen, onopenid }: Props = $props();
+
+	/** The REQ or SEQ ID that starts a row label (`REQ-001 AC2`, `SEQ-001`). */
+	const labelId = (label: string) => /^(?:REQ|SEQ)-\d{3}/.exec(label)?.[0];
 
 	const TONE = {
 		passed: 'active',
@@ -60,7 +65,8 @@
 				</header>
 				<ul class="rows">
 					{#each group.rows as row (row.key)}
-						<li>
+						{@const target = onopenid && labelId(row.label)}
+						<li class="item">
 							<!-- The name carries the group, so two tests with the same title stay apart. -->
 							<button
 								type="button"
@@ -77,6 +83,14 @@
 									{#if row.error}<span class="error">{row.error}</span>{/if}
 								</span>
 							</button>
+							{#if target}
+								<button
+									type="button"
+									class="to aise-hit"
+									aria-label="Show {target}"
+									onclick={() => onopenid?.(target)}>{target}</button
+								>
+							{/if}
 						</li>
 					{/each}
 				</ul>
@@ -91,7 +105,17 @@
 				{#each missing as m (`${m.reqId}-${m.n}`)}
 					<li>
 						<Badge tone={m.priority === 'must' ? 'error' : 'pending'}>{m.priority}</Badge>
-						<span class="label">{m.reqId} AC{m.n}</span>
+						{#if onopenid}
+							<button
+								type="button"
+								class="to aise-hit"
+								aria-label="Show {m.reqId}"
+								onclick={() => onopenid(m.reqId)}>{m.reqId}</button
+							>
+							<span class="label">AC{m.n}</span>
+						{:else}
+							<span class="label">{m.reqId} AC{m.n}</span>
+						{/if}
 						<span class="text">{m.text}</span>
 					</li>
 				{/each}
@@ -140,6 +164,28 @@
 		margin: 0;
 		padding: 0;
 		list-style: none;
+	}
+
+	.item {
+		display: flex;
+		align-items: flex-start;
+	}
+
+	.to {
+		flex: none;
+		margin: var(--space-2) var(--space-3) var(--space-2) 0;
+		padding: 0;
+		border: 0;
+		background: none;
+		color: var(--color-brand-strong);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		text-decoration: underline;
+		cursor: pointer;
+	}
+
+	.missing .to {
+		margin: 0;
 	}
 
 	.rows li + li {

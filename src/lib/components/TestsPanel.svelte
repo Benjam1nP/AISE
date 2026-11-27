@@ -21,9 +21,11 @@
 		progress: Record<string, FileStatus> | null;
 		/** A test file to show, and the line to mark in it. Pass a new object to open again. */
 		open?: Open;
+		/** Shows the requirement or sequence a test traces to. */
+		onopenid?: (id: string) => void;
 	};
 
-	let { snapshot, form, progress, open }: Props = $props();
+	let { snapshot, form, progress, open, onopenid }: Props = $props();
 
 	const testFiles = $derived(snapshot.files.filter((f) => f.startsWith('test/')));
 	/** CodePanel lists `snapshot.files`; here that is the tests only. */
@@ -187,6 +189,7 @@
 				{reqs}
 				design={snapshot.design}
 				onOpen={(path, line) => (opened = { path, line })}
+				{onopenid}
 			/>
 			<Findings
 				findings={checks.findings}
@@ -205,7 +208,7 @@
 		<!-- Before any results there is no test row to click, so the files show without one. -->
 		{#if opened || !checks}
 			<section class="viewer" aria-label="Test file">
-				<CodePanel snapshot={testSnapshot} open={opened} />
+				<CodePanel snapshot={testSnapshot} open={opened} {onopenid} />
 				{#if checks}
 					<div>
 						<Button size="sm" variant="ghost" onclick={() => (opened = undefined)}

@@ -21,9 +21,11 @@
 		snapshot: ProjectSnapshot;
 		/** The file to show, and the line to mark in it. Pass a new object to open again. */
 		open?: Open;
+		/** Shows a trace ID (requirement or design element) in its tab; without it the IDs are plain badges. */
+		onopenid?: (id: string) => void;
 	};
 
-	let { snapshot, open }: Props = $props();
+	let { snapshot, open, onopenid }: Props = $props();
 
 	const files = $derived(snapshot.files);
 	/** A class file first, then any source file, then whatever is there. */
@@ -191,7 +193,20 @@
 					{@const ids = traceIds(shown.loaded.text)}
 					{#if ids.length > 0}
 						<ul class="trace" aria-label="Trace">
-							{#each ids as id (id)}<li><Badge tone="info">{id}</Badge></li>{/each}
+							{#each ids as id (id)}
+								<li>
+									{#if onopenid}
+										<button
+											type="button"
+											class="trace-link aise-hit"
+											aria-label="Show {id}"
+											onclick={() => onopenid(id)}><Badge tone="info">{id}</Badge></button
+										>
+									{:else}
+										<Badge tone="info">{id}</Badge>
+									{/if}
+								</li>
+							{/each}
 						</ul>
 					{/if}
 				{/if}
@@ -371,6 +386,19 @@
 		font-family: var(--font-mono);
 		font-size: var(--text-xs);
 		overflow-wrap: anywhere;
+	}
+
+	.trace-link {
+		padding: 0;
+		border: 0;
+		border-radius: var(--radius-sm);
+		background: none;
+		font: inherit;
+		cursor: pointer;
+	}
+
+	.trace-link:hover :global(.badge) {
+		text-decoration: underline;
 	}
 
 	.trace {

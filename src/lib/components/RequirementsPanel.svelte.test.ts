@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { snapshotOf } from './fixtures.ts';
 import RequirementsPanel from './RequirementsPanel.svelte';
+import { NAMES, REQ_TRACE } from './trace-fixture.ts';
 
 // Stands in for SvelteKit's enhance: records the posted form and reports success.
 const posted: FormData[] = [];
@@ -183,5 +184,35 @@ describe('RequirementsPanel', () => {
 		await userEvent.click(screen.getAllByRole('button', { name: 'Edit' })[0]);
 		await userEvent.click(screen.getByRole('button', { name: 'Save' }));
 		expect(screen.getByRole('alert').textContent).toContain('still working');
+	});
+
+	it('lists the trace of an opened requirement as links', async () => {
+		const onopenid = vi.fn();
+		const onopenfile = vi.fn();
+		render(RequirementsPanel, {
+			snapshot: snapshot(),
+			traces: { 'REQ-001': REQ_TRACE },
+			names: NAMES,
+			onopenid,
+			onopenfile
+		});
+		await userEvent.click(screen.getByText('Add a task'));
+		await userEvent.click(screen.getByRole('button', { name: 'UC-001 Add task' }));
+		expect(onopenid).toHaveBeenCalledWith('UC-001');
+		await userEvent.click(screen.getByRole('button', { name: 'src/tasks/Task.ts:3 Task' }));
+		expect(onopenfile).toHaveBeenCalledWith({ path: 'src/tasks/Task.ts', line: 3 });
+	});
+
+	it('opens the focused requirement and moves focus to it', async () => {
+		const { rerender } = render(RequirementsPanel, { snapshot: snapshot() });
+		const row = screen.getByText('Fast list').closest('details')!;
+		expect(row.open).toBe(false);
+		await rerender({ snapshot: snapshot(), focus: { id: 'REQ-002' } });
+		expect(row.open).toBe(true);
+		expect(document.activeElement).toBe(row.querySelector('summary'));
+		// Closed again by hand, a new link to the same requirement opens it again.
+		row.open = false;
+		await rerender({ snapshot: snapshot(), focus: { id: 'REQ-002' } });
+		expect(row.open).toBe(true);
 	});
 });

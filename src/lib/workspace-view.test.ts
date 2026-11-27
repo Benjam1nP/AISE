@@ -5,7 +5,6 @@ import {
 	fileBelongsToTab,
 	tabForFile,
 	selectedTicketId,
-	tabForId,
 	ticketsTabOpen,
 	workPhase,
 	workspaceTabs
@@ -120,22 +119,6 @@ describe('ticketsTabOpen', () => {
 
 	it('opens for an existing ticket whatever P5 says', () => {
 		expect(ticketsTabOpen(phases({ P5: 'not_started' }), 1)).toBe(true);
-	});
-});
-
-describe('tabForId', () => {
-	it('sends a requirement to the Requirements tab', () => {
-		expect(tabForId('REQ-001')).toBe('requirements');
-	});
-
-	it('sends design IDs to the Diagrams tab', () => {
-		for (const id of ['UC-001', 'SEQ-002', 'ACT-001', 'DSN-003'])
-			expect(tabForId(id)).toBe('diagrams');
-	});
-
-	it('ignores anything else', () => {
-		expect(tabForId('TCK-001')).toBeUndefined();
-		expect(tabForId('REQUIREMENT')).toBeUndefined();
 	});
 });
 

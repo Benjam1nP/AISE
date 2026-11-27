@@ -17,13 +17,15 @@ import { REQUIREMENTS_PATH } from './requirements';
 const TRACE_MD = 'docs/trace.md';
 const TRACE_ID = /^(REQ|UC|SEQ|DSN|ACT|TCK)-\d{3}$/;
 
-type TestsInfo = { at: string; outOfDate: boolean } | null;
+export type TestsInfo = { at: string; outOfDate: boolean } | null;
 
 /**
  * The stored artefacts a trace reads, plus when the P5 results were taken and whether code or
  * tests changed since (same hashes as the P5 gate).
  */
-async function load(store: ProjectStore): Promise<{ input: TraceInput; tests: TestsInfo }> {
+export async function loadTraceInput(
+	store: ProjectStore
+): Promise<{ input: TraceInput; tests: TestsInfo }> {
 	const reqs = await store.readJson(REQUIREMENTS_PATH, RequirementsDoc);
 	const design = await store.readJson(DESIGN_PATH, DesignDoc);
 	const checks = await readTestChecks(store);
@@ -46,7 +48,7 @@ async function load(store: ProjectStore): Promise<{ input: TraceInput; tests: Te
 
 /** Writes `docs/trace.md` (the matrix as a table) from the stored artefacts, backed up under the run. */
 export async function writeTraceDoc({ store, runId, projectName }: ToolContext): Promise<void> {
-	const { input, tests } = await load(store);
+	const { input, tests } = await loadTraceInput(store);
 	await store.writeFile(TRACE_MD, traceMarkdown(traceMatrix(input), projectName, tests), runId);
 }
 
@@ -96,7 +98,7 @@ export const trace = defineTool({
 			)
 	}),
 	async run({ store }, { id }) {
-		const { input, tests } = await load(store);
+		const { input, tests } = await loadTraceInput(store);
 		const meta = { testsAt: tests?.at ?? null, testsOutOfDate: tests?.outOfDate ?? false };
 		if (id === undefined) return { requirements: traceMatrix(input), ...meta };
 		if (id.startsWith('TCK-')) return { ...(await traceTicket(store, id, input)), ...meta };

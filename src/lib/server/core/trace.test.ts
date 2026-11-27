@@ -3,7 +3,7 @@ import type { TestResult } from './docker/parse';
 import type { DesignDoc } from './schemas/design';
 import type { Requirement } from './schemas/requirements';
 import type { Decl } from './tools/code-model';
-import { traceId, traceMatrix, type TraceInput } from './trace';
+import { traceAll, traceId, traceMatrix, type TraceInput } from './trace';
 
 const req = (id: string, title = id): Requirement => ({
 	id,
@@ -371,5 +371,34 @@ describe('traceMatrix', () => {
 	it('flags a failing test as a test (noTest is about existence, not result)', () => {
 		const t = test('UC-002 List tasks > REQ-002 AC1: shows', 'failed');
 		expect(traceMatrix({ ...input, tests: [t] })[1]!.noTest).toBe(false);
+	});
+});
+
+describe('traceAll', () => {
+	it('has the trace of every requirement and design ID, the same as traceId', () => {
+		const all = traceAll(input);
+		expect(Object.keys(all).sort()).toEqual([
+			'ACT-001',
+			'DSN-001',
+			'DSN-002',
+			'DSN-003',
+			'DSN-010',
+			'DSN-020',
+			'REQ-001',
+			'REQ-002',
+			'REQ-003',
+			'SEQ-001',
+			'UC-001',
+			'UC-002'
+		]);
+		expect(all['UC-001']).toEqual(traceId('UC-001', input));
+	});
+
+	it('has only the requirements without a design', () => {
+		expect(Object.keys(traceAll({ ...input, design: null }))).toEqual([
+			'REQ-001',
+			'REQ-002',
+			'REQ-003'
+		]);
 	});
 });

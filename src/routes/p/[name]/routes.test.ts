@@ -10,6 +10,7 @@ import * as homePage from '../../+page.server';
 import * as projectPage from './+page.server';
 import { GET } from './events/+server';
 import { GET as getFile } from './file/+server';
+import { GET as getTrace } from './trace/+server';
 
 const g = globalThis as typeof globalThis & {
 	__aiseOrchestrator?: unknown;
@@ -927,5 +928,49 @@ describe('file endpoint', () => {
 	it('answers 413 for a file over 1 MB', async () => {
 		await put('src/big.ts', 'x'.repeat(1024 * 1024 + 1));
 		await expect(fileGet('demo', 'src/big.ts')).rejects.toMatchObject({ status: 413 });
+	});
+});
+
+describe('trace endpoint', () => {
+	const traceGet = (name: string) =>
+		(getTrace as unknown as (e: unknown) => Promise<Response>)({ params: { name } });
+
+	it('answers 404 for an unknown project', async () => {
+		await expect(traceGet('nope')).rejects.toMatchObject({ status: 404 });
+	});
+
+	it('returns the traces of the requirements, with the code that names them', async () => {
+		const dir = path.join(root, 'demo');
+		await mkdir(path.join(dir, '.aise'), { recursive: true });
+		await mkdir(path.join(dir, 'src/tasks'), { recursive: true });
+		await writeFile(
+			path.join(dir, '.aise/requirements.json'),
+			JSON.stringify({
+				requirements: [
+					{
+						id: 'REQ-001',
+						title: 'Add task',
+						text: 'Add a task.',
+						type: 'functional',
+						priority: 'must',
+						acceptanceCriteria: ['works']
+					}
+				],
+				openQuestions: [],
+				assumptions: [],
+				outOfScope: []
+			})
+		);
+		await writeFile(
+			path.join(dir, 'src/tasks/Task.ts'),
+			'/** @trace DSN-001 REQ-001 */\nexport class Task {}\n'
+		);
+		const res = await traceGet('demo');
+		expect(res.status).toBe(200);
+		const body = await res.json();
+		expect(body.testsOutOfDate).toBe(false);
+		expect(body.traces['REQ-001'].code).toEqual([
+			{ file: 'src/tasks/Task.ts', line: 2, name: 'Task' }
+		]);
 	});
 });
