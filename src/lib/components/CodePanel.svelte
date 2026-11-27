@@ -83,12 +83,13 @@
 
 	/**
 	 * A file opened from outside (a gate item) takes focus; this runs again for every new `open`.
-	 * The page only scrolls when the header is off screen.
+	 * The page only scrolls when the panel is not fully on screen, and then as little as it can, so a
+	 * file opened below a long list (test results) shows its code, not just its header.
 	 */
 	function focusOnOpen(node: HTMLElement) {
 		if (!open) return;
 		node.focus({ preventScroll: true });
-		node.scrollIntoView?.({ block: 'nearest' });
+		(node.closest('.code') ?? node).scrollIntoView?.({ block: 'nearest' });
 	}
 
 	// The last loaded file stays on screen until the next one has loaded: swapping it for a

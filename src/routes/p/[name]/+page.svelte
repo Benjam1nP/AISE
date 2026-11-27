@@ -66,6 +66,8 @@
 		])
 	);
 	$effect(() => {
+		// A run changes files one by one; each fetch parses the code, so wait for the run to end.
+		if (snapshot.activeRun) return;
 		void traceStore.load(snapshot.name, traceKey);
 	});
 	const names = $derived(traceNames(snapshot.requirements?.requirements ?? [], snapshot.design));
@@ -173,11 +175,15 @@
 	let diagramFocus: DiagramFocus | undefined = $state();
 	/**
 	 * A trace link or an affected ID of a ticket plan: a requirement opens its row, a design element
-	 * the diagram that draws it, marked. IDs the project does not have are ignored.
+	 * the diagram that draws it, marked. Any other ID is ignored.
 	 */
 	function showId(id: string) {
 		const target = traceTarget(id, snapshot.design);
-		if (!target) return;
+		if (!target) {
+			// A plan can name an element a later change removed: show the diagrams, nothing marked.
+			if (/^(UC|SEQ|ACT|DSN)-/.test(id)) showDiagrams();
+			return;
+		}
 		if (target.tab === 'requirements') reqFocus = { id };
 		else diagramFocus = { id, kind: target.kind, seqId: target.seqId };
 		pickTab(target.tab);
@@ -185,6 +191,19 @@
 		// The requirement row scrolls itself into view; a diagram needs the tabs brought up.
 		if (target.tab === 'diagrams') void revealTabs();
 	}
+
+	function showDiagrams() {
+		diagramFocus = undefined;
+		pickTab('diagrams');
+		pane = 'right';
+		void revealTabs();
+	}
+
+	// A link's target applies once: leaving its tab drops it, so coming back does not jump there again.
+	$effect(() => {
+		if (activeTab !== 'requirements') reqFocus = undefined;
+		if (activeTab !== 'diagrams') diagramFocus = undefined;
+	});
 
 	/** A ticket step that needs review in a phase: leave the Tickets tab for that phase's artefact. Phases the page cannot show are ignored. */
 	function showPhase(p: string) {

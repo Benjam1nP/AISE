@@ -61,8 +61,13 @@
 	const incoming = $derived(focus);
 	let kind = $derived<string>(incoming?.kind ?? 'useCase');
 	let picked = $derived(incoming?.seqId ?? '');
-	/** The element whose trace shows below the diagram, and which the diagram marks. */
+	/** The element whose trace shows below the diagram: the link's element, or the one clicked. */
 	let selected = $derived<string | undefined>(incoming?.id);
+	/**
+	 * The element the diagram marks and centres on: a link's only. A click does not mark, because a
+	 * new source draws the diagram again and the view would jump while the developer picks elements.
+	 */
+	const marked = $derived(incoming?.id);
 
 	const sequences = $derived(diagrams?.sequences ?? []);
 	const sequence = $derived(sequences.find((s) => s.id === picked) ?? sequences[0]);
@@ -72,7 +77,7 @@
 		selected = id;
 		oninsert(`${id} `);
 	}
-	const source = (k: DiagramKind, text: string) => focusSource(text, k, selected, design);
+	const source = (k: DiagramKind, text: string) => focusSource(text, k, marked, design);
 </script>
 
 <Panel title="Diagrams">
