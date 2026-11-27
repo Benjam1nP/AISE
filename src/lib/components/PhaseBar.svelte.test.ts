@@ -30,6 +30,20 @@ describe('PhaseBar', () => {
 		expect(screen.getByText('Total cost').parentElement!.textContent).toContain('$0.350');
 	});
 
+	it('opens P3 once P2 has started and selects it on click', async () => {
+		const onselect = vi.fn();
+		render(PhaseBar, { phases: phases('not_started'), selected: 'P2', onselect });
+		await userEvent.click(screen.getByRole('button', { name: /P3\s*Refinement/ }));
+		expect(onselect).toHaveBeenCalledWith('P3');
+	});
+
+	it('keeps P3 closed until P2 has started and says why', () => {
+		const closed = { ...(phases('not_started') as object), P2: { status: 'not_started' } };
+		render(PhaseBar, { phases: closed as never, selected: 'P1', onselect: () => {} });
+		expect(screen.queryByRole('button', { name: /P3/ })).toBeNull();
+		expect(screen.getByText('After the design starts')).toBeTruthy();
+	});
+
 	it('opens P5 once P4 is approved and selects it on click', async () => {
 		const onselect = vi.fn();
 		render(PhaseBar, { phases: phases('approved'), selected: 'P4', onselect });

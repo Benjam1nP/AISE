@@ -39,6 +39,19 @@ describe('Chat error banner', () => {
 	});
 });
 
+describe('Chat of the design review (P3)', () => {
+	it('shows the review run without a composer and without Retry', () => {
+		const failed = snapshotOf({
+			lastRun: { phase: 'P3', agent: 'review', status: 'failed', error: 'boom' }
+		} as never);
+		render(Chat, { snapshot: failed, phase: 'P3', live: null, form: null });
+		expect(screen.getByRole('heading', { name: /review agent/ })).toBeTruthy();
+		expect(screen.queryByRole('textbox')).toBeNull();
+		expect(screen.queryByRole('button', { name: 'Retry' })).toBeNull();
+		expect(screen.getByText(/Press Review design to run it again/)).toBeTruthy();
+	});
+});
+
 describe('Chat messages', () => {
 	const at = '2026-11-04T10:00:00.000Z';
 	const withChat = (over: Record<string, unknown>) =>

@@ -14,6 +14,7 @@
 	import GenerateDeployment from '#lib/components/GenerateDeployment.svelte';
 	import GenerateTests from '#lib/components/GenerateTests.svelte';
 	import PhaseBar from '#lib/components/PhaseBar.svelte';
+	import ProposalsPanel from '#lib/components/ProposalsPanel.svelte';
 	import RequirementsPanel from '#lib/components/RequirementsPanel.svelte';
 	import StaleBanner from '#lib/components/StaleBanner.svelte';
 	import TestsPanel from '#lib/components/TestsPanel.svelte';
@@ -44,6 +45,7 @@
 		Tabs,
 		ThemeToggle
 	} from '#lib/ui/index.ts';
+	import type { Proposal } from '#lib/server/core/tools/proposals.ts';
 	import type { PageProps } from './$types';
 
 	let { data, form }: PageProps = $props();
@@ -119,8 +121,9 @@
 		if (openFile && !fileBelongsToTab(id, openFile.path)) openFile = undefined;
 	}
 
-	function select(p: GatePhase) {
+	function select(p: GatePhase | 'P3') {
 		picked = p;
+		if (p === 'P3') tab = 'diagrams';
 		if (p === 'P4' && codeTab) tab = 'code';
 		if (p === 'P5' && testsTab) tab = 'tests';
 		if (p === 'P6' && deployTab) tab = 'deploy';
@@ -144,6 +147,19 @@
 	function selectRail(p: WorkPhase) {
 		if (p === 'P7') showTickets();
 		else select(p);
+	}
+
+	/** Accept started a design run: the design chat shows it. */
+	function showDesignRun() {
+		picked = 'P2';
+		pane = 'left';
+	}
+
+	/** Discuss: the design chat opens with the proposal in the composer, to edit and send as a change request. */
+	async function discuss(p: Proposal) {
+		showDesignRun();
+		await tick();
+		chat?.insert(`Regarding ${p.id} (${p.title}): ${p.change}`);
 	}
 
 	/** A drift ticket was opened from the P4 gate: show it, its triage runs in its chat. */
@@ -327,7 +343,17 @@
 							{/if}
 							<GenerateDeployment {snapshot} {form} />
 						{/if}
-						{#if phase !== 'P7'}
+						{#if phase === 'P3'}
+							<ProposalsPanel
+								proposals={snapshot.proposals}
+								status={snapshot.state.phases.P3.status}
+								hasDesign={snapshot.design !== null}
+								running={snapshot.activeRun !== null}
+								ondiscuss={discuss}
+								onaccepted={showDesignRun}
+								{form}
+							/>
+						{:else if phase !== 'P7'}
 							<GatePanel
 								{snapshot}
 								{phase}
