@@ -1,17 +1,17 @@
 {
-  "designHash": "065b9491b8a87be816fd872c54c891f39910cc7343723e2c0600368907c394f7",
+  "designHash": "59b5e282f499456ab055848e32ea4d4886a6deffb24c8032a6200657f0f56970",
   "rows": [
     {
       "reqId": "REQ-001",
       "criterion": 1,
       "coveredBy": [
         {
-          "classId": "DSN-022",
-          "method": "listItem"
+          "sequenceId": "SEQ-002",
+          "step": 2
         },
         {
-          "classId": "DSN-029",
-          "method": "saveItem"
+          "sequenceId": "SEQ-002",
+          "step": 4
         }
       ]
     },
@@ -20,8 +20,8 @@
       "criterion": 2,
       "coveredBy": [
         {
-          "classId": "DSN-022",
-          "method": "listItem"
+          "sequenceId": "SEQ-002",
+          "step": 2
         }
       ]
     },
@@ -30,8 +30,8 @@
       "criterion": 3,
       "coveredBy": [
         {
-          "classId": "DSN-022",
-          "method": "listItem"
+          "sequenceId": "SEQ-002",
+          "step": 2
         }
       ]
     },
@@ -40,8 +40,8 @@
       "criterion": 4,
       "coveredBy": [
         {
-          "classId": "DSN-022",
-          "method": "listItem"
+          "sequenceId": "SEQ-002",
+          "step": 4
         }
       ]
     },
@@ -50,62 +50,62 @@
       "criterion": 5,
       "coveredBy": [
         {
-          "classId": "DSN-022",
-          "method": "listItem"
+          "sequenceId": "SEQ-002",
+          "step": 2
         }
       ]
     },
     {
       "reqId": "REQ-002",
       "criterion": 1,
+      "coveredBy": [
+        {
+          "sequenceId": "SEQ-003",
+          "step": 5
+        },
+        {
+          "sequenceId": "SEQ-003",
+          "step": 8
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-002",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "sequenceId": "SEQ-003",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-002",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "sequenceId": "SEQ-003",
+          "step": 6
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-002",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "sequenceId": "SEQ-003",
+          "step": 6
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-002",
+      "criterion": 5,
       "coveredBy": [
         {
           "classId": "DSN-023",
           "method": "placeBid"
-        },
-        {
-          "classId": "DSN-015",
-          "method": "isOpen"
-        }
-      ]
-    },
-    {
-      "reqId": "REQ-002",
-      "criterion": 2,
-      "coveredBy": [
-        {
-          "classId": "DSN-015",
-          "method": "isOpen"
-        }
-      ]
-    },
-    {
-      "reqId": "REQ-002",
-      "criterion": 3,
-      "coveredBy": [
-        {
-          "classId": "DSN-015",
-          "method": "minimumBid"
-        }
-      ]
-    },
-    {
-      "reqId": "REQ-002",
-      "criterion": 4,
-      "coveredBy": [
-        {
-          "classId": "DSN-015",
-          "method": "minimumBid"
-        }
-      ]
-    },
-    {
-      "reqId": "REQ-002",
-      "criterion": 5,
-      "coveredBy": [
-        {
-          "classId": "DSN-023",
-          "method": "placeBid"
         }
       ]
     },
@@ -114,12 +114,8 @@
       "criterion": 1,
       "coveredBy": [
         {
-          "classId": "DSN-033",
-          "method": "broadcast"
-        },
-        {
-          "classId": "DSN-032",
-          "method": "onEvent"
+          "sequenceId": "SEQ-003",
+          "step": 15
         }
       ]
     },
@@ -127,10 +123,6 @@
       "reqId": "REQ-003",
       "criterion": 2,
       "coveredBy": [
-        {
-          "classId": "DSN-033",
-          "method": "watch"
-        },
         {
           "classId": "DSN-033",
           "method": "broadcast"
@@ -142,33 +134,24 @@
       "criterion": 3,
       "coveredBy": [
         {
-          "classId": "DSN-033",
-          "method": "broadcast"
+          "sequenceId": "SEQ-004",
+          "step": 3
         }
       ]
     },
     {
       "reqId": "REQ-003",
       "criterion": 4,
-      "coveredBy": [
-        {
-          "classId": "DSN-032",
-          "method": "connect"
-        }
-      ],
-      "note": "Browser retry behaviour lives in WebClient."
+      "coveredBy": [],
+      "note": "Live config loading/retry is browser behaviour (GET /api/config in code), not modelled in the design."
     },
     {
       "reqId": "REQ-004",
       "criterion": 1,
       "coveredBy": [
         {
-          "classId": "DSN-015",
-          "method": "isOpen"
-        },
-        {
-          "classId": "DSN-022",
-          "method": "closeDueAuctions"
+          "sequenceId": "SEQ-005",
+          "step": 4
         }
       ]
     },
@@ -177,12 +160,8 @@
       "criterion": 2,
       "coveredBy": [
         {
-          "classId": "DSN-015",
-          "method": "close"
-        },
-        {
-          "classId": "DSN-019",
-          "method": "getItem"
+          "sequenceId": "SEQ-005",
+          "step": 4
         }
       ]
     },
@@ -191,8 +170,8 @@
       "criterion": 3,
       "coveredBy": [
         {
-          "classId": "DSN-015",
-          "method": "close"
+          "sequenceId": "SEQ-005",
+          "step": 4
         }
       ]
     },
@@ -201,12 +180,8 @@
       "criterion": 4,
       "coveredBy": [
         {
-          "classId": "DSN-015",
-          "method": "close"
-        },
-        {
-          "classId": "DSN-030",
-          "method": "publishAuctionClosed"
+          "sequenceId": "SEQ-005",
+          "step": 4
         }
       ]
     },
@@ -215,12 +190,8 @@
       "criterion": 5,
       "coveredBy": [
         {
-          "classId": "DSN-030",
-          "method": "publishAuctionClosed"
-        },
-        {
-          "classId": "DSN-033",
-          "method": "broadcast"
+          "sequenceId": "SEQ-005",
+          "step": 9
         }
       ]
     },
@@ -229,8 +200,8 @@
       "criterion": 6,
       "coveredBy": [
         {
-          "classId": "DSN-015",
-          "method": "close"
+          "sequenceId": "SEQ-005",
+          "step": 4
         }
       ]
     },
@@ -239,24 +210,16 @@
       "criterion": 1,
       "coveredBy": [
         {
-          "classId": "DSN-025",
-          "method": "convert"
-        },
-        {
-          "classId": "DSN-026",
-          "method": "fetchRates"
+          "sequenceId": "SEQ-006",
+          "step": 3
         }
       ]
     },
     {
       "reqId": "REQ-005",
       "criterion": 2,
-      "coveredBy": [
-        {
-          "classId": "DSN-019",
-          "method": "getItem"
-        }
-      ]
+      "coveredBy": [],
+      "note": "Currency enum limits display currencies; UI offering is in the browser."
     },
     {
       "reqId": "REQ-005",
@@ -273,18 +236,46 @@
       "criterion": 4,
       "coveredBy": [
         {
-          "classId": "DSN-025",
-          "method": "convert"
+          "sequenceId": "SEQ-006",
+          "step": 3
         }
       ]
+    },
+    {
+      "reqId": "REQ-006",
+      "criterion": 1,
+      "coveredBy": [],
+      "note": "Non-functional: separate service nodes DSN-001 and DSN-002."
+    },
+    {
+      "reqId": "REQ-006",
+      "criterion": 2,
+      "coveredBy": [],
+      "note": "Non-functional: separate nodes."
+    },
+    {
+      "reqId": "REQ-007",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "sequenceId": "SEQ-003",
+          "step": 14
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-007",
+      "criterion": 2,
+      "coveredBy": [],
+      "note": "Non-functional: each live instance opens the feed ws."
     },
     {
       "reqId": "REQ-008",
       "criterion": 1,
       "coveredBy": [
         {
-          "classId": "DSN-021",
-          "method": "register"
+          "sequenceId": "SEQ-001",
+          "step": 2
         }
       ]
     },
@@ -293,8 +284,8 @@
       "criterion": 2,
       "coveredBy": [
         {
-          "classId": "DSN-021",
-          "method": "register"
+          "sequenceId": "SEQ-001",
+          "step": 2
         }
       ]
     },
@@ -303,8 +294,8 @@
       "criterion": 3,
       "coveredBy": [
         {
-          "classId": "DSN-028",
-          "method": "findByName"
+          "sequenceId": "SEQ-001",
+          "step": 3
         }
       ]
     },
@@ -313,8 +304,8 @@
       "criterion": 4,
       "coveredBy": [
         {
-          "classId": "DSN-028",
-          "method": "save"
+          "sequenceId": "SEQ-001",
+          "step": 4
         }
       ]
     },
@@ -323,12 +314,12 @@
       "criterion": 5,
       "coveredBy": [
         {
-          "classId": "DSN-022",
-          "method": "listItem"
+          "sequenceId": "SEQ-002",
+          "step": 1
         },
         {
-          "classId": "DSN-023",
-          "method": "placeBid"
+          "sequenceId": "SEQ-003",
+          "step": 1
         }
       ]
     },
@@ -336,15 +327,15 @@
       "reqId": "REQ-008",
       "criterion": 6,
       "coveredBy": [],
-      "note": "Property of the design: no admin role exists."
+      "note": "Satisfied by absence of an admin actor."
     },
     {
       "reqId": "REQ-008",
       "criterion": 7,
       "coveredBy": [
         {
-          "classId": "DSN-021",
-          "method": "register"
+          "sequenceId": "SEQ-001",
+          "step": 2
         }
       ]
     },
@@ -353,8 +344,8 @@
       "criterion": 1,
       "coveredBy": [
         {
-          "classId": "DSN-015",
-          "method": "extendIfLate"
+          "sequenceId": "SEQ-003",
+          "step": 7
         }
       ]
     },
@@ -363,8 +354,8 @@
       "criterion": 2,
       "coveredBy": [
         {
-          "classId": "DSN-015",
-          "method": "extendIfLate"
+          "sequenceId": "SEQ-003",
+          "step": 7
         }
       ]
     },
@@ -373,8 +364,8 @@
       "criterion": 3,
       "coveredBy": [
         {
-          "classId": "DSN-033",
-          "method": "broadcast"
+          "sequenceId": "SEQ-003",
+          "step": 15
         }
       ]
     },
@@ -383,8 +374,8 @@
       "criterion": 1,
       "coveredBy": [
         {
-          "classId": "DSN-025",
-          "method": "convert"
+          "sequenceId": "SEQ-006",
+          "step": 4
         }
       ]
     },
@@ -393,8 +384,8 @@
       "criterion": 2,
       "coveredBy": [
         {
-          "classId": "DSN-025",
-          "method": "convert"
+          "sequenceId": "SEQ-006",
+          "step": 4
         }
       ]
     },
@@ -409,12 +400,28 @@
       ]
     },
     {
+      "reqId": "REQ-011",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "sequenceId": "SEQ-003",
+          "step": 15
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-011",
+      "criterion": 2,
+      "coveredBy": [],
+      "note": "Non-functional."
+    },
+    {
       "reqId": "REQ-012",
       "criterion": 1,
       "coveredBy": [
         {
-          "classId": "DSN-022",
-          "method": "listItem"
+          "sequenceId": "SEQ-002",
+          "step": 2
         }
       ]
     },
@@ -423,8 +430,8 @@
       "criterion": 2,
       "coveredBy": [
         {
-          "classId": "DSN-022",
-          "method": "listItem"
+          "sequenceId": "SEQ-002",
+          "step": 2
         }
       ]
     },
@@ -433,8 +440,8 @@
       "criterion": 3,
       "coveredBy": [
         {
-          "classId": "DSN-022",
-          "method": "listItem"
+          "sequenceId": "SEQ-002",
+          "step": 4
         }
       ]
     },
@@ -443,8 +450,8 @@
       "criterion": 4,
       "coveredBy": [
         {
-          "classId": "DSN-015",
-          "method": "close"
+          "sequenceId": "SEQ-005",
+          "step": 4
         }
       ]
     },
@@ -453,8 +460,8 @@
       "criterion": 5,
       "coveredBy": [
         {
-          "classId": "DSN-015",
-          "method": "close"
+          "sequenceId": "SEQ-005",
+          "step": 4
         }
       ]
     },
@@ -463,16 +470,8 @@
       "criterion": 6,
       "coveredBy": [
         {
-          "classId": "DSN-015",
-          "method": "isReserveMet"
-        },
-        {
-          "classId": "DSN-022",
-          "method": "getItem"
-        },
-        {
-          "classId": "DSN-022",
-          "method": "listOpenItems"
+          "sequenceId": "SEQ-003",
+          "step": 9
         }
       ]
     },
@@ -481,12 +480,8 @@
       "criterion": 7,
       "coveredBy": [
         {
-          "classId": "DSN-022",
-          "method": "getItem"
-        },
-        {
           "classId": "DSN-019",
-          "method": "listOpenItems"
+          "method": "getItem"
         }
       ]
     },
@@ -495,12 +490,8 @@
       "criterion": 8,
       "coveredBy": [
         {
-          "classId": "DSN-031",
-          "method": "publishBidAccepted"
-        },
-        {
-          "classId": "DSN-030",
-          "method": "publishAuctionClosed"
+          "sequenceId": "SEQ-003",
+          "step": 9
         }
       ]
     }

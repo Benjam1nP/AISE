@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- C2 evidence in `evidence/change-propagation.md`: the requirement tickets of to do and auction, and two auction drift tickets from hand edits in `src/`. TCK-002 adopts a new `Item.timeLeftMs` into the design, and TCK-003 renames a parameter of `Item.isOpen` back to the name the design uses. The file lists what each ticket updated, how staleness, drift and tickets keep the artefacts aligned, and where they do not. `scripts/run-auction.ts drift` reproduces both tickets (about $0.66). The booking design change waits for #4 (#6).
+
 - To do showcase taken end to end in the UI: P1 to P6 (8 requirements after 7 clarifying questions, a P3 review round, 28 tests, deploy check passing) and ticket TCK-001 (tasks get an optional due date and an overdue mark), walked through P1 to P6 again and closed with its change report, 48 tests passing. All seven phases approved without override, $1.73 in total. Numbers and what needed help are in `evidence/scaling-comparison.md` (#3).
 - P6 turns stale when the code changes (files under `src/`, `public/` or `tsconfig.json`), not only the services, start scripts or dependencies. A ticket whose P4 or P5 runs change the code can no longer close with the deploy check from before the change: the walk asks for Update (the deploy agent reruns the deploy check) or Still valid. P6 approvals from before this change keep their hashes until P6 is next made or confirmed (#19).
 - The P4 gate's `Typecheck passes` ignores errors under `test/`, and `App starts` runs despite them. Those errors belong to P5 (`Tests type check`), which updates the tests after P4 approval; before, a P4 change to a signature failed P4 on the old tests and the ticket walk needed Approve with override (#18).

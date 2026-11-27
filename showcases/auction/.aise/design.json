@@ -227,6 +227,16 @@
           "returnType": "number"
         },
         {
+          "name": "timeLeftMs",
+          "params": [
+            {
+              "name": "now",
+              "type": "Date"
+            }
+          ],
+          "returnType": "number"
+        },
+        {
           "name": "extendIfLate",
           "params": [
             {

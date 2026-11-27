@@ -1,0 +1,20 @@
+{
+  "id": "20261127-132843-P7",
+  "phase": "P7",
+  "agent": "maintenance",
+  "status": "done",
+  "startedAt": "2026-11-27T13:28:43.683Z",
+  "finishedAt": "2026-11-27T13:28:56.804Z",
+  "usage": {
+    "input": 557,
+    "output": 1187,
+    "cacheRead": 35605,
+    "cacheWrite": 18588
+  },
+  "costUsd": 0.1209512,
+  "summary": "The agent saved a ticket plan starting at P4 that renames the `isOpen` parameter from `at` to `now` in `src/auction-api/Item.ts` to match the design, since the design and code differ only in that name. The developer should check that choosing the code over the design is right, which the agent justifies by consistency with the other methods, and then confirm the UC-002 to UC-006 tests still pass after the rename. All five tool calls succeeded, so nothing failed.",
+  "ticketId": "TCK-003",
+  "prevTicket": {
+    "status": "open"
+  }
+}
