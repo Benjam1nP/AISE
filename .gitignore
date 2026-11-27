@@ -27,3 +27,5 @@ results.sarif
 !/showcases/fixture/
 # runtime SQLite files of a showcase run
 /showcases/*/data/
+# presentation template, copied in locally
+/presentation/template/
