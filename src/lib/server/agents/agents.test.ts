@@ -1496,7 +1496,7 @@ describe('review agent', () => {
 			new Set(['REQ-002'])
 		);
 		expect(brief).toContain(
-			'- REQ-002 AC3: Done tasks are struck through (the browser page serves this requirement: if the criterion is about what the page shows, it needs no proposal)'
+			'- REQ-002 AC3: Done tasks are struck through (the browser page serves this requirement: if the criterion is only about what the page shows, it needs no proposal; server logic such as validation still does)'
 		);
 		expect(brief.split('\n').at(-1)).toBe('- REQ-006 AC1: Titles are trimmed');
 	});

@@ -43,7 +43,7 @@ export function reviewBrief(
 	pageReqIds: ReadonlySet<string> = new Set()
 ): string {
 	const line = (u: UncoveredCriterion) =>
-		`- ${u.reqId} AC${u.n}: ${u.text}${pageReqIds.has(u.reqId) ? ' (the browser page serves this requirement: if the criterion is about what the page shows, it needs no proposal)' : ''}`;
+		`- ${u.reqId} AC${u.n}: ${u.text}${pageReqIds.has(u.reqId) ? ' (the browser page serves this requirement: if the criterion is only about what the page shows, it needs no proposal; server logic such as validation still does)' : ''}`;
 	const coverage =
 		uncovered === null
 			? 'There is no coverage record for the current design; check the acceptance criteria yourself.'
