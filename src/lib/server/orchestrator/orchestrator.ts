@@ -2293,14 +2293,14 @@ export class Orchestrator {
 		// write_ticket_report sets done during the run; only a close run that finished keeps it.
 		if (run.report && run.status !== 'done' && run.ticketId && run.prevTicket)
 			await this.putBack(store, run.ticketId, run.prevTicket);
-		// An accept run: done moves the review along; otherwise, with the design unchanged, the
-		// proposal is open again.
-		if (run.fromProposal && run.status === 'done' && run.id) await followDesign(store, run.id);
-		else if (
-			run.fromProposal &&
-			(await artefactHash(store, 'P2').catch(() => undefined)) === run.prevArtefactHash
-		)
-			await reopenProposal(store, run.fromProposal);
+		// An accept run that left the design unchanged, done or not, opens the proposal again;
+		// a done run that changed it moves the review along.
+		if (run.fromProposal) {
+			const unchanged =
+				(await artefactHash(store, 'P2').catch(() => undefined)) === run.prevArtefactHash;
+			if (unchanged) await reopenProposal(store, run.fromProposal);
+			else if (run.status === 'done' && run.id) await followDesign(store, run.id);
+		}
 		if (!isChatPhase(run.phase)) return;
 		const state = await readState(store);
 		await afterRun(store, state, run);
