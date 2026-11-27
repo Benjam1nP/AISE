@@ -8,7 +8,7 @@
 	type Props = {
 		/** What is stale: the design (after a requirements change), the code (after a design change), the tests or the deployment. */
 		phase?: 'P2' | 'P4' | 'P5' | 'P6';
-		/** IDs that changed since approval: requirement IDs for P2, design element IDs for P4, REQ, UC and SEQ IDs for P5, service node IDs (and `dependencies`) for P6. */
+		/** IDs that changed since approval: requirement IDs for P2, design element IDs for P4, REQ, UC and SEQ IDs for P5, service node IDs (and `dependencies`, `code`) for P6. */
 		ids: string[];
 		/** The checks of the phase gate that fail right now. */
 		failing: GateResult['checks'];
@@ -57,7 +57,7 @@
 			agent: 'test'
 		},
 		P6: {
-			changed: 'services, start scripts or dependencies',
+			changed: 'services, start scripts, dependencies or code',
 			upstream: 'tests',
 			made: 'deployment',
 			update: 'Update deployment',

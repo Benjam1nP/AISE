@@ -95,6 +95,12 @@ describe('deployUpdateBrief', () => {
 		expect(b).toContain('npm run start:live-update-server');
 	});
 
+	it('names a code change as changed, never as a service', () => {
+		const b = deployUpdateBrief(plan, ['code'], [], [], auction);
+		expect(b.split('Added')[0]).toContain('code (the files under src/');
+		expect(b.split('Added')[0]).not.toContain('not a service now');
+	});
+
 	it('repeats the extra variables', () => {
 		expect(deployUpdateBrief(plan, [], [], [], auction, ['ADMIN_PASSWORD'])).toContain(
 			'ADMIN_PASSWORD=change-me-admin-password'

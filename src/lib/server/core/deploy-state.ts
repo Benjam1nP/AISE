@@ -1,6 +1,6 @@
 import { lstat } from 'node:fs/promises';
 import { z } from 'zod';
-import { hashPaths, listCodeFiles, orMissing } from './code-state';
+import { hashFiles, hashPaths, listCodeFiles, orMissing } from './code-state';
 import type { ProjectStore } from './store';
 
 /** What the deploy agent writes; the P6 artefact hash covers all three. */
@@ -40,6 +40,17 @@ export async function deployCheckHash(store: ProjectStore): Promise<string | nul
 	const own = await plainFiles(store, ['Dockerfile', 'compose.yaml', 'package-lock.json']);
 	if (!own.includes('compose.yaml')) return null;
 	return hashPaths(store, [...own, ...(await listCodeFiles(store))].sort());
+}
+
+/**
+ * The code P6 staleness follows: the code files without package.json, whose start scripts and
+ * dependencies the deploy hashes cover already. Null without a file under `src/`.
+ */
+export async function deployCodeHash(store: ProjectStore): Promise<string | null> {
+	return hashFiles(
+		store,
+		(await listCodeFiles(store)).filter((f) => f !== 'package.json')
+	);
 }
 
 export type DeployCheck = {

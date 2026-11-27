@@ -11,6 +11,7 @@ import {
 	GENERATE_DEPLOY_MESSAGE,
 	deployBlocked,
 	deployGate,
+	comparableDeployHashes,
 	deployHashesOf,
 	markP6Stale,
 	p6NotReady,
@@ -261,23 +262,23 @@ describe('p6NotReady', () => {
 describe('P6 staleness', () => {
 	const approvedP6 = (): State => {
 		const s = approved();
-		s.phases.P6 = { status: 'approved', deployHashes: deployHashesOf(design(), pkg()) };
+		s.phases.P6 = { status: 'approved', deployHashes: deployHashesOf(design(), pkg(), 'c1') };
 		return s;
 	};
 
 	it('is not stale for the stored hashes, nor without any', () => {
-		expect(staleDeployIds(approvedP6(), design(), pkg())).toEqual([]);
-		expect(staleDeployIds(approved(), design(), pkg())).toEqual([]);
+		expect(staleDeployIds(approvedP6(), design(), pkg(), 'c1')).toEqual([]);
+		expect(staleDeployIds(approved(), design(), pkg(), 'c1')).toEqual([]);
 	});
 
 	it('marks P6 stale on a start script change and back to approved after reverting', () => {
 		const s = approvedP6();
 		const changed = pkg();
 		changed.scripts['start:live-update-server'] = 'tsx src/other.ts';
-		expect(staleDeployIds(s, design(), changed)).toHaveLength(1);
-		markP6Stale(s, design(), changed);
+		expect(staleDeployIds(s, design(), changed, 'c1')).toHaveLength(1);
+		markP6Stale(s, design(), changed, 'c1');
 		expect(s.phases.P6.status).toBe('stale');
-		markP6Stale(s, design(), pkg());
+		markP6Stale(s, design(), pkg(), 'c1');
 		expect(s.phases.P6.status).toBe('approved');
 	});
 
@@ -285,24 +286,24 @@ describe('P6 staleness', () => {
 		const s = approvedP6();
 		const dep = pkg();
 		dep.dependencies.zzz = '1.0.0';
-		expect(staleDeployIds(s, design(), dep)).toEqual(['dependencies']);
+		expect(staleDeployIds(s, design(), dep, 'c1')).toEqual(['dependencies']);
 		const d = design();
 		d.links.pop();
-		expect(staleDeployIds(s, d, pkg()).length).toBeGreaterThan(0);
+		expect(staleDeployIds(s, d, pkg(), 'c1').length).toBeGreaterThan(0);
 		const text = design();
 		text.classes[0].description = 'another words';
-		expect(staleDeployIds(s, text, pkg())).toEqual([]);
+		expect(staleDeployIds(s, text, pkg(), 'c1')).toEqual([]);
 	});
 
 	it('leaves the status alone while package.json is unreadable', () => {
 		const stale = approvedP6();
 		stale.phases.P6.status = 'stale';
-		markP6Stale(stale, design(), null);
+		markP6Stale(stale, design(), null, 'c1');
 		expect(stale.phases.P6.status).toBe('stale');
 		const ok = approvedP6();
-		markP6Stale(ok, design(), null);
+		markP6Stale(ok, design(), null, 'c1');
 		expect(ok.phases.P6.status).toBe('approved');
-		expect(staleDeployIds(ok, design(), null)).toEqual([]);
+		expect(staleDeployIds(ok, design(), null, 'c1')).toEqual([]);
 	});
 
 	it('reads the stored hashes whatever the status and leaves other statuses alone', () => {
@@ -310,12 +311,26 @@ describe('P6 staleness', () => {
 		s.phases.P6.status = 'awaiting_approval';
 		const changed = pkg();
 		changed.scripts.start = 'x';
-		expect(staleDeployIds(s, design(), changed).length).toBeGreaterThan(0);
-		markP6Stale(s, design(), changed);
+		expect(staleDeployIds(s, design(), changed, 'c1').length).toBeGreaterThan(0);
+		markP6Stale(s, design(), changed, 'c1');
 		expect(s.phases.P6.status).toBe('awaiting_approval');
 	});
 
+	it('marks stale on a code change; hashes from before P6 tracked the code ignore it', () => {
+		const s = approvedP6();
+		expect(staleDeployIds(s, design(), pkg(), 'c2')).toEqual(['code']);
+		markP6Stale(s, design(), pkg(), 'c2');
+		expect(s.phases.P6.status).toBe('stale');
+		markP6Stale(s, design(), pkg(), 'c1');
+		expect(s.phases.P6.status).toBe('approved');
+		const old = approvedP6();
+		delete old.phases.P6.deployHashes!.code;
+		expect(staleDeployIds(old, design(), pkg(), 'c2')).toEqual([]);
+		expect(comparableDeployHashes({ a: 'x' }, { a: 'x', code: 'c' })).toEqual({ a: 'x' });
+		expect(deployHashesOf(design(), pkg(), null)).not.toHaveProperty('code');
+	});
+
 	it('hashes nothing without a design', () => {
-		expect(deployHashesOf(null, pkg())).toEqual({});
+		expect(deployHashesOf(null, pkg(), 'c1')).toEqual({});
 	});
 });

@@ -189,7 +189,7 @@ describe('StaleBanner for P6', () => {
 		render(StaleBanner, props);
 		for (const id of props.ids) expect(screen.getByText(id)).toBeTruthy();
 		expect(screen.getByRole('button', { name: 'Update deployment' })).toBeTruthy();
-		expect(screen.getByText(/start scripts or dependencies changed/)).toBeTruthy();
+		expect(screen.getByText(/start scripts, dependencies or code changed/)).toBeTruthy();
 	});
 
 	it('submits both actions with phase P6', () => {

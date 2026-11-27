@@ -41,6 +41,7 @@ import {
 	deployArtefactHash,
 	hasDeployFiles,
 	listDeployFiles,
+	deployCodeHash,
 	readDeployCheck,
 	type DeployCheck
 } from '../core/deploy-state';
@@ -134,6 +135,7 @@ import {
 import {
 	deployBlocked,
 	deployGate,
+	comparableDeployHashes,
 	deployHashesOf,
 	GENERATE_DEPLOY_MESSAGE,
 	markP6Stale,
@@ -613,6 +615,14 @@ async function afterRun(store: ProjectStore, state: State, run: RunOrigin): Prom
 		(await adopts(state.phases.P6.deployHashes, () => hasDeployFiles(store)))
 	) {
 		state.phases.P6 = { ...state.phases.P6, deployHashes: run.deployHashes };
+		// An Update that wrote nothing restores the approval, which then stands only while the gate
+		// passes (a code change leaves the deploy check out of date); else Approve records the override.
+		const { status } = state.phases.P6;
+		if (status === 'approved' || status === 'stale') {
+			const design = await readDesign(store).catch(() => null);
+			if (failedChecks(await deployGate(store, design)).length > 0)
+				state.phases.P6 = { status: 'awaiting_approval', deployHashes: run.deployHashes };
+		}
 	}
 }
 
@@ -704,7 +714,8 @@ async function refreshStale(store: ProjectStore, state: State): Promise<void> {
 	const reqs = await readReqs(store).catch(() => undefined);
 	if (reqs !== undefined) markP5Stale(state, reqs, design);
 	// An unreadable package.json (null) keeps P6 as it is; markP6Stale checks that.
-	if (design !== undefined) markP6Stale(state, design, await readPackageJson(store));
+	if (design !== undefined)
+		markP6Stale(state, design, await readPackageJson(store), await deployCodeHash(store));
 }
 
 /** Runs sorted by start time; run IDs alone misorder runs of different phases in one second. */
@@ -891,7 +902,7 @@ export class Orchestrator {
 				design && pkg !== null
 					? deployPlan(design, pkg).services.map((s) => ({ name: s.name, healthUrl: s.healthUrl }))
 					: [],
-			staleDeployIds: staleDeployIds(state, design, pkg),
+			staleDeployIds: staleDeployIds(state, design, pkg, await deployCodeHash(store)),
 			discardedRunIds: runs.filter((r) => r.status === 'discarded').map((r) => r.id),
 			tickets: await this.ticketViews(store, state, tickets, runs),
 			canOpenDriftTicket:
@@ -1155,7 +1166,8 @@ export class Orchestrator {
 				// Hashes only from a readable package.json: an empty one would mark every node changed.
 				const pkg = await readPackageJson(store);
 				const deployHashes =
-					state.phases.P6.deployHashes ?? (pkg === null ? undefined : deployHashesOf(design, pkg));
+					state.phases.P6.deployHashes ??
+					(pkg === null ? undefined : deployHashesOf(design, pkg, await deployCodeHash(store)));
 				state.phases.P6 = approval(failed, deployHashes ? { deployHashes } : {});
 			} else {
 				state.phases[p] = approval(failed);
@@ -1220,12 +1232,12 @@ export class Orchestrator {
 			const reqs = await readReqs(store);
 			const design = await readDesign(store);
 			if (p === 'P6') {
-				const pkg = await readPackageJson(store);
+				const [pkg, code] = await Promise.all([readPackageJson(store), deployCodeHash(store)]);
 				// staleDeployIds is empty for an unreadable package.json, so pkg is set below.
-				if (staleDeployIds(state, design, pkg).length === 0) {
+				if (staleDeployIds(state, design, pkg, code).length === 0) {
 					throw new ConflictError('P6 is not stale');
 				}
-				const deployHashes = deployHashesOf(design, pkg);
+				const deployHashes = deployHashesOf(design, pkg, code);
 				if (state.phases.P6.status === 'stale') {
 					const failed = failedChecks(await deployGate(store, design));
 					state.phases.P6 = approval(failed, { deployHashes });
@@ -1286,15 +1298,23 @@ export class Orchestrator {
 			const state = await readState(store);
 			if (p === 'P6') {
 				requireP6Ready(state, 'updating P6');
-				const [design, pkg] = await Promise.all([readDesign(store), readPackageJson(store)]);
+				const [design, pkg, code] = await Promise.all([
+					readDesign(store),
+					readPackageJson(store),
+					deployCodeHash(store)
+				]);
 				const stored = state.phases.P6.deployHashes;
 				// staleDeployIds is empty for an unreadable package.json, so pkg is set below.
-				if (!stored || staleDeployIds(state, design, pkg).length === 0) {
+				if (!stored || staleDeployIds(state, design, pkg, code).length === 0) {
 					throw new ConflictError('P6 is not stale');
 				}
 				if (!design) throw new ConflictError('Updating the deployment needs the design');
-				const current = deployHashesOf(design, pkg);
-				const { changed, added, removed } = designDiff(stored, current);
+				const current = deployHashesOf(design, pkg, code);
+				// Old hashes without `code` never list it as an added service.
+				const { changed, added, removed } = designDiff(
+					stored,
+					comparableDeployHashes(stored, current)
+				);
 				const plan = deployPlan(design, pkg);
 				const extra = await extraEnvVars(store, plan);
 				const brief = deployUpdateBrief(plan, changed, added, removed, design, extra);
@@ -2063,7 +2083,7 @@ export class Orchestrator {
 			throw new ConflictError('Generating the deployment needs the package.json of the code');
 		const plan = deployPlan(design, pkg);
 		const brief = deployBrief(plan, name, await extraEnvVars(store, plan));
-		const hashes = { deployHashes: deployHashesOf(design, pkg) };
+		const hashes = { deployHashes: deployHashesOf(design, pkg, await deployCodeHash(store)) };
 		const agent = { def: this.agents.deploy, brief };
 		const text = GENERATE_DEPLOY_MESSAGE;
 		return this.startRun(store, name, claim, 'P6', text, true, hashes, agent);

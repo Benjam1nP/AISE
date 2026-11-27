@@ -32,7 +32,12 @@ import {
 } from '../core/code-state';
 import type { TestResult } from '../core/docker/parse';
 import { deployHashes, deployPlan } from '../core/deploy-plan';
-import { deployCheckHash, readDeployCheck, writeDeployCheck } from '../core/deploy-state';
+import {
+	deployCheckHash,
+	deployCodeHash,
+	readDeployCheck,
+	writeDeployCheck
+} from '../core/deploy-state';
 import { DOCKER_DOWN } from '../core/docker/run';
 import type { DriftItem } from '../core/drift';
 import { appendChat, readChat } from '../core/chat';
@@ -2751,7 +2756,10 @@ volumes:
 		expect(s.state.phases.P5.status).toBe('approved');
 		expect(s.state.phases.P6).toEqual({
 			status: 'awaiting_approval',
-			deployHashes: deployHashes(await design(), await pkg())
+			deployHashes: {
+				...deployHashes(await design(), await pkg()),
+				code: await deployCodeHash(store())
+			}
 		});
 		expect(s.files).toEqual(expect.arrayContaining(['Dockerfile', 'RUN.md', 'compose.yaml']));
 		expect(s.deployCheck?.passed).toBe(true);
@@ -3025,6 +3033,80 @@ volumes:
 			deployHashes: deployHashes(await design(), await pkg())
 		});
 		expect(s.staleDeployIds).toEqual([]);
+	});
+
+	it('turns stale when only the code changes; Update names it, Still valid records the out of date check (#19)', async () => {
+		await approvedP5WithDeploy();
+		await orch.approve('todo', 'P6');
+		const main = await text('src/app/main.ts');
+		const changeCode = async (note: string) => {
+			await put('src/app/main.ts', `${main}// ${note}\n`);
+			// The chat run only triggers the staleness refresh; it must not store a new deploy check.
+			fake.deployEdits = {};
+			fake.deployRunPasses = false;
+			await send('P6', 'Still fine?');
+			expect(await p6()).toMatchObject({ status: 'stale' });
+		};
+		const update = async (passes: boolean) => {
+			fake.deployEdits = {};
+			fake.deployRunPasses = passes;
+			const done = nextFinished();
+			await orch.updateStale('todo', 'P6');
+			await done;
+			return snap();
+		};
+		await changeCode('changed');
+		let s = await snap();
+		expect(s.staleDeployIds).toEqual(['code']);
+		expect(s.gates.P6.checks.at(-1)).toMatchObject({ ok: false, detail: 'out of date' });
+
+		// An Update that writes nothing and leaves the check out of date does not approve P6.
+		s = await update(false);
+		const plan = deployPlan(await design(), await pkg());
+		expect(fake.calls.at(-1)!.history).toEqual([
+			{
+				role: 'user',
+				content: deployUpdateBrief(plan, ['code'], [], [], await design(), ['ADMIN_PASSWORD'])
+			}
+		]);
+		expect(s.staleDeployIds).toEqual([]);
+		expect(s.state.phases.P6).toEqual({
+			status: 'awaiting_approval',
+			deployHashes: {
+				...deployHashes(await design(), await pkg()),
+				code: await deployCodeHash(store())
+			}
+		});
+		await expect(orch.approve('todo', 'P6')).rejects.toThrow(/Deploy check passed/);
+		await orch.approve('todo', 'P6', { override: true });
+		expect(await p6()).toMatchObject({ override: { failed: ['Deploy check passed'] } });
+
+		// One whose deploy check passes keeps the approval without a file change.
+		await changeCode('again');
+		s = await update(true);
+		expect(s.state.phases.P6.status).toBe('approved');
+		expect(s.gates.P6.passed).toBe(true);
+
+		await changeCode('third');
+		await orch.stillValid('todo', 'P6');
+		s = await snap();
+		expect(s.state.phases.P6).toMatchObject({
+			status: 'approved',
+			override: { failed: ['Deploy check passed'] }
+		});
+		expect(s.staleDeployIds).toEqual([]);
+	});
+
+	it('keeps P6 hashes recorded before it tracked the code current after a code change', async () => {
+		await approvedP5WithDeploy();
+		await orch.approve('todo', 'P6');
+		const st = await readState(store());
+		delete st.phases.P6.deployHashes!.code;
+		await writeState(store(), st);
+		await put('src/app/main.ts', `${await text('src/app/main.ts')}// changed\n`);
+		fake.deployEdits = {};
+		await send('P6', 'Still fine?');
+		expect((await snap()).staleDeployIds).toEqual([]);
 	});
 
 	it('discarding a P6 run restores the files and deploy.json, and refuses after a later compose.yaml edit (Review Focus 5)', async () => {

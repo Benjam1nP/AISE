@@ -80,26 +80,65 @@ export async function deployGate(
 	});
 }
 
-/** The hashes P6 records: service nodes with their links and start scripts, and the dependencies. */
-export const deployHashesOf = (design: DesignDoc | null, pkg: unknown) => deployHashes(design, pkg);
+/**
+ * The hashes P6 records: service nodes with their links and start scripts, the dependencies, and
+ * `code` (`deployCodeHash`: the code files without package.json), since the deploy check builds
+ * and starts the code. No `code` without code; `{}` without a design.
+ */
+export function deployHashesOf(
+	design: DesignDoc | null,
+	pkg: unknown,
+	code: string | null
+): Record<string, string> {
+	const hashes = deployHashes(design, pkg);
+	return design && code !== null ? { ...hashes, code } : hashes;
+}
 
 /**
- * Service node IDs (and `dependencies`) that changed since the deployment was last made or
+ * The current hashes to compare with `stored`: hashes recorded before P6 tracked the code have no
+ * `code` key, so the current one is left out and those approvals stay current until P6 is next made or confirmed.
+ */
+export function comparableDeployHashes(
+	stored: Record<string, string>,
+	current: Record<string, string>
+): Record<string, string> {
+	if ('code' in stored) return current;
+	const rest = { ...current };
+	delete rest.code;
+	return rest;
+}
+
+/**
+ * Service node IDs (and `dependencies`, `code`) that changed since the deployment was last made or
  * confirmed. Read from the P6 phase state whatever its status, so the stale banner stays after a
  * chat run reopens P6. `pkg` is `readPackageJson`'s result: null (missing or broken, as while the
  * developer edits it) compares nothing, since hashing it as empty would mark every node changed.
  */
-export function staleDeployIds(state: State, design: DesignDoc | null, pkg: unknown): string[] {
+export function staleDeployIds(
+	state: State,
+	design: DesignDoc | null,
+	pkg: unknown,
+	code: string | null
+): string[] {
 	if (pkg === null) return [];
 	const stored = state.phases.P6.deployHashes;
-	return stored ? changedIds(stored, deployHashesOf(design, pkg)) : [];
+	if (!stored) return [];
+	return changedIds(stored, comparableDeployHashes(stored, deployHashesOf(design, pkg, code)));
 }
 
-/** An approved P6 turns stale while its stored hashes differ from the design and package.json, and back. */
-export function markP6Stale(state: State, design: DesignDoc | null, pkg: unknown): void {
+/**
+ * An approved P6 turns stale while its stored hashes differ from the design, package.json and the
+ * code, and back.
+ */
+export function markP6Stale(
+	state: State,
+	design: DesignDoc | null,
+	pkg: unknown,
+	code: string | null
+): void {
 	const p6 = state.phases.P6;
 	if (p6.status !== 'approved' && p6.status !== 'stale') return;
 	// An unreadable package.json says nothing about staleness: keep the status as it is.
 	if (pkg === null) return;
-	p6.status = staleDeployIds(state, design, pkg).length > 0 ? 'stale' : 'approved';
+	p6.status = staleDeployIds(state, design, pkg, code).length > 0 ? 'stale' : 'approved';
 }
