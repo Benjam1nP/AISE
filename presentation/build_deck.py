@@ -347,7 +347,7 @@ notes(s, "7:30, no slides. Switch to the app. Order: 1 clarifying questions in P
 s = new_slide("Nur Titel")
 header(s, "Showcases and limits", "Three projects of growing size; the larger one exposes where the checks stop.")
 cols = [
-    ("Small · to do", "Live", "the demo project, P1 to P7 on stage", "tasks, one service node"),
+    ("Small · to do", "48", "tests green after a P7 change ticket", "10 requirements, 5 classes, $1.73 in total"),
     ("Medium · booking", "13", "classes and 11 use cases", "12 requirements, room booking rules"),
     ("Larger · auction", "57", "tests green after a P7 change ticket", "23 classes, 4 nodes, 2 live services"),
 ]
@@ -371,7 +371,7 @@ for i, (h, b) in enumerate(limits):
     text(s, x + 0.2, 4.93, cw - 0.4, 0.3, h, size=14, bold=True, color=GREEN)
     text(s, x + 0.2, 5.3, cw - 0.4, 1.2, b, size=13)
 source(s, "showcases/, evidence/scaling-comparison.md (auction: 35 runs, $6.33 in total)")
-notes(s, "0:45. To do is the small one we just demoed. Booking is medium: 12 requirements, 11 use cases, 13 classes. Auction is the larger one: 23 classes on four nodes, two live services, taken through a reserve price change ticket with 57 tests green, for 6.33 dollars over 35 runs. Where it broke: the gates were green while concurrent bids could overwrite each other, because generated tests do not race requests; the design agent adds infrastructure outside our stack; and the auction ticket showed two gate problems, which we have since fixed. CHECK BEFORE THE TALK: update booking and to do numbers once issues #3 and #4 are done.")
+notes(s, "0:45. To do is the small one we just demoed: 10 requirements and 5 classes, taken through a due date change ticket with 48 tests green, for 1.73 dollars over 22 runs. Booking is medium: 12 requirements, 11 use cases, 13 classes. Auction is the larger one: 23 classes on four nodes, two live services, taken through a reserve price change ticket with 57 tests green, for 6.33 dollars over 35 runs. Where it broke: the gates were green while concurrent bids could overwrite each other, because generated tests do not race requests; the design agent adds infrastructure outside our stack; and the auction ticket showed two gate problems, which we have since fixed. CHECK BEFORE THE TALK: update the booking numbers once issue #4 is done.")
 
 # 8 Lessons learned -----------------------------------------------------------
 s = new_slide("Nur Titel")
