@@ -4570,6 +4570,16 @@ describe('P3 design review', () => {
 		expect((await snap()).proposals?.proposals[0].status).toBe('accepted');
 	});
 
+	it('an accept run that ends done without changing the design reopens its proposal', async () => {
+		await approvedP1WithDesign();
+		await review();
+		fake.design = null;
+		const done = nextFinished();
+		await orch.acceptProposal('todo', 'PRP-001');
+		expect((await done).status).toBe('done');
+		expect((await snap()).proposals?.proposals[0].status).toBe('open');
+	});
+
 	it('an accept that cannot start its run reopens the proposal', async () => {
 		await approvedP1WithDesign();
 		await review();
