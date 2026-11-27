@@ -19,13 +19,18 @@ results.sarif
 # agent worktrees
 .claude/worktrees/
 
-# Scratch projects: only the showcase deliverables and the test fixture are tracked.
+# Scratch projects: only the three showcase deliverables are tracked.
 /showcases/*
+!/showcases/README.md
 !/showcases/todo/
 !/showcases/booking/
 !/showcases/auction/
-!/showcases/fixture/
 # runtime SQLite files of a showcase run
 /showcases/*/data/
 # presentation template, copied in locally
 /presentation/template/
+
+# not handed in: course slides (instructor material, docs/context has the Markdown)
+/docs/pdf/slides/
+# third party agent skills, restored from skills-lock.json with `npx skills`
+/.claude/skills/
