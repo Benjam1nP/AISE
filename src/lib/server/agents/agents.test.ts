@@ -1476,4 +1476,28 @@ describe('review agent', () => {
 		expect(reviewBrief([])).toContain('covers every acceptance criterion');
 		expect(reviewBrief(null)).toContain('no coverage record');
 	});
+
+	it('tells the review that the browser holds no classes and what the page covers by itself', () => {
+		expect(reviewAgent.system).toContain(
+			'The browser is one component on the client node and holds no classes'
+		);
+		expect(reviewAgent.system).toContain(
+			'Never propose a class or method on the browser component'
+		);
+		expect(reviewAgent.system).toContain("add that REQ ID to the browser component's reqIds");
+	});
+
+	it('marks an uncovered criterion of a requirement the browser page serves, and no other', () => {
+		const brief = reviewBrief(
+			[
+				{ reqId: 'REQ-002', n: 3, text: 'Done tasks are struck through' },
+				{ reqId: 'REQ-006', n: 1, text: 'Titles are trimmed' }
+			],
+			new Set(['REQ-002'])
+		);
+		expect(brief).toContain(
+			'- REQ-002 AC3: Done tasks are struck through (the browser page serves this requirement: if the criterion is only about what the page shows, it needs no proposal; server logic such as validation still does)'
+		);
+		expect(brief.split('\n').at(-1)).toBe('- REQ-006 AC1: Titles are trimmed');
+	});
 });
