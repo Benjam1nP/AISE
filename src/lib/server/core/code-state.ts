@@ -178,6 +178,18 @@ export type CodeChecks = {
 	start?: StartResult | null;
 };
 
+/** A tsc error in a file under `test/`; an error without a file (no tsconfig, unparsed output) is not one. */
+export const isTestFileError = (file: string) =>
+	file !== '' && file.replaceAll('\\', '/').replace(/^\.\//, '').startsWith('test/');
+
+/**
+ * The typecheck P4 asks for: passed, or failed only with errors under `test/`, which belong to P5
+ * (it updates the tests after P4 changes a signature). A timeout or a failure without errors fails.
+ */
+export const codeTypecheckOk = (tc: TypecheckResult): boolean =>
+	tc.ok ||
+	(!tc.timedOut && tc.errors.length > 0 && tc.errors.every((e) => isTestFileError(e.file)));
+
 /** The stored shape of a typecheck result; the P5 checks file uses it too. */
 export const TypecheckSchema = z.object({
 	ok: z.boolean(),
@@ -232,15 +244,15 @@ export async function typecheckProject(
 }
 
 /**
- * The start check, only after a passing typecheck (a broken build tells nothing new when started)
- * and when at least one app entry exists; null otherwise.
+ * The start check, only after a passing typecheck of the code (a broken build tells nothing new
+ * when started; errors under `test/` do not count) and when at least one app entry exists; null otherwise.
  */
 async function startProject(
 	ctx: ToolContext,
 	tc: TypecheckResult | null,
 	start: typeof runStartCheck
 ): Promise<StartResult | null> {
-	if (!tc?.ok) return null;
+	if (!tc || !codeTypecheckOk(tc)) return null;
 	const targets = await existingTargets(ctx);
 	return targets.length === 0 ? null : start(ctx, targets);
 }

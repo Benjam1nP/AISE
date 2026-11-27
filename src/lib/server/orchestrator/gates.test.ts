@@ -233,6 +233,33 @@ describe('checkGate P4', () => {
 		]);
 	});
 
+	it('leaves typecheck errors under test/ to P5, but counts errors without a file', () => {
+		const err = (file: string) => ({ file, line: 1, col: 1, message: 'TS2554' });
+		const gate = (files: string[]) =>
+			failed(
+				checkGate(
+					'P4',
+					reqs(),
+					design(),
+					checksAt('h1', {
+						typecheck: { ok: false, errors: files.map(err), timedOut: false },
+						start: files.every((f) => f.startsWith('test/')) ? started() : null
+					}),
+					'h1',
+					[]
+				)
+			);
+		expect(gate(['test/a.test.ts', 'test/b.test.ts'])).toEqual([]);
+		expect(gate(['test/a.test.ts', 'src/a.ts'])).toEqual([
+			{ label: 'Typecheck passes', ok: false, detail: '1 error' },
+			{ label: 'App starts', ok: false, detail: 'not run, typecheck fails' }
+		]);
+		expect(gate([''])).toEqual([
+			{ label: 'Typecheck passes', ok: false, detail: '1 error' },
+			{ label: 'App starts', ok: false, detail: 'not run, typecheck fails' }
+		]);
+	});
+
 	describe('App starts', () => {
 		const startGate = (over: Partial<CodeChecks>) =>
 			failed(checkGate('P4', reqs(), design(), checksAt('h1', over), 'h1', []));
