@@ -1,8 +1,9 @@
 // Drives a committed showcase (showcases/<name>) from P4 approval through P5, P6 and one P7 change
 // ticket, in place, through the same orchestrator calls the UI makes. Costs API credit and needs
 // Docker. Not run in CI. Steps run in order; pass one to run only that step. The drift step (auction
-// only: two hand edits in src/, one drift ticket per repair direction) runs only when named.
-// Run: npx tsx scripts/run-showcase.ts <auction|booking> [approve|p6|p7|drift|check] [--override P4] [--anyway]
+// only: two hand edits in src/, one drift ticket per repair direction) runs only when named. The bug step
+// (booking only: C7 injected bug, Explain failures, Apply fix) runs only when named too.
+// Run: npx tsx scripts/run-showcase.ts <auction|booking> [approve|p6|p7|drift|bug|check] [--override P4] [--anyway]
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { DEPLOY_FILES } from '../src/lib/server/core/deploy-state';
@@ -11,9 +12,9 @@ import { subscribe, type WorkspaceEvent } from '../src/lib/server/orchestrator/b
 import { Orchestrator } from '../src/lib/server/orchestrator/orchestrator';
 
 if (existsSync('.env')) process.loadEnvFile('.env');
-const STEPS = ['approve', 'p6', 'p7', 'drift', 'check'] as const;
+const STEPS = ['approve', 'p6', 'p7', 'drift', 'bug', 'check'] as const;
 const USAGE =
-	'usage: npx tsx scripts/run-showcase.ts <auction|booking> [approve|p6|p7|drift|check] [--override P4] [--anyway]';
+	'usage: npx tsx scripts/run-showcase.ts <auction|booking> [approve|p6|p7|drift|bug|check] [--override P4] [--anyway]';
 
 /** The P7 change ticket each showcase takes; the showcase index (showcases/README.md) names its kind. */
 const TICKETS = {
@@ -324,9 +325,65 @@ if (only === 'drift') {
 	}
 }
 
+// C7 evidence (booking only): a hand edit drops the overlap rejection (REQ-003) from the shared rule
+// check, then the UI's P5 path: Run tests (red), Explain failures, Apply fix on each code bug
+// finding, Run tests (green). A rerun after the edit skips writing it again.
+const BUG = {
+	file: 'src/domain-services/BookingRuleChecker.ts',
+	from: '    if (overlapping.some((b) => !b.cancelled && b.id !== excludeId)) {\n      throw new Error(`Booking overlaps an existing booking in room ${roomId}`);\n    }\n',
+	to: '',
+	// The test expected to catch it: create is also guarded by the atomic insert, a time change is not.
+	test: { file: 'test/UC-004.test.ts', title: 'REQ-010 AC2' }
+} as const;
+
+async function failing(): Promise<string[]> {
+	const r = (await orch.snapshot(name)).testChecks?.result;
+	return (r?.tests ?? [])
+		.filter((t) => t.status === 'failed')
+		.map((t) => `${t.file} > ${t.title ?? t.name}`);
+}
+
+if (only === 'bug') {
+	if (name !== 'booking') await stop('the bug step has a hand edit for the booking showcase only');
+	console.log(`\n--- injected bug: overlap check removed from ${BUG.file} ---`);
+	const text = (await store.readText(BUG.file)) ?? '';
+	// A rerun after the fix (the overlap check rewritten, its finding resolved) only goes on to the
+	// final checks and approvals.
+	const fixed = ((await orch.snapshot(name)).testChecks?.findings ?? []).some(
+		(f) => f.resolvedAt && f.file === BUG.test.file && f.test.startsWith(BUG.test.title)
+	);
+	if (fixed && !text.includes(BUG.from)) console.log('the injected bug is fixed already');
+	else await injectAndFix(text);
+}
+
+async function injectAndFix(text: string): Promise<void> {
+	if (text.includes(BUG.from)) {
+		// No run ID: a hand edit, not a run, so Discard last run never restores it.
+		await store.writeFile(BUG.file, text.replace(BUG.from, BUG.to));
+	} else console.log('the overlap check is already gone; keeping the file as is');
+	await orch.checkTests(name);
+	const red = await failing();
+	console.log(`run tests: ${red.length} failing`);
+	for (const t of red) console.log(`  FAIL ${t}`);
+	if (red.length === 0) await stop('no test fails on the injected bug');
+	await watch('explain failures', () => orch.triageTests(name));
+	const findings = ((await orch.snapshot(name)).testChecks?.findings ?? []).filter(
+		(f) => !f.resolvedAt
+	);
+	for (const f of findings)
+		console.log(`  finding ${f.id} (${f.file} > ${f.test}): ${f.explanation}`);
+	if (findings.length === 0) await stop('triage reported no open finding');
+	for (const f of findings) await watch(`apply fix ${f.id}`, () => orch.applyFix(name, f.id));
+	await orch.checkTests(name);
+	const green = await failing();
+	console.log(`run tests after the fix: ${green.length} failing`);
+	for (const t of green) console.log(`  FAIL ${t}`);
+	console.log(`\n=== ${BUG.file} after the fix ===\n${await store.readText(BUG.file)}`);
+}
+
 // Rerun all checks at the end, also after the drift hand edits and their repairs, so the stored
 // results describe the final code.
-if (!only || only === 'check' || only === 'drift') {
+if (!only || only === 'check' || only === 'drift' || only === 'bug') {
 	console.log('\n--- final checks ---');
 	await orch.checkCode(name);
 	await orch.checkTests(name);
@@ -338,6 +395,19 @@ if (!only || only === 'check' || only === 'drift') {
 				.map((s) => `${s.url} ${s.status ?? 'no answer'}`)
 				.join(', ')}`
 		);
+}
+
+// The fix changed src/: P5 waits for approval and P6 is stale though its files did not change. With
+// the gates green the developer approves P5 and confirms P6 as still valid.
+if (only === 'bug') {
+	await approve('P5');
+	await idle();
+	if ((await orch.snapshot(name)).state.phases.P6.status === 'stale') {
+		await orch.stillValid(name, 'P6');
+		console.log('P6 confirmed still valid');
+	}
+	const { phases } = (await orch.snapshot(name)).state;
+	console.log(`P4 ${phases.P4.status}, P5 ${phases.P5.status}, P6 ${phases.P6.status}`);
 }
 
 console.log(`\ntotal project cost: $${(await spent()).toFixed(4)}`);

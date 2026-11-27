@@ -1,0 +1,15 @@
+{
+  "findings": [
+    {
+      "id": "20261127-152056-P5-1",
+      "runId": "20261127-152056-P5",
+      "test": "REQ-010 AC2: A change that violates the overlap rule or time slot rules is rejected and the original booking stays unchanged",
+      "file": "test/UC-004.test.ts",
+      "reqId": "REQ-010",
+      "explanation": "PUT /api/bookings/:id moving a booking from 12:00-13:00 to 10:30-11:30 overlaps another booking (10:00-11:00) in the same room, but the server answered 200 instead of 400. The overlap rule (REQ-003) is not enforced on a time change. Test setup is valid and the expectation follows the criterion.",
+      "proposedFix": "In BookingService.changeTime, run the rule check and overlap lookup against the other bookings in the room, excluding only the booking being changed. Throw an Error on overlap, and make the update atomic so the original booking stays unchanged. Check that findOverlapping/update do not ignore other bookings, for example through a wrong exclude-id comparison."
+    }
+  ],
+  "testFixes": [],
+  "fixResults": []
+}
