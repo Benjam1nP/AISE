@@ -166,7 +166,7 @@ What happened along the way:
 
 - P3: the review agent proposed a `TaskListView` class on the Browser client node; accepting it
   started a design run whose save was refused (client components hold no classes). Resolved in the
-  design chat by describing the done look on the page component instead. Filed as #21.
+  design chat by describing the done look on the page component instead. Filed as #21, fixed.
 - P4: the code agent served `GET /` statically and left the design's `TaskController.page` unused;
   one chat message wired the route through it.
 - P5: the generated tests caught `DELETE /api/tasks/:id` answering 204 against the wiring contract
@@ -198,6 +198,6 @@ What happened in P7:
 - After the design update the overdue criteria (REQ-010 AC3 to AC6) had no method, because the
   design agent left them to the class free browser page. One message moved the rule to the server
   (`TaskService.isOverdue`, `GET /api/tasks?today=`), so the tests cover it.
-- Both automatic reviews again proposed browser side classes (PRP-002 to PRP-005); all rejected (#21).
+- Both automatic reviews again proposed browser side classes (PRP-002 to PRP-005); all rejected (#21, fixed).
 - The change report says a P1 note about REQ-003 was cut off; that is the brief clipping notes at
   300 characters (#24). The plan labels its test and code steps with the wrong phase (#25).
