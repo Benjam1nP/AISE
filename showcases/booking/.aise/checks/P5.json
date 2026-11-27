@@ -1,6 +1,6 @@
 {
-  "at": "2026-11-27T13:45:54.363Z",
-  "codeHash": "8b81a2bd2d204a4ee6c8ffb348a7e69f01807bfccb32093ae5afaec32a55a567",
+  "at": "2026-11-27T15:22:40.221Z",
+  "codeHash": "f6dfb9cc25128eadae81a3d6e1036dc482851187b71042e324426ad7a92e8797",
   "testHash": "a068f5d3702d61e560bf68d0d9f763592de939fc8a84309e71cfd15ddf523360",
   "typecheck": {
     "ok": true,
@@ -441,7 +441,7 @@
       }
     ],
     "timedOut": false,
-    "logTail": "JSON report written to /opt/aise/out/report.json\n(node:36) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:65) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:22) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:79) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:52) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:54) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    "logTail": "JSON report written to /opt/aise/out/report.json\n(node:28) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:50) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:64) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:72) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:84) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:98) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
   },
   "findings": [
     {
@@ -453,6 +453,16 @@
       "explanation": "SEQ-002 orders messages: BookingService.create calls BookingRuleChecker.check (validate, findOverlapping), then RoomRepository.findById, then BookingRepository.saveIfFree. Observed call order is RoomRepository.findById first, before check.",
       "proposedFix": "In BookingService.create, call bookingRuleChecker.check(roomId, start, end, now, null) first, then load the room with roomRepository.findById and reject if missing or inactive, then call saveIfFree.",
       "resolvedAt": "2026-11-27T13:44:41.307Z"
+    },
+    {
+      "id": "20261127-152056-P5-1",
+      "runId": "20261127-152056-P5",
+      "test": "REQ-010 AC2: A change that violates the overlap rule or time slot rules is rejected and the original booking stays unchanged",
+      "file": "test/UC-004.test.ts",
+      "reqId": "REQ-010",
+      "explanation": "PUT /api/bookings/:id moving a booking from 12:00-13:00 to 10:30-11:30 overlaps another booking (10:00-11:00) in the same room, but the server answered 200 instead of 400. The overlap rule (REQ-003) is not enforced on a time change. Test setup is valid and the expectation follows the criterion.",
+      "proposedFix": "In BookingService.changeTime, run the rule check and overlap lookup against the other bookings in the room, excluding only the booking being changed. Throw an Error on overlap, and make the update atomic so the original booking stays unchanged. Check that findOverlapping/update do not ignore other bookings, for example through a wrong exclude-id comparison.",
+      "resolvedAt": "2026-11-27T15:21:26.054Z"
     }
   ],
   "testFixes": [

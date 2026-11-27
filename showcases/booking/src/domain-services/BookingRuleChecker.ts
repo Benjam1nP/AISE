@@ -15,8 +15,8 @@ export class BookingRuleChecker {
   async check(roomId: string, start: Date, end: Date, now: Date, excludeId: string | null): Promise<void> {
     this.timeSlotPolicy.validate(start, end, now);
     const overlapping = await this.bookingRepository.findOverlapping(roomId, start, end, excludeId);
-    if (overlapping.some((b) => !b.cancelled && b.id !== excludeId)) {
-      throw new Error(`Booking overlaps an existing booking in room ${roomId}`);
+    if (overlapping.length > 0) {
+      throw new Error(`Room ${roomId} is already booked for the requested time range`);
     }
   }
 }
