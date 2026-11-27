@@ -290,8 +290,8 @@ if (only === 'drift') {
 	}
 }
 
-// P6 is not marked stale when only code changes, so the walk keeps the old deploy check; rerun all
-// checks at the end so the stored results describe the final code.
+// Rerun all checks at the end, also after the drift hand edits and their repairs, so the stored
+// results describe the final code.
 if (!only || only === 'check' || only === 'drift') {
 	console.log('\n--- final checks ---');
 	await orch.checkCode(name);

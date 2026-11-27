@@ -267,7 +267,7 @@
             "phase": "P2",
             "agent": "design",
             "status": "done",
-            "summary": "Summarise the agent's work at this review gate in at most three plain-prose sentences, with no lists or markdown. The agent added the timeLeftMs method (DSN-015) to Item, left the description and sequences alone, and reported three uncovered acceptance criteria it did not change. One report_coverage call failed before a retry succeeded, and the drift check and test suite have not been run. The developer should decide whether to accept the uncovered criteria and then run P5.",
+            "summary": "The agent added the timeLeftMs method (DSN-015) to Item, left the description and sequences alone, and reported three uncovered acceptance criteria it did not change. One report_coverage call failed before a retry succeeded, and the drift check and test suite have not been run. The developer should decide whether to accept the uncovered criteria and then run P5.",
             "files": [
               "docs/design.md"
             ]

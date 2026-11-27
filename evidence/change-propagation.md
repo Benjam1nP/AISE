@@ -30,7 +30,7 @@ Tests 57 passed, 0 failed.
 `src/auction-api/Item.ts`. The P4 check found one difference (`method timeLeftMs: in code, not in
 design`), the gate failed, and a drift ticket opened from it. Repaired in the design direction: the
 design agent added the method to DSN-015, P4 turned stale and Update confirmed no code change was
-needed. Updated: the design model and its rendering `docs/design.md` (DSN-015 only). Tests 57 passed.
+needed. Updated: the design model and its rendering `docs/design.md` (DSN-015, plus five click links in the overview diagram; see Noise in a diff below). Tests 57 passed.
 
 **Auction TCK-003 (drift, design to code).** The parameter of `Item.isOpen` renamed by hand from
 `now` to `at`. The check found `method isOpen: parameters (now: Date) in design, (at: Date) in code`.
