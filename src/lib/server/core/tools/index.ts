@@ -9,6 +9,7 @@ import { readDesign, updateDesign } from './design';
 import { reportFixResult } from './fix-result';
 import { reportCodeBug, reportTestFix } from './findings';
 import { deleteFile, listFiles, readFile, writeFile } from './files';
+import { reportDesignProposals } from './proposals';
 import { readRequirements, writeRequirements } from './requirements';
 import { startApp } from './start';
 import { readTicketsTool, writeTicketPlan, writeTicketReport } from './tickets';
@@ -26,6 +27,7 @@ export const TOOLS: Record<string, ToolDef<any>> = Object.fromEntries(
 		readDesign,
 		updateDesign,
 		reportCoverage,
+		reportDesignProposals,
 		listFiles,
 		readFile,
 		writeFile,

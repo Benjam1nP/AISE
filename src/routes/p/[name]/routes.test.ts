@@ -746,6 +746,58 @@ describe('ticket actions', () => {
 	});
 });
 
+describe('P3 actions', () => {
+	const a = projectPage.actions;
+
+	it('reviewDesign without a design is 409 with the orchestrator reason', async () => {
+		expect(failure(await call(a.reviewDesign, {}))).toMatchObject({
+			status: 409,
+			action: 'reviewDesign',
+			message: expect.stringContaining('There is no design to review yet')
+		});
+	});
+
+	it('acceptProposal and rejectProposal pass the proposal ID on; an unknown one is 404', async () => {
+		const o = getOrchestrator();
+		const accept = vi.spyOn(o, 'acceptProposal').mockResolvedValue({ runId: 'r1' });
+		const reject = vi.spyOn(o, 'rejectProposal').mockResolvedValue(undefined);
+		expect(await call(a.acceptProposal, { proposalId: 'PRP-001' })).toEqual({
+			ok: true,
+			action: 'acceptProposal'
+		});
+		expect(accept).toHaveBeenCalledWith('demo', 'PRP-001');
+		expect(await call(a.rejectProposal, { proposalId: ' PRP-002 ' })).toEqual({
+			ok: true,
+			action: 'rejectProposal'
+		});
+		expect(reject).toHaveBeenCalledWith('demo', 'PRP-002');
+		reject.mockRestore();
+		expect(failure(await call(a.rejectProposal, { proposalId: 'PRP-003' }))).toMatchObject({
+			status: 404,
+			action: 'rejectProposal'
+		});
+	});
+
+	it('answers 400 for a missing or malformed proposal ID, without calling the orchestrator', async () => {
+		const o = getOrchestrator();
+		const accept = vi.spyOn(o, 'acceptProposal');
+		const reject = vi.spyOn(o, 'rejectProposal');
+		for (const proposalId of ['', 'PRP-1', 'TCK-001', '../PRP-001']) {
+			const bad = { status: 400, message: 'Choose the proposal.' };
+			expect(failure(await call(a.acceptProposal, { proposalId }))).toEqual({
+				...bad,
+				action: 'acceptProposal'
+			});
+			expect(failure(await call(a.rejectProposal, { proposalId }))).toEqual({
+				...bad,
+				action: 'rejectProposal'
+			});
+		}
+		expect(accept).not.toHaveBeenCalled();
+		expect(reject).not.toHaveBeenCalled();
+	});
+});
+
 describe('file endpoint', () => {
 	const inProject = (rel: string) => path.join(root, 'demo', rel);
 	const put = async (rel: string, content: string) => {

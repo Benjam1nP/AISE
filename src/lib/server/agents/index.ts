@@ -3,10 +3,20 @@ import { deployAgent } from './deploy';
 import { designAgent } from './design';
 import { maintenanceAgent } from './maintenance';
 import { requirementsAgent } from './requirements';
+import { reviewAgent } from './review';
 import { testAgent } from './test';
 import type { AgentDef } from './types';
 
-export { codeAgent, deployAgent, designAgent, maintenanceAgent, requirementsAgent, testAgent };
+export {
+	codeAgent,
+	deployAgent,
+	designAgent,
+	maintenanceAgent,
+	requirementsAgent,
+	reviewAgent,
+	testAgent
+};
+export { reviewBrief } from './review';
 export { deployBrief, deployUpdateBrief } from './deploy';
 export {
 	closeBrief,
@@ -24,11 +34,12 @@ export { testWorkerBrief, testWorkerDef } from './test-worker';
 export { summariseRun } from './summary';
 
 export const AGENTS: Record<
-	'requirements' | 'design' | 'code' | 'test' | 'deploy' | 'maintenance',
+	'requirements' | 'design' | 'review' | 'code' | 'test' | 'deploy' | 'maintenance',
 	AgentDef
 > = {
 	requirements: requirementsAgent,
 	design: designAgent,
+	review: reviewAgent,
 	code: codeAgent,
 	test: testAgent,
 	deploy: deployAgent,

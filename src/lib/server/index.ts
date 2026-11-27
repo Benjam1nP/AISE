@@ -17,7 +17,9 @@ const g = globalThis as typeof globalThis & { __aiseOrchestrator?: Orchestrator 
 /** One orchestrator per server process; projects live in AISE_PROJECTS_DIR, relative to the cwd. */
 export function getOrchestrator(): Orchestrator {
 	g.__aiseOrchestrator ??= new Orchestrator({
-		root: path.resolve(process.env.AISE_PROJECTS_DIR ?? 'showcases')
+		root: path.resolve(process.env.AISE_PROJECTS_DIR ?? 'showcases'),
+		// The P3 panel shows the proposals, so every design change is reviewed.
+		autoReview: true
 	});
 	return g.__aiseOrchestrator;
 }
