@@ -83,6 +83,8 @@ def fill_paragraphs(tf, runs, size, color, bold, align, space_after):
             f.bold = o.get("bold", bold)
             f.italic = o.get("italic", False)
             f.color.rgb = o.get("color", color)
+            if o.get("mono"):
+                f.name = "Consolas"
 
 
 def box(slide, x, y, w, h, fill=BOX, line=None, line_w=1.5, shape=MSO_SHAPE.ROUNDED_RECTANGLE,
@@ -236,18 +238,57 @@ box(s, rx, 4.15, rw, 1.47, fill=MINT, shape=MSO_SHAPE.RECTANGLE, anchor=MSO_ANCH
     size=13, name="Artefacts files")
 arrow(s, tx + tw + 0.02, 3.65, rx - 0.02, 3.1)
 arrow(s, tx + tw + 0.02, 4.2, rx - 0.02, 4.75)
-# sync strip
-sync = [("Source of truth", "JSON design model; Mermaid rendered by code"),
-        ("Shared IDs", "REQ, UC, SEQ, DSN and @trace in code"),
-        ("Stale hashes", "a change upstream marks later phases"),
-        ("Drift check", "code vs. design, repair either way")]
-sw, sg = 2.92, 0.2
-for i, (h, b) in enumerate(sync):
-    box(s, 0.52 + i * (sw + sg), 5.85, sw, 0.62, fill=CARD, shape=MSO_SHAPE.RECTANGLE, align=PP_ALIGN.LEFT, inset=0.12,
-        runs=[[(h + ": ", {"bold": True, "color": GREEN}), (b, {})]], size=12, name=f"Sync {h}")
-notes(s, "1:30. The developer works in a SvelteKit UI; HTTP actions go in, events come back over SSE. The orchestrator is plain code: it owns the phases, the gates and staleness, and starts one agent per run with a brief. Sonnet 5.5 runs the phase agents. Haiku 5.5 runs the parallel workers, one file each, cheap and fast, and escalates to Sonnet on the third attempt; Haiku also writes the short gate summary. Opus 5.5 runs maintenance, because it has to reason over every artefact at once. Every write goes through one tool registry: zod-validated tools with a scope per agent, the same tools served over stdio as an MCP server. Docker runs typecheck, tests and the deploy check. Sync: the JSON design model is the source of truth and Mermaid is rendered from it, agents never write Mermaid. Shared IDs and @trace comments link everything, hashes mark later phases stale, and detect_drift compares code with the design.")
+notes(s, "1:00. The developer works in a SvelteKit UI; HTTP actions go in, events come back over SSE. The orchestrator is plain code: it owns the phases, the gates and staleness, and starts one agent per run with a brief. Sonnet 5.5 runs the phase agents. Haiku 5.5 runs the parallel workers, one file each, cheap and fast, and escalates to Sonnet on the third attempt; Haiku also writes the short gate summary. Opus 5.5 runs maintenance, because it has to reason over every artefact at once. Every write goes through one tool registry: zod-validated tools with a scope per agent, the same tools served over stdio as an MCP server. Docker runs typecheck, tests and the deploy check. How the artefacts stay in sync is the next slide.")
 
-# 4 Workflow ------------------------------------------------------------------
+# 4 Traceability and sync -----------------------------------------------------------
+s = new_slide("Nur Titel")
+header(s, "One ID through every artefact", "Shared IDs link each requirement to its design, code and tests; code is compared with the design.")
+chain = [
+    ("Requirement", ".aise/requirements.json",
+     [[("REQ-002", {"bold": True, "color": GREEN, "mono": True}), ("  must", {"color": GREY})],
+      "Mark task done or not done", [("AC1: ticking makes it done", {"color": GREY})]]),
+    ("Design", ".aise/design.json",
+     [[("UC-003", {"bold": True, "color": GREEN, "mono": True}), ("  use case", {})],
+      [("SEQ-003", {"bold": True, "color": GREEN, "mono": True}), ("  calls setDone", {})],
+      [("DSN-007", {"bold": True, "color": GREEN, "mono": True}), ("  TaskService", {})]]),
+    ("Code", "src/tasks-app/TaskService.ts",
+     [[("@trace DSN-007", {"color": GREEN, "mono": True, "bold": True})],
+      [("REQ-001 REQ-002 …", {"color": GREEN, "mono": True, "bold": True})],
+      [("class TaskService", {"mono": True})]]),
+    ("Test", "test/UC-003.test.ts",
+     [[("UC-003", {"bold": True, "color": GREEN, "mono": True}), (" groups the tests", {})],
+      [("it(\"", {"mono": True}), ("REQ-002 AC1", {"bold": True, "color": GREEN, "mono": True}), (": …\")", {"mono": True})],
+      [("runs green in Docker", {"color": GREY})]]),
+]
+kw, kh, ky = 2.6, 2.15, 2.25
+kg = (12.29 - 4 * kw) / 3
+for i, (head, path, body) in enumerate(chain):
+    x = 0.52 + i * (kw + kg)
+    box(s, x, ky, kw, kh, fill=WHITE, line=GREEN, shape=MSO_SHAPE.RECTANGLE, name=f"Chain {head}")
+    text(s, x + 0.2, ky + 0.15, kw - 0.4, 0.4, head, size=18, color=GREEN, bold=True)
+    text(s, x + 0.2, ky + 0.55, kw - 0.4, 0.3, path, size=11, color=GREY)
+    text(s, x + 0.2, ky + 0.95, kw - 0.3, kh - 1.0, body, size=14, space_after=4)
+    if i < len(chain) - 1:
+        arrow(s, x + kw + 0.06, ky + kh / 2, x + kw + kg - 0.06, ky + kh / 2, color=GREEN, width=2)
+# drift: design and code compared both ways
+dx1, dx2, dy = 0.52 + (kw + kg) + kw / 2, 0.52 + 2 * (kw + kg) + kw / 2, ky + kh + 0.45
+for x in (dx1, dx2):
+    arrow(s, x, dy, x, ky + kh + 0.04, color=DARK, width=1.75, dash=True)
+c = arrow(s, dx1, dy, dx2, dy, color=DARK, width=1.75, dash=True)
+c.line._get_or_add_ln().remove(c.line._get_or_add_ln().find(qn("a:tailEnd")))
+text(s, dx1 - 1.0, dy + 0.12, dx2 - dx1 + 2.0, 0.6,
+     [[("Drift check: ", {"bold": True, "color": GREEN}), ("the class model read from the code is compared with design.json; the developer repairs either side.", {})]],
+     size=14, align=PP_ALIGN.CENTER)
+text(s, 0.52, ky + kh + 0.25, kw, 0.9,
+     [[("4 UML diagrams", {"bold": True}), (" are rendered from design.json by code", {})]],
+     size=14, color=GREY)
+box(s, 0.52, 5.85, 12.29, 0.62, fill=CARD, shape=MSO_SHAPE.RECTANGLE, align=PP_ALIGN.LEFT, inset=0.25,
+    runs=[[("Source of truth: ", {"bold": True, "color": GREEN}),
+           ("one JSON design model behind every diagram; agents edit it through a zod-checked tool, never Mermaid.", {})]],
+    size=14, name="Source of truth")
+notes(s, "0:30. Every artefact carries the same IDs. REQ-002 in the to do app: its use case UC-003 and sequence SEQ-003 call setDone on TaskService, DSN-007; the class carries an @trace comment with its IDs; the test for acceptance criterion 1 is named after it. The diagrams are rendered from one JSON model, so they cannot disagree. And because the code names its design element, we compare the code with the design and the developer repairs either side. You will follow this chain live in demo step 4.")
+
+# 5 Workflow ------------------------------------------------------------------
 s = new_slide("Nur Titel")
 header(s, "Workflow P1 to P7", "Seven phases with a gate after each: the checks pass and the developer approves.")
 flow = [("P1", "Requirements", "asks instead of guessing"),
@@ -280,7 +321,7 @@ box(s, 0.52, 5.3, 12.29, 0.85, fill=CARD, shape=MSO_SHAPE.RECTANGLE, align=PP_AL
     size=14, name="Change note")
 notes(s, "0:30. This is the map for the demo. Seven phases, and between each pair a gate: automatic checks plus the developer's approval. Code generation is grey on purpose, it is the baseline. When something changes upstream, later phases turn stale and the developer decides: update them or confirm they are still valid.")
 
-# 5 Live demo -----------------------------------------------------------------
+# 6 Live demo -----------------------------------------------------------------
 s = new_slide("Kapiteltrenner 1", number=False)
 text(s, 0.52, 0.55, 12.29, 0.89, "Live demo", size=32, color=WHITE, anchor=MSO_ANCHOR.MIDDLE)
 t = s.shapes.title
@@ -302,7 +343,7 @@ for i, (n, t, c) in enumerate(steps):
          size=15, color=WHITE, space_after=0)
 notes(s, "7:30, no slides. Switch to the app. Order: 1 clarifying questions in P1; 2 the diagrams, ask why about one choice; 3 change a diagram and show it update everywhere; 4 follow one requirement into diagram, code and test and back; 5 tests grouped by use case running green; 6 break the code, run tests, explain, apply fix, green; 7 Dockerfile, compose.yaml, RUN.md and the passing deploy check; 8 a P7 ticket through requirements, diagrams, code and tests to the change report; 9 hand edit the code and repair the drift. Skip a step rather than rush.")
 
-# 6 Showcases and limits --------------------------------------------------------
+# 7 Showcases and limits --------------------------------------------------------
 s = new_slide("Nur Titel")
 header(s, "Showcases and limits", "Three projects of growing size; the larger one exposes where the checks stop.")
 cols = [
@@ -332,7 +373,7 @@ for i, (h, b) in enumerate(limits):
 source(s, "showcases/, evidence/scaling-comparison.md (auction: 35 runs, $6.33 in total)")
 notes(s, "0:45. To do is the small one we just demoed. Booking is medium: 12 requirements, 11 use cases, 13 classes. Auction is the larger one: 23 classes on four nodes, two live services, taken through a reserve price change ticket with 57 tests green, for 6.33 dollars over 35 runs. Where it broke: the gates were green while concurrent bids could overwrite each other, because generated tests do not race requests; the design agent adds infrastructure outside our stack; and the auction ticket showed two gate problems, which we have since fixed. CHECK BEFORE THE TALK: update booking and to do numbers once issues #3 and #4 are done.")
 
-# 7 Lessons learned -----------------------------------------------------------
+# 8 Lessons learned -----------------------------------------------------------
 s = new_slide("Nur Titel")
 header(s, "Lessons learned", "AI did the volume; plain code and hard checks kept it honest.")
 card(s, 0.52, 2.2, cw, 2.75, "01", "Small jobs, hard checks",
@@ -351,7 +392,7 @@ for i, (big, lab) in enumerate(stats):
     text(s, x, 5.98, cw, 0.35, lab, size=14, color=GREY)
 notes(s, "0:30. Three points. One: AI is great at volume when each job is small and a hard check decides, not the model. Two: give the model structure; a validated JSON design model kept every diagram consistent. Three: a green gate is not correct code; review still found a race condition, a cached outage and dead timers in the auction showcase.")
 
-# 8 Thanks --------------------------------------------------------------------
+# 9 Thanks --------------------------------------------------------------------
 s = new_slide("Dank", number=False)
 s.shapes.title.text = "Thank You!"
 phs = {p.placeholder_format.idx: p for p in s.placeholders}

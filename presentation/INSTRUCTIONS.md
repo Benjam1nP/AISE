@@ -11,22 +11,23 @@ Source: `docs/context/project_requirements.md` (§5 grading criteria, §10 prese
 
 ## Slide plan (about 12 minutes)
 
-| #   | Slide                       | Time | Content                                                                                                                                                                                             |
-| --- | --------------------------- | ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | Title                       | 0:15 | Project name, one line description, both names, course, date                                                                                                                                        |
-| 2   | Problem and idea            | 0:45 | AI writes code well; the "wings" (requirements, design, tests, deployment, maintenance) are the hard part. Our answer: design first, developer approves every phase, every artefact traceable by ID |
-| 3   | Architecture (required, C4) | 1:30 | One diagram, see below                                                                                                                                                                              |
-| 4   | Workflow P1 to P7           | 0:30 | The seven phases as one strip with the approval gate between them; this slide is the map for the demo                                                                                               |
-| 5   | Live demo                   | 7:30 | Switch to the app, see the demo script below. No slides during the demo                                                                                                                             |
-| 6   | Showcases and limits (C6)   | 0:45 | Small / medium / larger (to do, booking, auction): what worked, where it broke and why                                                                                                              |
-| 7   | Lessons learned             | 0:30 | Two or three honest points: where AI helped, where it failed                                                                                                                                        |
-| 8   | Thanks / Q&A                | 0:15 | Repo link, names                                                                                                                                                                                    |
+| #   | Slide                         | Time | Content                                                                                                                                                                                             |
+| --- | ----------------------------- | ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Title                         | 0:15 | Project name, one line description, both names, course, date                                                                                                                                        |
+| 2   | Problem and idea              | 0:45 | AI writes code well; the "wings" (requirements, design, tests, deployment, maintenance) are the hard part. Our answer: design first, developer approves every phase, every artefact traceable by ID |
+| 3   | Architecture (required, C4)   | 1:00 | One diagram, see below                                                                                                                                                                              |
+| 4   | One ID through every artefact | 0:30 | Artefact storage and sync as one chain: REQ → UC/SEQ/DSN → `@trace` in code → test, the drift check between design and code, the JSON model as source of truth. Sets up demo step 4                 |
+| 5   | Workflow P1 to P7             | 0:30 | The seven phases as one strip with the approval gate between them; this slide is the map for the demo                                                                                               |
+| 6   | Live demo                     | 7:30 | Switch to the app, see the demo script below. No slides during the demo                                                                                                                             |
+| 7   | Showcases and limits (C6)     | 0:45 | Small / medium / larger (to do, booking, auction): what worked, where it broke and why                                                                                                              |
+| 8   | Lessons learned               | 0:30 | Two or three honest points: where AI helped, where it failed                                                                                                                                        |
+| 9   | Thanks / Q&A                  | 0:15 | Repo link, names                                                                                                                                                                                    |
 
-Keep a hidden backup slide after slide 8 with screenshots of every demo step, in case the live demo breaks.
+Keep a hidden backup slide after slide 9 with screenshots of every demo step, in case the live demo breaks.
 
-## Slide 3: architecture (required content)
+## Slides 3 and 4: architecture, storage and sync (required content)
 
-One diagram plus short labels, no paragraphs. It must answer:
+Slide 3 is one diagram plus short labels, no paragraphs; slide 4 covers the last point. Together they must answer:
 
 - **Which agents exist and what each one does**: requirements (P1), design (P2/P3), code agent and code workers (P4), test agent and test workers (P5), deploy (P6), maintenance (P7), gate summary
 - **Which LLMs and why**: Sonnet 5.5 for the phase agents, Haiku 5.5 for the parallel workers and the gate summary (cheap, one file each, escalates to Sonnet on attempt 3), Opus 5.5 for maintenance (reasons over all artefacts at once)
@@ -34,7 +35,7 @@ One diagram plus short labels, no paragraphs. It must answer:
 - **How agents communicate**: through the orchestrator and the shared artefacts in `.aise/`, not by chatting with each other; events go to the UI over SSE
 - **Artefact storage and sync**: JSON design model as the source of truth, Mermaid rendered from it (agents never write Mermaid), shared IDs (REQ, UC, SEQ, DSN) and `@trace` comments in the code, hashes that mark phases stale, `detect_drift` for code vs. design
 
-## Demo script (slide 5): what the graders want to see
+## Demo script (slide 6): what the graders want to see
 
 Prepare the project up to the start so nobody waits for code generation live. Each step names the criterion it proves.
 
@@ -59,7 +60,7 @@ C2 needs **one change of each kind**: requirement (step 8), design (step 3), cod
 
 ## Slide style
 
-- One message per slide, few words, large font. The diagram on slide 3 must be readable from the back of the room.
+- One message per slide, few words, large font. The diagrams on slides 3 and 4 must be readable from the back of the room.
 - Show the product, not the code: screenshots of the UI beat code listings.
 
 ## Rebuilding the deck
