@@ -94,7 +94,9 @@
 						<span class="text">
 							<span class="name"><span class="id">{phase}</span>{NAMES[phase]}</span>
 							<span class="status"
-								>{STATUS[status]}{#if costByPhase[phase] !== undefined}<span class="aise-sr-only"
+								>{phase === 'P3' && status === 'awaiting_approval'
+									? 'Open proposals'
+									: STATUS[status]}{#if costByPhase[phase] !== undefined}<span class="aise-sr-only"
 										>, cost
 									</span><span class="cost aise-num">{formatUsd(costByPhase[phase])}</span
 									>{/if}</span

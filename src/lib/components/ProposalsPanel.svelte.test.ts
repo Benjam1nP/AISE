@@ -55,8 +55,8 @@ describe('ProposalsPanel', () => {
 		render(ProposalsPanel, props());
 		const card = screen.getByRole('article', { name: /PRP-001/ });
 		const sent = await submitted(async () => {
-			await userEvent.click(within(card).getByRole('button', { name: 'Accept' }));
-			await userEvent.click(within(card).getByRole('button', { name: 'Reject' }));
+			await userEvent.click(within(card).getByRole('button', { name: 'Accept PRP-001' }));
+			await userEvent.click(within(card).getByRole('button', { name: 'Reject PRP-001' }));
 		});
 		expect(sent).toEqual([
 			['?/acceptProposal', 'PRP-001'],
@@ -68,7 +68,7 @@ describe('ProposalsPanel', () => {
 		const ondiscuss = vi.fn();
 		render(ProposalsPanel, props({ ondiscuss }));
 		const sent = await submitted(() =>
-			userEvent.click(screen.getByRole('button', { name: 'Discuss' }))
+			userEvent.click(screen.getByRole('button', { name: 'Discuss PRP-001' }))
 		);
 		expect(sent).toEqual([]);
 		expect(ondiscuss).toHaveBeenCalledWith(open);
@@ -87,7 +87,7 @@ describe('ProposalsPanel', () => {
 		const details = screen.getByText(/Resolved proposals \(1\)/).closest('details')!;
 		expect(details.hasAttribute('open')).toBe(false);
 		expect(details.textContent).toContain('Rename Task');
-		expect(screen.getAllByRole('button', { name: 'Accept' })).toHaveLength(1);
+		expect(screen.getAllByRole('button', { name: 'Accept PRP-001' })).toHaveLength(1);
 	});
 
 	it('says so when a review found nothing', () => {
@@ -100,12 +100,12 @@ describe('ProposalsPanel', () => {
 
 	it('shows busy buttons with a wait note while a run is active, and does not submit', async () => {
 		render(ProposalsPanel, props({ running: true }));
-		for (const name of ['Review design', 'Accept', 'Reject']) {
+		for (const name of ['Review design', 'Accept PRP-001', 'Reject PRP-001']) {
 			expect(screen.getByRole('button', { name }).getAttribute('aria-busy')).toBe('true');
 		}
 		expect(screen.getByText(/when the agent finishes/)).toBeTruthy();
 		const sent = await submitted(() =>
-			userEvent.click(screen.getByRole('button', { name: 'Accept' }))
+			userEvent.click(screen.getByRole('button', { name: 'Accept PRP-001' }))
 		);
 		expect(sent).toEqual([]);
 	});
@@ -113,6 +113,15 @@ describe('ProposalsPanel', () => {
 	it('notes that the proposals are out of date when the design changed since', () => {
 		render(ProposalsPanel, props({ status: 'stale' }));
 		expect(screen.getByText(/design changed since this review/)).toBeTruthy();
+	});
+
+	it('does not say nothing was proposed when the review is out of date', () => {
+		render(
+			ProposalsPanel,
+			props({ proposals: { designHash: 'h', proposals: [] }, status: 'stale' })
+		);
+		expect(screen.getByText(/design changed since this review/)).toBeTruthy();
+		expect(screen.queryByText('No improvements proposed')).toBeNull();
 	});
 
 	it('asks for a design first and offers no review without one', () => {

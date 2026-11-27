@@ -18,6 +18,12 @@ afterEach(async () => {
 	await rm(root, { recursive: true, force: true });
 });
 
+it('turns the automatic design review on for the app', async () => {
+	vi.resetModules();
+	const { getOrchestrator } = await import('./index');
+	expect((getOrchestrator() as unknown as { autoReview: boolean }).autoReview).toBe(true);
+});
+
 it('keeps one orchestrator and one event bus when the module is evaluated again (Vite dev)', async () => {
 	vi.resetModules();
 	const first = await import('./index');

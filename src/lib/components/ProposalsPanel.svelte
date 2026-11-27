@@ -60,6 +60,14 @@
 			};
 		};
 	const wait = (key: string) => running || busy === key;
+
+	let body: HTMLElement | undefined = $state();
+	/** After Reject removes a card the focused button is gone: focus moves to the panel heading. */
+	function focusHeading() {
+		const heading = body?.closest('section')?.querySelector('h2');
+		heading?.setAttribute('tabindex', '-1');
+		heading?.focus();
+	}
 	const waitNote = $derived(running ? `${uid}-wait` : undefined);
 </script>
 
@@ -68,11 +76,16 @@
 	<form
 		method="POST"
 		action="?/{name}"
-		use:enhance={submit(key, name === 'acceptProposal' ? onaccepted : undefined)}
+		use:enhance={submit(key, name === 'acceptProposal' ? onaccepted : focusHeading)}
 	>
 		<input type="hidden" name="proposalId" value={id} />
-		<Button type="submit" {variant} size="sm" loading={wait(key)} aria-describedby={waitNote}
-			>{label}</Button
+		<Button
+			type="submit"
+			{variant}
+			size="sm"
+			loading={wait(key)}
+			aria-label="{label} {id}"
+			aria-describedby={waitNote}>{label}</Button
 		>
 	</form>
 {/snippet}
@@ -87,83 +100,91 @@
 			</form>
 		{/if}
 	{/snippet}
-	<Stack gap={3}>
-		{#if !hasDesign}
-			<EmptyState
-				icon={Network}
-				title="No design yet"
-				text="The review agent proposes improvements once the design agent has drawn the diagrams."
-			/>
-		{:else}
-			{#if status === 'stale'}
-				<Banner tone="warning" title="Out of date">
-					The design changed since this review. Press Review design for current proposals.
-				</Banner>
-			{/if}
-			{#if running}
-				<p class="note" id="{uid}-wait">Available when the agent finishes.</p>
-			{/if}
-			{#if error.message}
-				<Banner tone="error" title="That did not work">
-					{error.message}
-					{#snippet actions()}
-						<Button size="sm" variant="ghost" onclick={error.dismiss}>Dismiss</Button>
-					{/snippet}
-				</Banner>
-			{/if}
-			{#if proposals === null}
+	<div bind:this={body}>
+		<Stack gap={3}>
+			{#if !hasDesign}
 				<EmptyState
-					icon={Lightbulb}
-					title="No review yet"
-					text="The review agent checks the design against the requirements and proposes concrete improvements. It runs after every design change, or press Review design."
-				/>
-			{:else if open.length === 0}
-				<EmptyState
-					icon={Lightbulb}
-					title={resolved.length === 0 ? 'No improvements proposed' : 'No open proposals'}
-					text="Code generation still starts from the approved design."
+					icon={Network}
+					title="No design yet"
+					text="The review agent proposes improvements once the design agent has drawn the diagrams."
 				/>
 			{:else}
-				<ul class="cards">
-					{#each open as p (p.id)}
-						<li>
-							<article class="card" aria-label="{p.id}, {p.title}">
-								<header class="top">
-									<Badge tone="info">{KIND[p.kind]}</Badge>
-									<span class="id">{p.id}</span>
-								</header>
-								<h3>{p.title}</h3>
-								<p class="text">{p.change}</p>
-								{#if p.elementIds.length > 0 || p.reqIds.length > 0}
-									<p class="ids">
-										{#each [...p.elementIds, ...p.reqIds] as id (id)}<Badge>{id}</Badge>{/each}
-									</p>
-								{/if}
-								<div class="buttons">
-									{@render proposalForm('acceptProposal', p.id, 'Accept', 'primary')}
-									{@render proposalForm('rejectProposal', p.id, 'Reject', 'secondary')}
-									<Button size="sm" variant="ghost" onclick={() => ondiscuss(p)}>Discuss</Button>
-								</div>
-							</article>
-						</li>
-					{/each}
-				</ul>
-			{/if}
-			{#if resolved.length > 0}
-				<Disclosure summary="Resolved proposals ({resolved.length})">
-					<ul class="resolved">
-						{#each resolved as p (p.id)}
+				{#if status === 'stale'}
+					<Banner tone="warning" title="Out of date">
+						The design changed since this review. Press Review design for current proposals.
+					</Banner>
+				{/if}
+				{#if running}
+					<p class="note" id="{uid}-wait">Available when the agent finishes.</p>
+				{/if}
+				{#if error.message}
+					<Banner tone="error" title="That did not work">
+						{error.message}
+						{#snippet actions()}
+							<Button size="sm" variant="ghost" onclick={error.dismiss}>Dismiss</Button>
+						{/snippet}
+					</Banner>
+				{/if}
+				{#if proposals === null}
+					<EmptyState
+						icon={Lightbulb}
+						title="No review yet"
+						text="The review agent checks the design against the requirements and proposes concrete improvements. It runs after every design change, or press Review design."
+					/>
+				{:else if open.length > 0}
+					<ul class="cards">
+						{#each open as p (p.id)}
 							<li>
-								<span class="id">{p.id}</span>
-								{p.title}
-								<Badge tone={p.status === 'accepted' ? 'active' : 'default'}>{p.status}</Badge>
+								<article class="card" aria-label="{p.id}, {p.title}">
+									<header class="top">
+										<Badge tone="info">{KIND[p.kind]}</Badge>
+										<span class="id">{p.id}</span>
+									</header>
+									<h3>{p.title}</h3>
+									<p class="text">{p.change}</p>
+									{#if p.elementIds.length > 0 || p.reqIds.length > 0}
+										<p class="ids">
+											{#each new Set([...p.elementIds, ...p.reqIds]) as id (id)}<Badge>{id}</Badge
+												>{/each}
+										</p>
+									{/if}
+									<div class="buttons">
+										{@render proposalForm('acceptProposal', p.id, 'Accept', 'primary')}
+										{@render proposalForm('rejectProposal', p.id, 'Reject', 'secondary')}
+										<Button
+											size="sm"
+											variant="ghost"
+											aria-label="Discuss {p.id}"
+											onclick={() => ondiscuss(p)}>Discuss</Button
+										>
+									</div>
+								</article>
 							</li>
 						{/each}
 					</ul>
-				</Disclosure>
+				{:else if status !== 'stale'}
+					<EmptyState
+						icon={Lightbulb}
+						title={resolved.length === 0 ? 'No improvements proposed' : 'No open proposals'}
+						text="Code generation still starts from the approved design."
+					/>
+				{/if}
+				{#if resolved.length > 0}
+					<Disclosure summary="Resolved proposals ({resolved.length})">
+						<ul class="resolved">
+							{#each resolved as p (p.id)}
+								<li>
+									<span class="id">{p.id}</span>
+									{p.title}
+									<Badge tone={p.status === 'accepted' ? 'active' : 'default'}>{p.status}</Badge>
+								</li>
+							{/each}
+						</ul>
+					</Disclosure>
+				{/if}
 			{/if}
-		{/if}
-	</Stack>
+		</Stack>
+	</div>
 </Panel>
 
 <style>

@@ -37,6 +37,17 @@ describe('PhaseBar', () => {
 		expect(onselect).toHaveBeenCalledWith('P3');
 	});
 
+	it('calls an awaiting P3 "Open proposals" and other phases "Awaiting approval"', () => {
+		const all = { ...(phases('awaiting_approval') as object), P3: { status: 'awaiting_approval' } };
+		render(PhaseBar, { phases: all as never, selected: 'P3', onselect: () => {} });
+		expect(screen.getByRole('button', { name: /P3\s*Refinement/ }).textContent).toContain(
+			'Open proposals'
+		);
+		expect(screen.getByRole('button', { name: /P4\s*Code/ }).textContent).toContain(
+			'Awaiting approval'
+		);
+	});
+
 	it('keeps P3 closed until P2 has started and says why', () => {
 		const closed = { ...(phases('not_started') as object), P2: { status: 'not_started' } };
 		render(PhaseBar, { phases: closed as never, selected: 'P1', onselect: () => {} });

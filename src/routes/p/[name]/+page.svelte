@@ -101,7 +101,12 @@
 		phase === 'P7' && (ticketCreating || snapshot.tickets.length === 0)
 	);
 	/** An element ID clicked in a diagram: into the new ticket's description, else the chat message. */
-	function insertId(text: string) {
+	async function insertId(text: string) {
+		// The P3 chat is read only: the ID goes to the design chat, like Discuss.
+		if (phase === 'P3') {
+			showDesignRun();
+			await tick();
+		}
 		if (!draftTakesIds) return chat?.insert(text);
 		const gap = ticketDraft === '' || /\s$/.test(ticketDraft) ? '' : ' ';
 		ticketDraft = `${ticketDraft}${gap}${text}`;
