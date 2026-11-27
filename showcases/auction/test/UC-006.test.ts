@@ -1,4 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { DatabaseSync } from 'node:sqlite';
+import { AuctionEventPublisher } from '../src/auction-api/AuctionEventPublisher.js';
+import { BidEventPublisher } from '../src/auction-api/BidEventPublisher.js';
+import { BidService } from '../src/auction-api/BidService.js';
+import { EventFeed } from '../src/auction-api/EventFeed.js';
+import { ItemStore } from '../src/auction-api/ItemStore.js';
 import { Currency } from '../src/auction-api/Currency.js';
 import { ItemController } from '../src/auction-api/ItemController.js';
 import type { ItemView } from '../src/auction-api/ItemView.js';
@@ -32,6 +38,18 @@ function makeFakes(rates: Record<string, number> = { EUR: 0.5, USD: 2 }) {
   } as unknown as ItemService;
   const controller = new ItemController(itemService, exchangeRateService);
   return { fetchRates, getItem, itemService, exchangeRateService, controller };
+}
+
+// The real services over an in-memory store, so the reserve state is computed, not faked.
+function makeReal() {
+  const store = new ItemStore(new DatabaseSync(':memory:'));
+  const feed = new EventFeed(new Set());
+  const users = new Proxy({}, { get: () => async () => ({ id: 'user' }) }) as never;
+  const itemService = new ItemService(store, users, new AuctionEventPublisher(feed));
+  const bidService = new BidService(store, new BidEventPublisher(feed), users);
+  const fetchRates = vi.fn(async (_base: Currency) => ({ EUR: 0.5, USD: 2 }));
+  const rates = new ExchangeRateService({ fetchRates } as unknown as FrankfurterClient, ONE_HOUR_MS);
+  return { itemService, bidService, controller: new ItemController(itemService, rates) };
 }
 
 describe('UC-006 View prices in display currency', () => {
@@ -99,10 +117,31 @@ describe('UC-006 View prices in display currency', () => {
   });
 
   it('REQ-012 AC6: Item pages and lists of open items show whether the reserve is met (reserve met / not met) for items that have a reserve.', async () => {
-    const { controller } = makeFakes();
-    const view = await controller.getItem('item-1', 'EUR');
+    const { itemService, bidService, controller } = makeReal();
+    const end = new Date('2030-01-01T01:00:00Z');
+    const reserved = await itemService.listItem('seller-1', 'Vase', 100, end, 'CHF', 4321);
+    const plain = await itemService.listItem('seller-1', 'Lamp', 100, end, 'CHF', null);
+
+    // Below the reserve: not met, on the item page and in the list of open items.
+    await bidService.placeBid(reserved.id, 'bidder-1', 200);
+    expect((await controller.getItem(reserved.id, 'EUR')).item.reserveMet).toBe(false);
+    let list = await controller.listOpenItems();
+    expect(list.find((i) => i.id === reserved.id)?.reserveMet).toBe(false);
+
+    // Above the reserve: met. (Not at it: the highest bid would then show the reserve amount.)
+    await bidService.placeBid(reserved.id, 'bidder-2', 4400);
+    const view = await controller.getItem(reserved.id, 'EUR');
     expect(view.item.reserveMet).toBe(true);
-    expect(JSON.stringify(view)).not.toContain('reservePrice');
+    list = await controller.listOpenItems();
+    expect(list.find((i) => i.id === reserved.id)?.reserveMet).toBe(true);
+
+    // Without a reserve there is no state to show.
+    expect((await controller.getItem(plain.id, 'EUR')).item.reserveMet).toBeNull();
+    // Never the amount.
+    for (const text of [JSON.stringify(view), JSON.stringify(list)]) {
+      expect(text).not.toContain('4321');
+      expect(text).not.toContain('reservePrice');
+    }
   });
 
   it('SEQ-006 scenario: View prices in display currency', async () => {

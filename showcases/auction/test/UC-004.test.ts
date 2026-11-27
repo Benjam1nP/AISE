@@ -3,6 +3,7 @@ import { LiveGateway } from '../src/live-updates/LiveGateway.js';
 import { EventFeedClient } from '../src/live-updates/EventFeedClient.js';
 import { EventFeed } from '../src/auction-api/EventFeed.js';
 import { BidEventPublisher } from '../src/auction-api/BidEventPublisher.js';
+import { AuctionEventPublisher } from '../src/auction-api/AuctionEventPublisher.js';
 import { Bid } from '../src/auction-api/Bid.js';
 import { Item } from '../src/auction-api/Item.js';
 
@@ -59,6 +60,33 @@ async function makeBidEvent(
   return events[0];
 }
 
+// Produces a real auction closed event by running the API server's publisher.
+async function makeCloseEvent(
+  highestBid: number,
+  reservePrice: number | null,
+): Promise<{ topic: string; payload: string }> {
+  const events: Array<{ topic: string; payload: string }> = [];
+  const feed = new EventFeed(new Set());
+  feed.publish = (topic: string, payload: string): void => {
+    events.push({ topic, payload });
+  };
+  const item = new Item(
+    'item-1',
+    'seller-1',
+    'Vase',
+    100,
+    reservePrice,
+    'USD' as unknown as Item['currency'],
+    new Date('2030-01-01T12:00:00Z'),
+    'closed' as unknown as Item['status'],
+    highestBid,
+    'bidder-1',
+    null,
+  );
+  await new AuctionEventPublisher(feed).publishAuctionClosed(item);
+  return events[0];
+}
+
 describe('UC-004 Watch item live', () => {
   it('REQ-007 AC1: With two or more live update server instances running, a client connected to any instance receives every bid for the item it watches.', async () => {
     const a = makeInstance('client-a');
@@ -91,6 +119,24 @@ describe('UC-004 Watch item live', () => {
     expect(inst.received.length).toBe(1);
     expect(inst.received[0]).toMatch(/reserveMet\W+true/);
     expect(inst.received[0]).not.toContain('987');
+
+    // A bid below the reserve says not met.
+    const below = await makeBidEvent('bid-2', 900, 987);
+    inst.feedClient.onEvent(below.topic, below.payload);
+    expect(inst.received[1]).toMatch(/reserveMet\W+false/);
+
+    // The close event carries the state too, met and not met, never the amount.
+    const closedMet = await makeCloseEvent(1000, 987);
+    const closedNotMet = await makeCloseEvent(900, 987);
+    inst.feedClient.onEvent(closedMet.topic, closedMet.payload);
+    inst.feedClient.onEvent(closedNotMet.topic, closedNotMet.payload);
+    expect(inst.received.length).toBe(4);
+    expect(inst.received[2]).toMatch(/reserveMet\W+true/);
+    expect(inst.received[3]).toMatch(/reserveMet\W+false/);
+    for (const message of inst.received) {
+      expect(message).not.toContain('987');
+      expect(message).not.toContain('reservePrice');
+    }
   });
 
   it('SEQ-004 scenario: Watch item live', async () => {

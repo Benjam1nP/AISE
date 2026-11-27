@@ -1,7 +1,7 @@
 {
-  "at": "2026-11-27T11:20:09.930Z",
+  "at": "2026-11-27T11:43:38.850Z",
   "codeHash": "4613160a81986b0e1d48a0128dae4e711069a78ba43a757a9d7341ca782ed324",
-  "testHash": "1b2335a10fb2d183fd3f1d50de1ae67209e0cce295778d7050ee33c236afe916",
+  "testHash": "122e78e5b908c2ee4a6e14f2d776bab38beda69fe6119eb2e7f68d569715767b",
   "typecheck": {
     "ok": true,
     "errors": [],
@@ -136,70 +136,70 @@
         "title": "REQ-001 AC1: A seller can submit an item with a starting price, an end time and a currency (CHF, EUR or USD) and it then appears as an open auction.",
         "file": "test/UC-002.test.ts",
         "status": "passed",
-        "line": 13
+        "line": 18
       },
       {
         "name": "UC-002 List item REQ-001 AC2: A listing without a starting price, end time or currency is rejected with an error message.",
         "title": "REQ-001 AC2: A listing without a starting price, end time or currency is rejected with an error message.",
         "file": "test/UC-002.test.ts",
         "status": "passed",
-        "line": 33
+        "line": 38
       },
       {
         "name": "UC-002 List item REQ-001 AC3: A listing with a currency other than CHF, EUR or USD is rejected.",
         "title": "REQ-001 AC3: A listing with a currency other than CHF, EUR or USD is rejected.",
         "file": "test/UC-002.test.ts",
         "status": "passed",
-        "line": 45
+        "line": 50
       },
       {
         "name": "UC-002 List item REQ-001 AC4: A listing submitted without a reserve price is accepted and appears as an open auction.",
         "title": "REQ-001 AC4: A listing submitted without a reserve price is accepted and appears as an open auction.",
         "file": "test/UC-002.test.ts",
         "status": "passed",
-        "line": 59
+        "line": 64
       },
       {
         "name": "UC-002 List item REQ-001 AC5: A listing submitted with a reserve price is accepted subject to the rules in REQ-012.",
         "title": "REQ-001 AC5: A listing submitted with a reserve price is accepted subject to the rules in REQ-012.",
         "file": "test/UC-002.test.ts",
         "status": "passed",
-        "line": 77
+        "line": 82
       },
       {
         "name": "UC-002 List item REQ-012 AC1: A listing with a reserve price lower than the starting price is rejected with an error message and no item is created.",
         "title": "REQ-012 AC1: A listing with a reserve price lower than the starting price is rejected with an error message and no item is created.",
         "file": "test/UC-002.test.ts",
         "status": "passed",
-        "line": 100
+        "line": 105
       },
       {
         "name": "UC-002 List item REQ-012 AC2: A listing with a reserve price equal to or higher than the starting price is accepted.",
         "title": "REQ-012 AC2: A listing with a reserve price equal to or higher than the starting price is accepted.",
         "file": "test/UC-002.test.ts",
         "status": "passed",
-        "line": 118
+        "line": 123
       },
       {
         "name": "UC-002 List item REQ-012 AC3: A listing without a reserve price is accepted and works as before.",
         "title": "REQ-012 AC3: A listing without a reserve price is accepted and works as before.",
         "file": "test/UC-002.test.ts",
         "status": "passed",
-        "line": 141
+        "line": 146
       },
       {
         "name": "UC-002 List item REQ-012 AC7: No item view, item list, API response or live event sent to bidders contains the reserve amount.",
         "title": "REQ-012 AC7: No item view, item list, API response or live event sent to bidders contains the reserve amount.",
         "file": "test/UC-002.test.ts",
         "status": "passed",
-        "line": 154
+        "line": 159
       },
       {
         "name": "UC-002 List item SEQ-002 scenario: List item",
         "title": "SEQ-002 scenario: List item",
         "file": "test/UC-002.test.ts",
         "status": "passed",
-        "line": 174
+        "line": 205
       },
       {
         "name": "UC-003 Place bid REQ-002 AC1: A bid on an item whose end time has not passed, from a user other than the seller, is stored in the item currency if it is valid.",
@@ -311,28 +311,28 @@
         "title": "REQ-007 AC1: With two or more live update server instances running, a client connected to any instance receives every bid for the item it watches.",
         "file": "test/UC-004.test.ts",
         "status": "passed",
-        "line": 63
+        "line": 91
       },
       {
         "name": "UC-004 Watch item live REQ-007 AC2: Adding an instance requires no code change.",
         "title": "REQ-007 AC2: Adding an instance requires no code change.",
         "file": "test/UC-004.test.ts",
         "status": "passed",
-        "line": 76
+        "line": 104
       },
       {
         "name": "UC-004 Watch item live REQ-012 AC8: Live bid and close events carry the reserve-met state, so watchers see it update without reloading.",
         "title": "REQ-012 AC8: Live bid and close events carry the reserve-met state, so watchers see it update without reloading.",
         "file": "test/UC-004.test.ts",
         "status": "passed",
-        "line": 87
+        "line": 115
       },
       {
         "name": "UC-004 Watch item live SEQ-004 scenario: Watch item live",
         "title": "SEQ-004 scenario: Watch item live",
         "file": "test/UC-004.test.ts",
         "status": "passed",
-        "line": 96
+        "line": 142
       },
       {
         "name": "UC-005 Close auction REQ-004 AC1: At the end time the item no longer accepts bids.",
@@ -402,67 +402,67 @@
         "title": "REQ-005 AC1: A bidder who selects CHF, EUR or USD sees item prices and bids converted with a rate obtained from Frankfurter.",
         "file": "test/UC-006.test.ts",
         "status": "passed",
-        "line": 47
+        "line": 65
       },
       {
         "name": "UC-006 View prices in display currency REQ-005 AC2: Only CHF, EUR and USD are offered as display currencies.",
         "title": "REQ-005 AC2: Only CHF, EUR and USD are offered as display currencies.",
         "file": "test/UC-006.test.ts",
         "status": "passed",
-        "line": 56
+        "line": 74
       },
       {
         "name": "UC-006 View prices in display currency REQ-005 AC3: Converted prices are shown with the currency code.",
         "title": "REQ-005 AC3: Converted prices are shown with the currency code.",
         "file": "test/UC-006.test.ts",
         "status": "passed",
-        "line": 61
+        "line": 79
       },
       {
         "name": "UC-006 View prices in display currency REQ-005 AC4: Conversion is for display only: stored bids and bid validation use the item currency.",
         "title": "REQ-005 AC4: Conversion is for display only: stored bids and bid validation use the item currency.",
         "file": "test/UC-006.test.ts",
         "status": "passed",
-        "line": 68
+        "line": 86
       },
       {
         "name": "UC-006 View prices in display currency REQ-010 AC1: Within 1 hour of a successful fetch, no further request is made to Frankfurter for the same rates.",
         "title": "REQ-010 AC1: Within 1 hour of a successful fetch, no further request is made to Frankfurter for the same rates.",
         "file": "test/UC-006.test.ts",
         "status": "passed",
-        "line": 75
+        "line": 93
       },
       {
         "name": "UC-006 View prices in display currency REQ-010 AC2: After the cache is older than 1 hour, the next conversion fetches fresh rates.",
         "title": "REQ-010 AC2: After the cache is older than 1 hour, the next conversion fetches fresh rates.",
         "file": "test/UC-006.test.ts",
         "status": "passed",
-        "line": 83
+        "line": 101
       },
       {
         "name": "UC-006 View prices in display currency REQ-010 AC3: When Frankfurter cannot be reached and no valid cached rate exists, prices are shown only in the item currency and bidding still works.",
         "title": "REQ-010 AC3: When Frankfurter cannot be reached and no valid cached rate exists, prices are shown only in the item currency and bidding still works.",
         "file": "test/UC-006.test.ts",
         "status": "passed",
-        "line": 91
+        "line": 109
       },
       {
         "name": "UC-006 View prices in display currency REQ-012 AC6: Item pages and lists of open items show whether the reserve is met (reserve met / not met) for items that have a reserve.",
         "title": "REQ-012 AC6: Item pages and lists of open items show whether the reserve is met (reserve met / not met) for items that have a reserve.",
         "file": "test/UC-006.test.ts",
         "status": "passed",
-        "line": 101
+        "line": 119
       },
       {
         "name": "UC-006 View prices in display currency SEQ-006 scenario: View prices in display currency",
         "title": "SEQ-006 scenario: View prices in display currency",
         "file": "test/UC-006.test.ts",
         "status": "passed",
-        "line": 108
+        "line": 147
       }
     ],
     "timedOut": false,
-    "logTail": "JSON report written to /opt/aise/out/report.json\n(node:21) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:29) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:37) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:64) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:72) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    "logTail": "JSON report written to /opt/aise/out/report.json\n(node:22) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:53) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:29) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:28) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:21) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:41) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
   },
   "findings": [
     {

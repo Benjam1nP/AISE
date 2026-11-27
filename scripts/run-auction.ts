@@ -1,7 +1,7 @@
 // Drives the committed auction showcase (showcases/auction) through P4 and P5 approval, P6 and one
 // P7 change ticket, in place, through the same orchestrator calls the UI makes. Costs API credit and
 // needs Docker. Not run in CI. Steps run in order; pass one to run only that step.
-// Run: npx tsx scripts/run-auction.ts [approve|p6|p7|check]
+// Run: npx tsx scripts/run-auction.ts [approve|p6|p7|check] [--override P4] [--anyway]
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { DEPLOY_FILES } from '../src/lib/server/core/deploy-state';
@@ -10,11 +10,27 @@ import { subscribe, type WorkspaceEvent } from '../src/lib/server/orchestrator/b
 import { Orchestrator } from '../src/lib/server/orchestrator/orchestrator';
 
 if (existsSync('.env')) process.loadEnvFile('.env');
-const only = process.argv[2];
+const STEPS = ['approve', 'p6', 'p7', 'check'] as const;
+const USAGE =
+	'usage: npx tsx scripts/run-auction.ts [approve|p6|p7|check] [--override P4] [--anyway]';
+const args = process.argv.slice(2);
 // Phases the walk may approve over a failing gate: --override P4
-const overrides = process.argv.includes('--override')
-	? [process.argv[process.argv.indexOf('--override') + 1]]
-	: [];
+const at = args.indexOf('--override');
+const override = at >= 0 ? args[at + 1] : undefined;
+if (at >= 0 && (!override || override.startsWith('--'))) {
+	console.error(`--override needs a phase, e.g. --override P4\n${USAGE}`);
+	process.exit(1);
+}
+const overrides = override ? [override] : [];
+// --anyway approves P1 over open questions, which then become assumptions; without it the walk stops.
+const anyway = args.includes('--anyway');
+// The step is the one argument that is neither a flag nor the phase after --override.
+const positional = args.filter((a, i) => !a.startsWith('--') && !(at >= 0 && i === at + 1));
+const only = positional[0];
+if (positional.length > 1 || (only !== undefined && !(STEPS as readonly string[]).includes(only))) {
+	console.error(`unknown step: ${positional.join(' ')}\n${USAGE}`);
+	process.exit(1);
+}
 const name = 'auction';
 const orch = new Orchestrator({ root: path.resolve('showcases') });
 const store = new ProjectStore(orch.projectDir(name));
@@ -28,22 +44,36 @@ async function stop(reason: string): Promise<never> {
 	process.exit(1);
 }
 
+/**
+ * Starts a run and waits for its own `run_finished`: a run the orchestrator chains by itself (P5
+ * approval starting P6, test generation starting the fix loop) finishes under another run ID.
+ * Events that arrive before `start` returns the ID are kept until it is known.
+ */
 async function watch(label: string, start: () => Promise<{ runId: string }>): Promise<Finished> {
-	const finished = new Promise<Finished>((resolve) => {
-		const off = subscribe(name, (e) => {
-			if (e.type === 'tool_call')
-				console.log(`${label} tool ${e.name}: ${e.isError ? 'error' : 'ok'}`);
-			else if (e.type === 'codegen_file')
-				console.log(`${e.status.padEnd(9)} ${e.path} (attempt ${e.attempt})`);
-			else if (e.type === 'run_finished') {
-				off();
-				resolve(e);
-			}
-		});
+	// Every run_finished is kept until the run ID is known; only the one with that ID counts.
+	const ended: Finished[] = [];
+	let wake = () => {};
+	const off = subscribe(name, (e) => {
+		if (e.type === 'tool_call')
+			console.log(`${label} tool ${e.name}: ${e.isError ? 'error' : 'ok'}`);
+		else if (e.type === 'codegen_file')
+			console.log(`${e.status.padEnd(9)} ${e.path} (attempt ${e.attempt})`);
+		else if (e.type === 'run_finished') {
+			ended.push(e);
+			wake();
+		}
 	});
 	const { runId } = await start();
+	const finished = new Promise<Finished>((resolve) => {
+		wake = () => {
+			const own = ended.find((e) => e.runId === runId);
+			if (own) resolve(own);
+		};
+		wake();
+	});
 	console.log(`${label} run ${runId} started`);
 	const run = await finished;
+	off();
 	console.log(
 		`${label} run ${runId}: ${run.status}, $${run.costUsd.toFixed(4)}${run.error ? ` (${run.error})` : ''}`
 	);
@@ -114,7 +144,9 @@ if (!only || only === 'p6') {
 if (!only || only === 'p7') {
 	console.log('\n--- P7 ticket ---');
 	// Resume an open ticket when one exists, so a stopped walk goes on where it stopped.
-	const open = (await orch.snapshot(name)).tickets.find((t) => t.status !== 'done');
+	const open = (await orch.snapshot(name)).tickets.find(
+		(t) => t.status !== 'done' && t.status !== 'rejected'
+	);
 	let ticketId = open?.id ?? '';
 	const ticket = async () => (await orch.snapshot(name)).tickets.find((t) => t.id === ticketId)!;
 	if (!open) {
@@ -135,22 +167,38 @@ if (!only || only === 'p7') {
 		);
 		for (const [i, s] of triaged.plan!.steps.entries()) console.log(`  ${i + 1}. ${s}`);
 		await watch(`entry ${triaged.plan!.entry}`, () => orch.approvePlan(name, ticketId));
+	} else if (open.status === 'triaged') {
+		// Stopped after triage: the plan was never approved, so the entry run has not happened.
+		await idle();
+		if (!open.plan) await stop(`${open.id} is triaged without a plan`);
+		await watch(`entry ${open.plan!.entry}`, () => orch.approvePlan(name, open.id));
+	} else if (open.status !== 'in_progress') {
+		await stop(`${open.id} is ${open.status}; answer its questions in the UI, then run p7 again`);
 	}
 
 	const ORDER = ['P1', 'P2', 'P4', 'P5', 'P6'] as const;
-	for (let step = 0; step < 15; step++) {
+	const pending = async () => {
 		await idle();
 		const { state: s } = await orch.snapshot(name);
-		const phase = ORDER.find((p) => s.phases[p].status !== 'approved');
+		return ORDER.find((p) => s.phases[p].status !== 'approved');
+	};
+	for (let step = 0; step < 15; step++) {
+		const phase = await pending();
 		if (!phase) break;
+		const { state: s, requirements } = await orch.snapshot(name);
 		const status = s.phases[phase].status;
 		console.log(`\n${phase} is ${status}`);
 		if (status === 'awaiting_approval') {
 			try {
 				// P4 may only fail on tests that call a changed signature; P5 updates them next, so
 				// that P4 approval is an override, recorded in the state like one made in the UI.
+				const questions = requirements?.openQuestions ?? [];
+				if (phase === 'P1' && questions.length > 0 && !anyway) {
+					for (const q of questions) console.log(`  ${q.id} ${q.text}`);
+					await stop('P1 has open questions; answer them in the UI, or pass --anyway to assume');
+				}
 				const opts =
-					phase === 'P1' ? { anyway: true } : overrides.includes(phase) ? { override: true } : {};
+					phase === 'P1' ? { anyway } : overrides.includes(phase) ? { override: true } : {};
 				await orch.approve(name, phase, opts);
 			} catch (e) {
 				await gates('P4', 'P5', 'P6');
@@ -161,7 +209,8 @@ if (!only || only === 'p7') {
 			await watch(`update ${phase}`, () => orch.updateStale(name, phase));
 		} else await stop(`${phase} is ${status}; the walk cannot go on`);
 	}
-	await idle();
+	const left = await pending();
+	if (left) await stop(`${left} is still not approved after 15 steps`);
 	await orch.checkTests(name);
 	const before = await ticket();
 	if (before.closeBlocked) await stop(`ticket cannot close: ${before.closeBlocked}`);
@@ -182,7 +231,9 @@ if (!only || only === 'check') {
 	const c = (await gates('P4', 'P5', 'P6')).deployCheck;
 	if (c)
 		console.log(
-			`deploy check at ${c.at}: ${c.services.map((s) => `${s.url} ${s.status}`).join(', ')}`
+			`deploy check at ${c.at} ${c.passed ? 'passed' : 'FAILED'}: ${c.services
+				.map((s) => `${s.url} ${s.status ?? 'no answer'}`)
+				.join(', ')}`
 		);
 }
 

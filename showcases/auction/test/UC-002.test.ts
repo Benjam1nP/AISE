@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../src/app/app.js';
+import { AuctionEventPublisher } from '../src/auction-api/AuctionEventPublisher.js';
+import { Bid } from '../src/auction-api/Bid.js';
+import { BidEventPublisher } from '../src/auction-api/BidEventPublisher.js';
+import { EventFeed } from '../src/auction-api/EventFeed.js';
+import { Item } from '../src/auction-api/Item.js';
 
 const FUTURE_END = '2030-01-01T00:00:00.000Z';
 
@@ -165,7 +170,33 @@ describe("UC-002 List item", () => {
     expect(created.status).toBe(201);
     const view = await request(app).get(`/api/items/${created.body.id}`);
     const list = await request(app).get('/api/items');
-    for (const text of [JSON.stringify(created.body), JSON.stringify(view.body), JSON.stringify(list.body)]) {
+    // The live events: what the API server's publishers send to the feed for this item.
+    const sent: string[] = [];
+    const feed = new EventFeed(new Set());
+    feed.publish = (_topic: string, payload: string): void => {
+      sent.push(payload);
+    };
+    const item = new Item(
+      created.body.id,
+      sellerId,
+      'Secret reserve',
+      50,
+      7777,
+      'CHF' as unknown as Item['currency'],
+      new Date(FUTURE_END),
+      'open' as unknown as Item['status'],
+      60,
+      'bidder-1',
+      null,
+    );
+    await new BidEventPublisher(feed).publishBidAccepted(
+      new Bid('bid-1', item.id, 'bidder-1', 60, new Date('2029-12-31T00:00:00Z')),
+      item,
+    );
+    await new AuctionEventPublisher(feed).publishAuctionClosed(item);
+    expect(sent.length).toBe(2);
+    const texts = [JSON.stringify(created.body), JSON.stringify(view.body), JSON.stringify(list.body), ...sent];
+    for (const text of texts) {
       expect(text).not.toContain('7777');
       expect(text).not.toContain('reservePrice');
     }
