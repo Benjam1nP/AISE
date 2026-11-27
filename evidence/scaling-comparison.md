@@ -1,9 +1,78 @@
-# Showcase scaling: booking and auction through P1 to P4
+# Showcase scaling: to do, booking and auction through P1 to P7
 
-Run on 2026-11-21 on branch `showcases/booking-auction` (from `main` at 5c81f06), grading criterion C6.
+Grading criterion C6: how the environment behaved on the small, medium and larger project. The
+summary below compares the three; the sections after it are the logs of each run, with the
+findings they produced.
+
+## Summary
+
+| Project | Size at the end                                            | Runs | Cost (USD) | Agent time |
+| ------- | ---------------------------------------------------------- | ---- | ---------- | ---------- |
+| to do   | 10 requirements, 5 classes, 2 nodes, 7 files, 348 lines    | 22   | 1.73       | 9.7 min    |
+| booking | 12 requirements, 14 classes, 2 nodes, 16 files, 1057 lines | 20   | 2.63       | 16.3 min   |
+| auction | 12 requirements, 23 classes, 4 nodes, 26 files, 1193 lines | 42   | 6.99       | 43.3 min   |
+
+Totals are every run in `.aise/runs/` (`costUsd`, `finishedAt` minus `startedAt`); lines count
+`src/**/*.ts`. Per phase, the first build up to the first P7 run, then P7 as all runs of the change
+tickets:
+
+| Project | Phase | Runs | Cost (USD) | Agent time | Gate at approval                 | Manual help                                                                          |
+| ------- | ----- | ---- | ---------- | ---------- | -------------------------------- | ------------------------------------------------------------------------------------ |
+| to do   | P1    | 3    | 0.07       | 37 s       | passed                           | answered 7 questions                                                                 |
+| to do   | P2    | 3    | 0.23       | 86 s       | passed, 1 warning (visual AC)    | 1 refinement                                                                         |
+| to do   | P3    | 2    | 0.05       | 13 s       | no open proposals                | accepted proposal refused on save (#21), resolved in chat                            |
+| to do   | P4    | 2    | 0.14       | 61 s       | passed, app starts               | 1 chat fix: route through `TaskController.page`                                      |
+| to do   | P5    | 2    | 0.09       | 46 s       | passed, 28 tests                 | none; fix loop fixed 1 code bug in 1 round                                           |
+| to do   | P6    | 1    | 0.02       | 16 s       | passed, deploy check 200         | none                                                                                 |
+| to do   | P7    | 9    | 1.14       | 5.3 min    | 1 ticket closed, no override     | 1 message moving the overdue rule to the server; deploy check rerun (#19)            |
+| booking | P1    | 4    | 0.16       | 73 s       | passed                           | 3 answer rounds                                                                      |
+| booking | P2    | 2    | 0.32       | 103 s      | passed                           | refinement: 3 use cases for uncovered criteria (finding 9)                           |
+| booking | P3    | 0    |            |            | no gate, no review run           |                                                                                      |
+| booking | P4    | 3    | 0.44       | 143 s      | passed                           | chat fix: file database instead of `:memory:` (finding 3)                            |
+| booking | P5    | 1    | 0.49       | 235 s      | passed, 58 tests                 | none                                                                                 |
+| booking | P6    | 1    | 0.05       | 71 s       | passed, deploy check 200         | none                                                                                 |
+| booking | P7    | 7    | 1.06       | 5.3 min    | 1 ticket closed, no override     | fix loop started by hand (finding 21)                                                |
+| auction | P1    | 3    | 0.11       | 59 s       | passed                           | 2 answer rounds                                                                      |
+| auction | P2    | 4    | 0.93       | 5.0 min    | passed                           | refinement: broker and database server nodes removed (finding 8)                     |
+| auction | P3    | 0    |            |            | no gate, no review run           |                                                                                      |
+| auction | P4    | 14   | 2.77       | 20.2 min   | passed, but core features broken | chat fixes for live server, file database, ids and enums (findings 1 to 4, 15 to 17) |
+| auction | P5    | 7    | 0.87       | 7.8 min    | passed, 45 tests                 | 1 failed run, rerun                                                                  |
+| auction | P6    | 1    | 0.06       | 23 s       | passed, 2 services, 200          | none                                                                                 |
+| auction | P7    | 13   | 2.25       | 9.0 min    | 3 tickets closed, 1 P4 override  | P4 override (#18), deploy check by hand (#19); 2 hand edits for the drift tickets    |
+
+Booking's 20 runs include 2 P5 runs of the injected bug ([injected-bug.md](injected-bug.md)),
+$0.11, not in the table. Auction's P7 row is TCK-001 (7 runs, $1.65) and the two drift tickets
+TCK-002 and TCK-003 (6 runs, $0.60, [change-propagation.md](change-propagation.md)). P3 ran on the
+to do project only; the showcase script keeps the automatic review off.
+
+## Where it breaks as the project grows
+
+- **Deployment nodes, not classes, drive the cost.** Booking has almost three times the classes of to do
+  and cost 1.5 times as much. Auction has 23 classes like booking's 14, but 4 nodes instead of 2,
+  and cost 2.7 times booking: 14 P4 runs instead of 2 or 3, $2.77 in P4 alone. Relations across
+  nodes became constructor injection (finding 2) and the design schema cannot draw node to node
+  links (finding 7, #12, #14).
+- **Green gates stop meaning working code.** On to do, P5 found one wrong status code.
+  On booking and auction, per class workers broke contracts between classes (ids, enum values,
+  store semantics) that typecheck and drift accept (findings 1, 4). P5 tests from the acceptance
+  criteria are what caught them; without P5 the larger project would ship broken.
+- **Design coverage drifts from the criteria.** The P2 gate checks that each requirement links to
+  some element, not that every criterion has a method or sequence step. Gaps appeared on booking
+  (finding 9, REQ-008 in finding 23) and on to do's overdue rule in P7; they grow with the number
+  of criteria and only a human review or a P3 run finds them.
+- **Diagrams get hard to read.** The auction class diagram has 23 classes in one view (finding 14);
+  to do and booking fit on a screen.
+- **Change tickets scale well.** A change costs about the same on every size: $1.14 on to do,
+  $1.06 on booking, $1.65 on auction, 5 to 7 minutes each, because triage limits each phase to the
+  affected IDs. The manual help in P7 came from product gaps (#18, #19, finding 21), all fixed or
+  worked around, not from project size.
+
+## Booking and auction through P1 to P4
+
+Run on 2026-11-21 on branch `showcases/booking-auction` (from `main` at 5c81f06).
 Artefacts: `showcases/booking/`, `showcases/auction/`.
 
-## How it was run
+### How it was run
 
 The dev server ran in a separate worktree with `AISE_PROJECTS_DIR=showcases`. Each phase was driven
 through the project page's form actions (`send`, `approve`) over HTTP with the same fields the page
@@ -12,7 +81,7 @@ not looked at in a browser in this session, so UI friction is only covered where
 data. After P4 each generated app was copied to a temp folder, started and called with curl and a
 ws client (smoke test, not part of the app's own flow).
 
-## Numbers
+### Numbers
 
 | Project | Phase | Runs                      | Cost (USD) | Agent time | Gate at approval | Notes                                           |
 | ------- | ----- | ------------------------- | ---------- | ---------- | ---------------- | ----------------------------------------------- |
@@ -34,7 +103,7 @@ bookings cannot be deleted, data survives a restart). Auction passes duplicate n
 late bid extension (end moved by 2 min), Frankfurter conversion, unsold close, bid to browser over two
 live nodes in about 50 ms, and bids survive a restart.
 
-## Findings
+### Findings
 
 Severity: high means a core requirement was broken while the gate was green; medium means wrong or
 misleading artefacts or a later phase will break; low means friction.
@@ -59,7 +128,7 @@ misleading artefacts or a later phase will break; low means friction.
 | 16  | A swallowed error is cached as a fresh result. `FrankfurterClient.fetchRates` returns `{}` on failure and `ExchangeRateService` caches it for an hour, so one short outage disables conversion for that base currency for the whole TTL.                                                                     | P4             | Found in PR review: `showcases/auction/src/exchange-rates/FrankfurterClient.ts:37`, `ExchangeRateService.ts` (`getRates`). Two stacked caches.                                                                                                                                                                                                                                                                                                               | Worker rule: never swallow errors in a client class; never cache a failed or empty result.                                                                                                                                                                                                                                                  | medium   |
 | 17  | Lifecycle methods generated private and never called. `AuctionCloser.start` and `stop` are private; `src/app/main.ts` runs its own `setInterval`, so the class's timer is dead code. Booking's admin tokens never expire and a missing `ADMIN_PASSWORD` fails silently.                                      | P4             | Found in PR review: `showcases/auction/src/auction-api/AuctionCloser.ts:21,30`, `showcases/booking/src/domain-services/AdminAuthService.ts`.                                                                                                                                                                                                                                                                                                                 | Wiring agent uses the class's own start and stop; entry point logs missing required env vars at boot.                                                                                                                                                                                                                                       | low      |
 
-## What scaled well
+### What scaled well
 
 - P1 asked good questions on both (identity, time zone, slot rules, currency, failure of the
   external API, scale targets) and converged in 3 or 4 rounds with no open questions.
@@ -67,7 +136,7 @@ misleading artefacts or a later phase will break; low means friction.
   and left typecheck and drift clean.
 - Total spend for both projects through P4 was under 2 USD, and no run came close to its turn limit.
 
-## Issues
+### Issues
 
 | Issue                                                                           | Findings             |
 | ------------------------------------------------------------------------------- | -------------------- |
