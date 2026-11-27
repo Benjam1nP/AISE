@@ -1,0 +1,83 @@
+{
+  "id": "20261127-133931-P2",
+  "phase": "P2",
+  "agent": "design",
+  "status": "done",
+  "startedAt": "2026-11-27T13:39:31.516Z",
+  "finishedAt": "2026-11-27T13:40:43.866Z",
+  "usage": {
+    "input": 757,
+    "output": 15007,
+    "cacheRead": 98812,
+    "cacheWrite": 30608
+  },
+  "costUsd": 0.23461269999999998,
+  "summary": "At the P2 design gate, the agent added `BookingRuleChecker` (DSN-024) under Domain Services, rewired `BookingService` and the two sequence diagrams to use it, and left the code phases untouched. The first `report_coverage` call failed and the retry succeeded, so coverage was reported. Check that REQ-008 criteria 1 to 4 are still uncovered, as the agent says they already were before this ticket, and decide whether that gap is acceptable at this gate. Also confirm that `excludeId` in `check` is the right place for the self-exclusion from the ticket, since the diagrams cannot show it.",
+  "prevPhase": {
+    "status": "approved",
+    "approvedAt": "2026-11-20T23:39:18.622Z",
+    "reqHashes": {
+      "REQ-001": "113bf2db35926d443685dd6ea6d1920f493bd2a3d45edac281f1e75ed18d66af",
+      "REQ-002": "12092d3f3326a4160973228725ebffba938223554b4e469f240cb3c1819bb939",
+      "REQ-003": "7a545a31c821f1c4553da55d1baf0b5bdef6776c52c12c14e7c142c0fb25adca",
+      "REQ-004": "29b56b844415476a04fa8bf9396de7e9184d8992541cba6af261158e5cee509e",
+      "REQ-005": "f002920b3ecaddb8ce26bf20b5d915e889da14281c1bf595fedc90e7adcaf448",
+      "REQ-006": "e95b61344b95071c9364c3661a943f77fa34e6b73558cd1dc60488f3817a8591",
+      "REQ-007": "e567e4008b5b63bbf8a277733a0ebeb4b6c047b21753c577d40b01705a88964d",
+      "REQ-008": "e8e9eed58c5b43700ddedcb6b674f1be068d6e6f28226056922c1f8e81014c0b",
+      "REQ-009": "9565041d74b8189506d756bc8243cf7cd9f31b500dcba64d87bcfa2932dbf99a",
+      "REQ-010": "e58f7c64b87308e3927d18ade2e59ad30c67dad31eed941304e0a78cf9a49402",
+      "REQ-011": "b7316acbcf9ca3eadab7a1b2c359cb0d7ee0d659c53e92cd1aab87837f054772",
+      "REQ-012": "8a02bb9f1b5a35b7dab8ac154a9138bdea8f0ed6503c7b3246cc7a9db8562d7b"
+    }
+  },
+  "prevArtefactHash": "27db4b03215a4a2f64b1ae9fa8eea81d1fb121806414df9b68cb08fde75bc248",
+  "postArtefactHash": "58994488118865858b96cd1a79e972b1c74fad2664af67659e2c730e9f562230",
+  "reqHashes": {
+    "REQ-001": "113bf2db35926d443685dd6ea6d1920f493bd2a3d45edac281f1e75ed18d66af",
+    "REQ-002": "12092d3f3326a4160973228725ebffba938223554b4e469f240cb3c1819bb939",
+    "REQ-003": "7a545a31c821f1c4553da55d1baf0b5bdef6776c52c12c14e7c142c0fb25adca",
+    "REQ-004": "29b56b844415476a04fa8bf9396de7e9184d8992541cba6af261158e5cee509e",
+    "REQ-005": "f002920b3ecaddb8ce26bf20b5d915e889da14281c1bf595fedc90e7adcaf448",
+    "REQ-006": "e95b61344b95071c9364c3661a943f77fa34e6b73558cd1dc60488f3817a8591",
+    "REQ-007": "e567e4008b5b63bbf8a277733a0ebeb4b6c047b21753c577d40b01705a88964d",
+    "REQ-008": "e8e9eed58c5b43700ddedcb6b674f1be068d6e6f28226056922c1f8e81014c0b",
+    "REQ-009": "9565041d74b8189506d756bc8243cf7cd9f31b500dcba64d87bcfa2932dbf99a",
+    "REQ-010": "e58f7c64b87308e3927d18ade2e59ad30c67dad31eed941304e0a78cf9a49402",
+    "REQ-011": "b7316acbcf9ca3eadab7a1b2c359cb0d7ee0d659c53e92cd1aab87837f054772",
+    "REQ-012": "8a02bb9f1b5a35b7dab8ac154a9138bdea8f0ed6503c7b3246cc7a9db8562d7b"
+  },
+  "ticketId": "TCK-001",
+  "entry": true,
+  "prevTicket": {
+    "status": "triaged",
+    "plan": {
+      "entry": "P2",
+      "affectedIds": [
+        "DSN-007",
+        "DSN-009",
+        "DSN-012",
+        "DSN-018",
+        "SEQ-002",
+        "SEQ-004",
+        "UC-002",
+        "UC-004"
+      ],
+      "files": [
+        "src/domain-services/BookingService.ts",
+        "src/domain-services/TimeSlotPolicy.ts",
+        "src/app/app.ts",
+        "test/UC-002.test.ts",
+        "test/UC-004.test.ts"
+      ],
+      "steps": [
+        "P2: Add a new domain class (e.g. BookingRuleChecker) in Domain Services DSN-018 with one method that takes roomId, start, end, now and an optional excludeId, runs the TimeSlotPolicy validation and rejects overlaps with non-cancelled bookings of the same room via BookingRepository.findOverlapping; trace it to REQ-003, REQ-007, REQ-002 and REQ-010.",
+        "P2: Give the new class dependencies on TimeSlotPolicy DSN-009 and BookingRepository DSN-012; replace BookingService DSN-007's direct 'validates with' dependency on DSN-009 with a dependency on the new class, keeping its BookingRepository and RoomRepository dependencies.",
+        "P2: Update SEQ-002 so BookingService.create calls the new class's check in place of the direct validate call, followed by RoomRepository.findById and BookingRepository.saveIfFree (atomic insert unchanged).",
+        "P2: Update SEQ-004 so BookingService.changeTime calls the new class's check (with the booking's own ID excluded) in place of the direct validate and findOverlapping calls, followed by BookingRepository.update.",
+        "P4: Create the new class file under src/domain-services, move the slot and overlap check out of BookingService.create and changeTime into it, inject it into BookingService and wire it in src/app/app.ts; keep error messages and order of checks so behaviour stays the same.",
+        "P5: Run the existing UC-002 and UC-004 tests unchanged (REQ-002, REQ-003, REQ-007, REQ-010) to confirm behaviour is unchanged; add a unit test for the new class if wanted."
+      ]
+    }
+  }
+}

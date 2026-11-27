@@ -1,0 +1,30 @@
+{
+  "findings": [],
+  "testFixes": [
+    {
+      "runId": "20261127-133327-P5",
+      "test": "REQ-004 AC1: A user can cancel a not-yet-started booking created with their email",
+      "file": "test/UC-003.test.ts",
+      "reason": "Tests assumed the seeded booking keeps its chosen id and that DELETE reads email from the JSON body. The repository assigns the id, and the route reads email from the query string. Fixed in all tests of the file (AC1-AC4, SEQ-003)."
+    },
+    {
+      "runId": "20261127-133327-P5",
+      "test": "REQ-010 AC1: A user can change the time of their own not-yet-started booking to a free valid slot in the same room",
+      "file": "test/UC-004.test.ts",
+      "reason": "Tests booked a non-existent room on dates more than 60 days ahead and used hard-coded ids. They now create the room through RoomService, use weekday slots inside the 60-day window and the stored ids. Fixed in AC1-AC5 and SEQ-004."
+    },
+    {
+      "runId": "20261127-133327-P5",
+      "test": "REQ-011 AC1: An admin can cancel a not-yet-started booking created by any user",
+      "file": "test/UC-007.test.ts",
+      "reason": "Tests saved plain objects instead of Booking instances (startTime, endTime), expected a cancelled booking to be deleted although the Booking model has a cancelled flag, and used a hard-coded id. Fixed in AC1-AC4 and SEQ-007."
+    },
+    {
+      "runId": "20261127-133327-P5",
+      "test": "SEQ-010 scenario: View room schedule",
+      "file": "test/UC-010.test.ts",
+      "reason": "The GET route reads date from the query string, not a body, and the stored booking id is assigned by the repository."
+    }
+  ],
+  "fixResults": []
+}

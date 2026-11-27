@@ -1,0 +1,20 @@
+{
+  "id": "20261127-133904-P7",
+  "phase": "P7",
+  "agent": "maintenance",
+  "status": "done",
+  "startedAt": "2026-11-27T13:39:04.642Z",
+  "finishedAt": "2026-11-27T13:39:31.440Z",
+  "usage": {
+    "input": 994,
+    "output": 2525,
+    "cacheRead": 106390,
+    "cacheWrite": 27545
+  },
+  "costUsd": 0.20558149999999997,
+  "summary": "The agent saved a P7 plan for TCK-001 that starts at design (P2) and leaves requirements unchanged; it proposes a new BookingRuleChecker class that combines the time slot and overlap checks, rewires BookingService and two sequence diagrams to use it, and expects existing tests to pass unchanged. Before approving, check that the code step keeps the current order of checks (time slot, then room active, then overlap) so error messages don't change, and decide whether the separate race condition in rescheduling, which the plan explicitly leaves unfixed, should get its own ticket. All tool calls succeeded, so there are no failures to chase.",
+  "ticketId": "TCK-001",
+  "prevTicket": {
+    "status": "open"
+  }
+}

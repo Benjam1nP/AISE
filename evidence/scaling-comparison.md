@@ -82,7 +82,7 @@ misleading artefacts or a later phase will break; low means friction.
 
 ## Auction through P5 to P7
 
-Run on 2026-11-27 for issue #5 with `npx tsx scripts/run-auction.ts`, which drives
+Run on 2026-11-27 for issue #5 with `npx tsx scripts/run-auction.ts` (now `scripts/run-showcase.ts auction`), which drives
 `showcases/auction` in place through the orchestrator calls the UI makes. Docker 29.8.
 
 | Step                       | Run                | Cost (USD) | Agent time | Result                                                            |
@@ -114,6 +114,38 @@ rejected with 400.
 
 Earlier P4 and P5 work on this showcase (findings 1 to 17) brought the project to $4.68 before this
 run. Nothing hit a turn or cost limit; the deploy agent needed one deploy check.
+
+## Medium: booking through P5 to P7
+
+Run on 2026-11-27 for issue #4 with `npx tsx scripts/run-showcase.ts booking`, which drives
+`showcases/booking` in place through the orchestrator calls the UI makes. P1 to P4 were from the
+2026-11-21 run above; the P4 code was approved as it was (gate 5/5, no regeneration needed).
+
+| Step                         | Run                | Cost (USD) | Agent time | Result                                                                    |
+| ---------------------------- | ------------------ | ---------- | ---------- | ------------------------------------------------------------------------- |
+| P4 approval                  | none (checks only) | 0          |            | P4 gate 5/5                                                               |
+| P5, started by P4 approval   | 20261127-133327-P5 | 0.49       | 235 s      | 11 test files, 58 tests pass, 4 test fixes recorded, no code bug          |
+| P6, started by P5 approval   | 20261127-133733-P6 | 0.05       | 71 s       | 1 service, deploy check 200                                               |
+| P7 triage, TCK-001           | 20261127-133904-P7 | 0.21       | 27 s       | design change: plan entry P2, 8 affected IDs                              |
+| P2 entry                     | 20261127-133931-P2 | 0.23       | 72 s       | new `BookingRuleChecker` (DSN-024), SEQ-002 and SEQ-004 call it           |
+| P4 update                    | 20261127-134044-P4 | 0.14       | 50 s       | checker class, `BookingService` uses it; gate passed, no override (#18)   |
+| P5 update                    | 20261127-134134-P5 | 0.28       | 99 s       | 3 test files updated; SEQ-002 call order test fails, recorded as code bug |
+| P5 fix loop                  | 20261127-134400-P5 | 0.10       | 42 s       | `create` calls the check before the room lookup, 58 tests pass            |
+| P6 update, stale on the code | 20261127-134442-P6 | 0.01       | 12 s       | no file changed, deploy check rerun, 200 (#19)                            |
+| P7 change report             | 20261127-134508-P7 | 0.10       | 17 s       | TCK-001 done                                                              |
+| total                        | 9 runs             | 1.60       | 10.4 min   | project total over all runs: 2.52                                         |
+
+Final checks: P4 5/5, P5 4/4 (58 tests), P6 3/3, deploy check `/health` 200. P1, P2, P4, P5 and P6
+approved without an override; P3 has no gate and no review ran (the script keeps the automatic
+review off).
+
+### What failed or needed manual help
+
+| #   | Problem                                                                                                                                                                                                                   | Evidence                                              | Follow up                                             | Severity |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | -------- |
+| 21  | An Update run of P5 that ends with an open code bug finding does not start the fix loop; only a generation run does. The walk stopped at the P5 gate until the fix loop was started by hand (the UI's Fix automatically). | Run 20261127-134134-P5, finding 20261127-134134-P5-1. | the script now starts the loop once; product gap open | low      |
+| 22  | The design change moved the overlap check before the room lookup, so a request that overlaps and targets a deactivated room now gets the overlap error. The change report names it; no requirement says which error wins. | TCK-001 report in `.aise/tickets.json`.               | left open, visible in the report                      | low      |
+| 23  | REQ-008 (name and email identity) criteria 1 to 4 have no design coverage in the stored review; the gap predates the ticket.                                                                                              | TCK-001 report, "Still open".                         | left open                                             | low      |
 
 ## Small: todo through P1 to P7
 

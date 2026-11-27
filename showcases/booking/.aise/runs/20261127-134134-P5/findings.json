@@ -1,0 +1,34 @@
+{
+  "findings": [
+    {
+      "id": "20261127-134134-P5-1",
+      "runId": "20261127-134134-P5",
+      "test": "SEQ-002 scenario: Book a room",
+      "file": "test/UC-002.test.ts",
+      "reqId": "REQ-002",
+      "explanation": "SEQ-002 orders messages: BookingService.create calls BookingRuleChecker.check (validate, findOverlapping), then RoomRepository.findById, then BookingRepository.saveIfFree. Observed call order is RoomRepository.findById first, before check.",
+      "proposedFix": "In BookingService.create, call bookingRuleChecker.check(roomId, start, end, now, null) first, then load the room with roomRepository.findById and reject if missing or inactive, then call saveIfFree."
+    }
+  ],
+  "testFixes": [
+    {
+      "runId": "20261127-134134-P5",
+      "test": "SEQ-002 scenario: Book a room",
+      "file": "test/UC-002.test.ts",
+      "reason": "requirement changed: SEQ-002 now routes through BookingRuleChecker (check, validate, findOverlapping), then room findById, then saveIfFree; setup builds BookingService with a BookingRuleChecker and the test asserts the message order."
+    },
+    {
+      "runId": "20261127-134134-P5",
+      "test": "SEQ-004 scenario: Change own booking time",
+      "file": "test/UC-004.test.ts",
+      "reason": "requirement changed: SEQ-004 now follows changeBooking, changeTime, findById, check, validate, findOverlapping, update; the test spies on these calls and asserts their order."
+    },
+    {
+      "runId": "20261127-134134-P5",
+      "test": "SEQ-009 scenario: View my bookings",
+      "file": "test/UC-009.test.ts",
+      "reason": "BookingService constructor takes a BookingRuleChecker as first argument per the design (DSN-007/DSN-024); test setup fixed to compile."
+    }
+  ],
+  "fixResults": []
+}

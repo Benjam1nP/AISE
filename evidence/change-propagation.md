@@ -38,7 +38,7 @@ Repaired in the code direction: the code agent renamed it back, the design staye
 Updated: `src/auction-api/Item.ts` only. Tests 57 passed.
 
 All gates (P4, P5, P6) passed after the last ticket; the deploy check answered 200 on both services.
-Reproduce: `npx tsx scripts/run-auction.ts drift` (about $0.66 of API credit for both tickets).
+Reproduce: `npx tsx scripts/run-showcase.ts auction drift` (about $0.66 of API credit for both tickets).
 
 ## How the artefacts stay aligned
 

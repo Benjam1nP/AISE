@@ -1,0 +1,59 @@
+{
+  "id": "20261127-133327-P5",
+  "phase": "P5",
+  "agent": "test",
+  "status": "done",
+  "startedAt": "2026-11-27T13:33:27.024Z",
+  "finishedAt": "2026-11-27T13:37:21.779Z",
+  "usage": {
+    "input": 972,
+    "output": 71547,
+    "cacheRead": 698444,
+    "cacheWrite": 181819
+  },
+  "costUsd": 0.486670665,
+  "summary": "The agent reports that all 18 failures were test bugs, not code bugs, and it rewrote four test files so typecheck is clean and the suite passes (58 passed, with the manual todo tests skipped). Its main decision for you is about the DELETE and GET routes: it made the tests send parameters in the query string, which is what the app reads, rather than the JSON body its brief specified. If you want the routes to read the body instead, that is a code change you need to approve, and it has not been made.",
+  "prevPhase": {
+    "status": "not_started"
+  },
+  "prevArtefactHash": "d57ebf39cb412f2b57e27347a8df1d257c36b7494116b3957e24fade461ae31c",
+  "postArtefactHash": "ef3c64cabfba6bb3c254fb5d3ca98ff2eda49ee57e87ee2e8feb495fb7090c62",
+  "reqHashes": {
+    "REQ-001": "113bf2db35926d443685dd6ea6d1920f493bd2a3d45edac281f1e75ed18d66af",
+    "REQ-002": "12092d3f3326a4160973228725ebffba938223554b4e469f240cb3c1819bb939",
+    "REQ-003": "7a545a31c821f1c4553da55d1baf0b5bdef6776c52c12c14e7c142c0fb25adca",
+    "REQ-004": "29b56b844415476a04fa8bf9396de7e9184d8992541cba6af261158e5cee509e",
+    "REQ-005": "f002920b3ecaddb8ce26bf20b5d915e889da14281c1bf595fedc90e7adcaf448",
+    "REQ-006": "e95b61344b95071c9364c3661a943f77fa34e6b73558cd1dc60488f3817a8591",
+    "REQ-007": "e567e4008b5b63bbf8a277733a0ebeb4b6c047b21753c577d40b01705a88964d",
+    "REQ-008": "e8e9eed58c5b43700ddedcb6b674f1be068d6e6f28226056922c1f8e81014c0b",
+    "REQ-009": "9565041d74b8189506d756bc8243cf7cd9f31b500dcba64d87bcfa2932dbf99a",
+    "REQ-010": "e58f7c64b87308e3927d18ade2e59ad30c67dad31eed941304e0a78cf9a49402",
+    "REQ-011": "b7316acbcf9ca3eadab7a1b2c359cb0d7ee0d659c53e92cd1aab87837f054772",
+    "REQ-012": "8a02bb9f1b5a35b7dab8ac154a9138bdea8f0ed6503c7b3246cc7a9db8562d7b"
+  },
+  "useCaseHashes": {
+    "UC-001": "e2ced24d1ad18abc3073fa09b90341e6f6c8644353906918ffa50bb3e2f4bb06",
+    "UC-002": "45da5a1e4ae668ba437f8bdefc1d175dd5a60c32c78fc64b22cbea81358b2897",
+    "UC-003": "05eddeab5fea8405e1a69ff74ddd202ed0ddb7666819760041309c3de5df24d5",
+    "UC-004": "d0afb77d1ab52d2ae5420959e6e4ae8806bde8d1392d5d681d46ccd61613d63d",
+    "UC-005": "e88e81895144178e52fafafa2315517ac05654006d2ba4652f7821e979ad093c",
+    "UC-006": "110e00a7aead1b1dfdc2b8bd980ad7cd0d02ee6becabece60f7c2550ee1e2a1e",
+    "UC-007": "b6b7f041b3c4612775ab6b2a999c891a1f00d8bdc261fad41a89133fcb7fb8e7",
+    "UC-008": "2b778e5a43a27abf5e750f5e5917de2a495ab9bddbd636d68812009058d2b724",
+    "UC-009": "ca72e61073f466be5dbeff40100b8eb5653cba5cdb8eb0543efbadaa54313bc5",
+    "UC-010": "4507baa5cc9c1f8c24cd5f895e3a2bb4f2eb180251b99d625fffc3ed05eac8f8",
+    "UC-011": "d478ec9843fbeb1867d25123718eb10f44b9a11c082fb4e2a1158a8b132b462b",
+    "SEQ-001": "31d5c960319c8cd07ff69b1236b9651ff98d6a886a02adf08f511ceea1d94099",
+    "SEQ-002": "d65913068b3ad196697059988052e49d0be5627fa35af14305a01de145b51d11",
+    "SEQ-003": "4697cf68fbf491662f75c91e959e5218e586db93305531b64c6f2db9f28380ce",
+    "SEQ-004": "f892013192deffed878c33818cafcaeb70219e224bc1afb17564751a70e8700c",
+    "SEQ-005": "07ea22f81bafb726b63ec1ae119ae24ba44394c209328eb96bc4806d9a042750",
+    "SEQ-006": "a343b5bcf6aec60bcbf4b037f98ed8af6ee07cbc558e9d5e4a359fc04b618226",
+    "SEQ-007": "efa5b1cfbe08c38b63f0b25fcb6ab1052f5f787e3738c527eaae6b6dba1c16f4",
+    "SEQ-008": "c9138918462706d3fb51b3da247a87333e1afdf9bb2ca8e6e743b5c6d8d80b51",
+    "SEQ-009": "121a7f7c6f6f67c6e50f79de6a66fca6908d235ca8448f468c55ab89ca3c9333",
+    "SEQ-010": "bdabbb3edef5a3b16c77ed9a24bfbef5e05103e788c53caca6fbcf4f98dd9afd",
+    "SEQ-011": "586ca43540e7988fa9295df868c1731ebfec79ef726cd3b71b7b5739f6deb8c1"
+  }
+}

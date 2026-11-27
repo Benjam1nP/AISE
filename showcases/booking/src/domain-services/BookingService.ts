@@ -1,6 +1,6 @@
 import { Booking } from '../domain-model/Booking.js';
 import { Room } from '../domain-model/Room.js';
-import { TimeSlotPolicy } from './TimeSlotPolicy.js';
+import { BookingRuleChecker } from './BookingRuleChecker.js';
 import { RoomRepository } from '../persistence/RoomRepository.js';
 import { BookingRepository } from '../persistence/BookingRepository.js';
 
@@ -43,28 +43,23 @@ function zurichMidnight(year: number, month0: number, day: number): Date {
 }
 
 /**
- * Booking rules: creation, listing, time change, cancellation; enforces slot rules, ownership and atomic overlap check. Listings exclude cancelled bookings; a day is a calendar day in Europe/Zurich.
+ * Booking rules: creation, listing, time change, cancellation; delegates slot and overlap checks to BookingRuleChecker, enforces ownership and the atomic insert. Listings exclude cancelled bookings; a day is a calendar day in Europe/Zurich.
  *
  * @trace DSN-007 REQ-002 REQ-003 REQ-004 REQ-007 REQ-010 REQ-011 REQ-012
  */
 export class BookingService {
-  constructor(private readonly timeSlotPolicy: TimeSlotPolicy, private readonly roomRepository: RoomRepository, private readonly bookingRepository: BookingRepository) {}
+  constructor(private readonly bookingRuleChecker: BookingRuleChecker, private readonly roomRepository: RoomRepository, private readonly bookingRepository: BookingRepository) {}
 
   /**
-   * Creates a booking for an active room after validating slot rules and checking for overlaps atomically.
+   * Creates a booking for an active room after the rule check, inserting atomically.
    */
   async create(roomId: string, start: Date, end: Date, name: string, email: string): Promise<Booking> {
     this.requireText(name, 'Name');
     this.requireText(email, 'Email');
-    this.timeSlotPolicy.validate(start, end, new Date());
+    await this.bookingRuleChecker.check(roomId, start, end, new Date(), null);
     const room = await this.getRoom(roomId);
     if (!room.active) {
       throw new Error(`Room ${roomId} is deactivated`);
-    }
-    const overlapping = await this.bookingRepository.findOverlapping(roomId, start, end, null);
-    const conflict = overlapping.some((b) => !b.cancelled);
-    if (conflict) {
-      throw new Error(`Booking overlaps an existing booking in room ${roomId}`);
     }
     const booking = new Booking('', roomId, start, end, name.trim(), this.normalizeEmail(email), false);
     return this.bookingRepository.saveIfFree(booking);
@@ -97,19 +92,14 @@ export class BookingService {
   }
 
   /**
-   * Changes start and end of an own, not yet started booking, applying slot and overlap rules.
+   * Changes start and end of an own, not yet started booking, applying the rule check.
    */
   async changeTime(id: string, email: string, start: Date, end: Date): Promise<Booking> {
     const booking = await this.getBooking(id);
     this.assertOwner(booking, email);
     const now = new Date();
     this.assertActive(booking, now);
-    this.timeSlotPolicy.validate(start, end, now);
-    const overlapping = await this.bookingRepository.findOverlapping(booking.roomId, start, end, id);
-    const conflict = overlapping.some((b) => !b.cancelled && b.id !== id);
-    if (conflict) {
-      throw new Error(`Booking overlaps an existing booking in room ${booking.roomId}`);
-    }
+    await this.bookingRuleChecker.check(booking.roomId, start, end, now, id);
     booking.startTime = start;
     booking.endTime = end;
     return this.bookingRepository.update(booking);

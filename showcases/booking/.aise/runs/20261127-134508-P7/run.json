@@ -1,0 +1,49 @@
+{
+  "id": "20261127-134508-P7",
+  "phase": "P7",
+  "agent": "maintenance",
+  "status": "done",
+  "startedAt": "2026-11-27T13:45:08.192Z",
+  "finishedAt": "2026-11-27T13:45:25.507Z",
+  "usage": {
+    "input": 604,
+    "output": 1945,
+    "cacheRead": 16329,
+    "cacheWrite": 11604
+  },
+  "costUsd": 0.0965451,
+  "summary": "The agent finished P7 by writing the change report for TCK-001 and closing the ticket, with a passing run of 58 tests. The developer should check the behaviour change it reports: a request that both overlaps another booking and targets a deactivated room now gets the overlap error instead of the deactivated-room error. The open items to decide on are REQ-008 criteria 1 to 4, which have no tests or design coverage (a gap the design phase says predates this ticket), the cut-off `excludeId` design question, and the placeholder `ADMIN_PASSWORD` that must be changed before real use.",
+  "ticketId": "TCK-001",
+  "report": true,
+  "prevTicket": {
+    "status": "in_progress",
+    "plan": {
+      "entry": "P2",
+      "affectedIds": [
+        "DSN-007",
+        "DSN-009",
+        "DSN-012",
+        "DSN-018",
+        "SEQ-002",
+        "SEQ-004",
+        "UC-002",
+        "UC-004"
+      ],
+      "files": [
+        "src/domain-services/BookingService.ts",
+        "src/domain-services/TimeSlotPolicy.ts",
+        "src/app/app.ts",
+        "test/UC-002.test.ts",
+        "test/UC-004.test.ts"
+      ],
+      "steps": [
+        "P2: Add a new domain class (e.g. BookingRuleChecker) in Domain Services DSN-018 with one method that takes roomId, start, end, now and an optional excludeId, runs the TimeSlotPolicy validation and rejects overlaps with non-cancelled bookings of the same room via BookingRepository.findOverlapping; trace it to REQ-003, REQ-007, REQ-002 and REQ-010.",
+        "P2: Give the new class dependencies on TimeSlotPolicy DSN-009 and BookingRepository DSN-012; replace BookingService DSN-007's direct 'validates with' dependency on DSN-009 with a dependency on the new class, keeping its BookingRepository and RoomRepository dependencies.",
+        "P2: Update SEQ-002 so BookingService.create calls the new class's check in place of the direct validate call, followed by RoomRepository.findById and BookingRepository.saveIfFree (atomic insert unchanged).",
+        "P2: Update SEQ-004 so BookingService.changeTime calls the new class's check (with the booking's own ID excluded) in place of the direct validate and findOverlapping calls, followed by BookingRepository.update.",
+        "P4: Create the new class file under src/domain-services, move the slot and overlap check out of BookingService.create and changeTime into it, inject it into BookingService and wire it in src/app/app.ts; keep error messages and order of checks so behaviour stays the same.",
+        "P5: Run the existing UC-002 and UC-004 tests unchanged (REQ-002, REQ-003, REQ-007, REQ-010) to confirm behaviour is unchanged; add a unit test for the new class if wanted."
+      ]
+    }
+  }
+}

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Booking showcase taken through P7: P4 approved as generated, P5 generated 58 passing tests, P6 deployed one compose service with a passing deploy check, and design change ticket TCK-001 (one `BookingRuleChecker` for booking and rescheduling) walked P2, P4, P5 (with one fix loop round) and P6 and closed with its change report; no override. `scripts/run-showcase.ts <auction|booking>` replaces `scripts/run-auction.ts` and starts the fix loop once when the P5 gate fails on open code bug findings (#4).
 - C2 evidence in `evidence/change-propagation.md`: the requirement tickets of to do and auction, and two auction drift tickets from hand edits in `src/`. TCK-002 adopts a new `Item.timeLeftMs` into the design, and TCK-003 renames a parameter of `Item.isOpen` back to the name the design uses. The file lists what each ticket updated, how staleness, drift and tickets keep the artefacts aligned, and where they do not. `scripts/run-auction.ts drift` reproduces both tickets (about $0.66). The booking design change waits for #4 (#6).
 
 - To do showcase taken end to end in the UI: P1 to P6 (8 requirements after 7 clarifying questions, a P3 review round, 28 tests, deploy check passing) and ticket TCK-001 (tasks get an optional due date and an overdue mark), walked through P1 to P6 again and closed with its change report, 48 tests passing. All seven phases approved without override, $1.73 in total. Numbers and what needed help are in `evidence/scaling-comparison.md` (#3).

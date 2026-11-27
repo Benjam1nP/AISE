@@ -6,6 +6,7 @@ import { BookingRepository } from '../persistence/BookingRepository.js';
 import { TimeSlotPolicy } from '../domain-services/TimeSlotPolicy.js';
 import { AdminAuthService } from '../domain-services/AdminAuthService.js';
 import { AvailabilityService } from '../domain-services/AvailabilityService.js';
+import { BookingRuleChecker } from '../domain-services/BookingRuleChecker.js';
 import { BookingService } from '../domain-services/BookingService.js';
 import { RoomService } from '../domain-services/RoomService.js';
 import { AdminGuard } from '../api-layer/AdminGuard.js';
@@ -27,7 +28,8 @@ export function createApp(db: DatabaseSync = new DatabaseSync(':memory:')): Expr
   const timeSlotPolicy = new TimeSlotPolicy();
   const adminAuthService = new AdminAuthService();
   const availabilityService = new AvailabilityService(roomRepository, bookingRepository);
-  const bookingService = new BookingService(timeSlotPolicy, roomRepository, bookingRepository);
+  const bookingRuleChecker = new BookingRuleChecker(timeSlotPolicy, bookingRepository);
+  const bookingService = new BookingService(bookingRuleChecker, roomRepository, bookingRepository);
   const roomService = new RoomService(roomRepository, bookingRepository);
   const adminGuard = new AdminGuard(adminAuthService);
   const roomController = new RoomController(availabilityService, roomService, adminGuard);

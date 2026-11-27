@@ -1,8 +1,8 @@
-// Drives the committed auction showcase (showcases/auction) through P4 and P5 approval, P6 and one
-// P7 change ticket, in place, through the same orchestrator calls the UI makes. Costs API credit and
-// needs Docker. Not run in CI. Steps run in order; pass one to run only that step. The drift step
-// (two hand edits in src/, one drift ticket per repair direction) runs only when named.
-// Run: npx tsx scripts/run-auction.ts [approve|p6|p7|drift|check] [--override P4] [--anyway]
+// Drives a committed showcase (showcases/<name>) from P4 approval through P5, P6 and one P7 change
+// ticket, in place, through the same orchestrator calls the UI makes. Costs API credit and needs
+// Docker. Not run in CI. Steps run in order; pass one to run only that step. The drift step (auction
+// only: two hand edits in src/, one drift ticket per repair direction) runs only when named.
+// Run: npx tsx scripts/run-showcase.ts <auction|booking> [approve|p6|p7|drift|check] [--override P4] [--anyway]
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { DEPLOY_FILES } from '../src/lib/server/core/deploy-state';
@@ -13,8 +13,30 @@ import { Orchestrator } from '../src/lib/server/orchestrator/orchestrator';
 if (existsSync('.env')) process.loadEnvFile('.env');
 const STEPS = ['approve', 'p6', 'p7', 'drift', 'check'] as const;
 const USAGE =
-	'usage: npx tsx scripts/run-auction.ts [approve|p6|p7|drift|check] [--override P4] [--anyway]';
-const args = process.argv.slice(2);
+	'usage: npx tsx scripts/run-showcase.ts <auction|booking> [approve|p6|p7|drift|check] [--override P4] [--anyway]';
+
+/** The P7 change ticket each showcase takes; the showcase index (showcases/README.md) names its kind. */
+const TICKETS = {
+	auction: {
+		kind: 'requirement',
+		title: 'Sellers can set a reserve price',
+		description:
+			'When listing an item a seller can set an optional reserve price, at least the starting price. If the auction closes with a highest bid below the reserve, the item is unsold and no winner is announced. Bidders see whether the reserve is met, never its amount.'
+	},
+	booking: {
+		kind: 'change',
+		title: 'One overlap check for booking and rescheduling',
+		description:
+			'Design change, no new requirement: booking a room (REQ-002) and changing the time of a booking (REQ-010) must reject overlaps (REQ-003) by the same rule. Move the overlap and time slot check into one class of its own that both use, and show it in the class and sequence diagrams. Behaviour stays as it is.'
+	}
+} as const;
+
+const [name, ...args] = process.argv.slice(2);
+if (!(name in TICKETS)) {
+	console.error(`unknown showcase: ${name ?? '(none)'}\n${USAGE}`);
+	process.exit(1);
+}
+const TICKET = TICKETS[name as keyof typeof TICKETS];
 // Phases the walk may approve over a failing gate: --override P4
 const at = args.indexOf('--override');
 const override = at >= 0 ? args[at + 1] : undefined;
@@ -32,7 +54,6 @@ if (positional.length > 1 || (only !== undefined && !(STEPS as readonly string[]
 	console.error(`unknown step: ${positional.join(' ')}\n${USAGE}`);
 	process.exit(1);
 }
-const name = 'auction';
 const orch = new Orchestrator({ root: path.resolve('showcases') });
 const store = new ProjectStore(orch.projectDir(name));
 type Finished = Extract<WorkspaceEvent, { type: 'run_finished' }>;
@@ -122,12 +143,27 @@ async function walkAndClose(ticketId: string): Promise<void> {
 		const { state: s } = await orch.snapshot(name);
 		return ORDER.find((p) => s.phases[p].status !== 'approved');
 	};
+	// The fix loop runs at most once per walk, as a developer would press Fix automatically once.
+	let fixed = false;
 	for (let step = 0; step < 15; step++) {
 		const phase = await pending();
 		if (!phase) break;
 		const { state: s, requirements } = await orch.snapshot(name);
 		const status = s.phases[phase].status;
 		console.log(`\n${phase} is ${status}`);
+		if (status === 'awaiting_approval' && phase === 'P5' && !fixed) {
+			// An Update run does not start the fix loop by itself; a failing gate with open code bug
+			// findings is what the Fix automatically button is for.
+			await orch.checkTests(name);
+			const snap = await orch.snapshot(name);
+			const open = (snap.testChecks?.findings ?? []).filter((f) => !f.resolvedAt);
+			if (!snap.gates.P5.passed && open.length > 0) {
+				fixed = true;
+				for (const f of open) console.log(`  finding ${f.id}: ${f.explanation}`);
+				await watch('fix loop', () => orch.fixLoop(name));
+				continue;
+			}
+		}
 		if (status === 'awaiting_approval') {
 			try {
 				// P4 may only fail on tests that call a changed signature; P5 updates them next, so
@@ -164,10 +200,12 @@ async function walkAndClose(ticketId: string): Promise<void> {
 if (!only || only === 'approve') {
 	console.log('--- P4 and P5: checks, then approve ---');
 	await orch.checkCode(name);
-	await orch.checkTests(name);
-	const snap = await gates('P4', 'P5');
-	if (!snap.gates.P4.passed || !snap.gates.P5.passed) await stop('P4 or P5 gate fails');
+	if (!(await gates('P4')).gates.P4.passed) await stop('P4 gate fails');
 	await approve('P4');
+	// Approving P4 starts test generation when there are no tests yet (and the fix loop after it).
+	await idle();
+	await orch.checkTests(name);
+	if (!(await gates('P5')).gates.P5.passed) await stop('P5 gate fails');
 	await approve('P5');
 	await idle();
 }
@@ -200,12 +238,7 @@ if (!only || only === 'p7') {
 	const ticket = async () => (await orch.snapshot(name)).tickets.find((t) => t.id === ticketId)!;
 	if (!open) {
 		await watch('triage', async () => {
-			const r = await orch.createTicket(name, {
-				kind: 'requirement',
-				title: 'Sellers can set a reserve price',
-				description:
-					'When listing an item a seller can set an optional reserve price, at least the starting price. If the auction closes with a highest bid below the reserve, the item is unsold and no winner is announced. Bidders see whether the reserve is met, never its amount.'
-			});
+			const r = await orch.createTicket(name, { ...TICKET });
 			ticketId = r.ticketId;
 			return r;
 		});
@@ -247,6 +280,7 @@ const DRIFTS = [
 ] as const;
 
 if (only === 'drift') {
+	if (name !== 'auction') await stop('the drift step has hand edits for the auction showcase only');
 	for (const [i, d] of DRIFTS.entries()) {
 		const drifts = (await orch.snapshot(name)).tickets.filter((t) => t.kind === 'drift');
 		if (drifts.filter((t) => t.status === 'done').length > i) continue;

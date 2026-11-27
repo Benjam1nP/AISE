@@ -1,0 +1,13 @@
+{
+  "at": "2026-11-27T13:45:59.056Z",
+  "filesHash": "5badbc405ea74d1240155c6e68d32512895321178fcf158bf4c8e689c74e01fe",
+  "passed": true,
+  "services": [
+    {
+      "url": "http://localhost:8080/health",
+      "status": 200
+    }
+  ],
+  "logTail": "application-server-1  | \napplication-server-1  | > start\napplication-server-1  | > tsx src/app/main.ts\napplication-server-1  | \napplication-server-1  | (node:30) ExperimentalWarning: SQLite is an experimental feature and might change at any time\napplication-server-1  | (Use `node --trace-warnings ...` to show where the warning was created)\napplication-server-1  | Listening on port 8080",
+  "durationMs": 4687
+}

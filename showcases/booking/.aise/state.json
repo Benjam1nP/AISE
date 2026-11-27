@@ -6,7 +6,7 @@
     },
     "P2": {
       "status": "approved",
-      "approvedAt": "2026-11-20T23:39:18.622Z",
+      "approvedAt": "2026-11-27T13:40:44.066Z",
       "reqHashes": {
         "REQ-001": "113bf2db35926d443685dd6ea6d1920f493bd2a3d45edac281f1e75ed18d66af",
         "REQ-002": "12092d3f3326a4160973228725ebffba938223554b4e469f240cb3c1819bb939",
@@ -26,7 +26,8 @@
       "status": "not_started"
     },
     "P4": {
-      "status": "awaiting_approval",
+      "status": "approved",
+      "approvedAt": "2026-11-27T13:41:34.231Z",
       "designHashes": {
         "DSN-001": "9d68858d53ec4e31baf8838437c26d071f61b96b60e853118751b552f2a1a490",
         "DSN-002": "689b639964181c723ada32b8bfc23d086ffac13bf8073b079e7e1cc275c2039a",
@@ -34,16 +35,17 @@
         "DSN-004": "805df9206432945ab63bedb1d9b0db21524beaace3ad846337f57f744f95dc60",
         "DSN-005": "69bffd9fc6ab2cd39a9c507a849344b6206f01c917cada94bd3ab07028a5a95a",
         "DSN-006": "53a3ed060dc203e77680ee2b609bff1bf321e44bbf1eec300c0f60f6e76b6903",
-        "DSN-007": "99798b23bd8ef981e07732157b5e349d323622e8ef8036a165bc8f3ef34d62a2",
+        "DSN-007": "daaa89da6eb62d5b60a245f29c6fbdb472fdc91d65fa777a1f3ea23e12347101",
         "DSN-008": "3b343ef1f2a3a08bc8db020a7761424e2c5818b628070962e15f8cbe3153084c",
         "DSN-009": "6412f67873ea033d50b12067904c330822ecc4547e265fab90bdd5d60983d6b7",
         "DSN-010": "49f71217d134c90bffa8d64fed6f116bf0db4add4d8b36fd86d05e108fde7d7c",
         "DSN-011": "e07607634f7d8f9ce40d3a04ee4b500399ebb81f90931461789c457a4aa3cc30",
         "DSN-012": "11acbaf4ced54846f483c54085e95d4df147dad3fdae0eea367673d3f7028b28",
         "DSN-013": "2d80616f2d5151817bcea9c725e5a9151e0759e775d65c47e859a859483db4a9",
+        "DSN-024": "96d51536ce13e80063ad5dba93e392647756c71036c9c08297f40ffe02e11be0",
         "DSN-016": "967c45dfcc2960dba32bc70fec8e1aa1b5dabfade641d264afe98819c7a57b14",
         "DSN-017": "2228edd37143d63140b113504b691ae90236c971372304142ef7df76e9160567",
-        "DSN-018": "2d6ee88d6fa9dd542ffcfc5fa1833bc87d5cebf59783e5f4a27f6230ac5f4215",
+        "DSN-018": "0219d4a41a9b9dde6fee08865594d1daa2413b9f5cfb69c4c6ba748e31c0b73e",
         "DSN-019": "6025084e1053010a4b98f97b6c7f21f1cb011b1b828c7537d848b06383d1f386",
         "DSN-023": "d4cc995e09086a056b4acbf61b6f8e0d5b6033c0f091f1ffd7b2945576e2a179",
         "DSN-020": "a6c70d03a89e02fdb6fc91e5769fae8099638fe3b8482005caae592f63054ded",
@@ -51,10 +53,55 @@
       }
     },
     "P5": {
-      "status": "not_started"
+      "status": "approved",
+      "approvedAt": "2026-11-27T13:44:42.651Z",
+      "reqHashes": {
+        "REQ-001": "113bf2db35926d443685dd6ea6d1920f493bd2a3d45edac281f1e75ed18d66af",
+        "REQ-002": "12092d3f3326a4160973228725ebffba938223554b4e469f240cb3c1819bb939",
+        "REQ-003": "7a545a31c821f1c4553da55d1baf0b5bdef6776c52c12c14e7c142c0fb25adca",
+        "REQ-004": "29b56b844415476a04fa8bf9396de7e9184d8992541cba6af261158e5cee509e",
+        "REQ-005": "f002920b3ecaddb8ce26bf20b5d915e889da14281c1bf595fedc90e7adcaf448",
+        "REQ-006": "e95b61344b95071c9364c3661a943f77fa34e6b73558cd1dc60488f3817a8591",
+        "REQ-007": "e567e4008b5b63bbf8a277733a0ebeb4b6c047b21753c577d40b01705a88964d",
+        "REQ-008": "e8e9eed58c5b43700ddedcb6b674f1be068d6e6f28226056922c1f8e81014c0b",
+        "REQ-009": "9565041d74b8189506d756bc8243cf7cd9f31b500dcba64d87bcfa2932dbf99a",
+        "REQ-010": "e58f7c64b87308e3927d18ade2e59ad30c67dad31eed941304e0a78cf9a49402",
+        "REQ-011": "b7316acbcf9ca3eadab7a1b2c359cb0d7ee0d659c53e92cd1aab87837f054772",
+        "REQ-012": "8a02bb9f1b5a35b7dab8ac154a9138bdea8f0ed6503c7b3246cc7a9db8562d7b"
+      },
+      "useCaseHashes": {
+        "UC-001": "e2ced24d1ad18abc3073fa09b90341e6f6c8644353906918ffa50bb3e2f4bb06",
+        "UC-002": "45da5a1e4ae668ba437f8bdefc1d175dd5a60c32c78fc64b22cbea81358b2897",
+        "UC-003": "05eddeab5fea8405e1a69ff74ddd202ed0ddb7666819760041309c3de5df24d5",
+        "UC-004": "d0afb77d1ab52d2ae5420959e6e4ae8806bde8d1392d5d681d46ccd61613d63d",
+        "UC-005": "e88e81895144178e52fafafa2315517ac05654006d2ba4652f7821e979ad093c",
+        "UC-006": "110e00a7aead1b1dfdc2b8bd980ad7cd0d02ee6becabece60f7c2550ee1e2a1e",
+        "UC-007": "b6b7f041b3c4612775ab6b2a999c891a1f00d8bdc261fad41a89133fcb7fb8e7",
+        "UC-008": "2b778e5a43a27abf5e750f5e5917de2a495ab9bddbd636d68812009058d2b724",
+        "UC-009": "ca72e61073f466be5dbeff40100b8eb5653cba5cdb8eb0543efbadaa54313bc5",
+        "UC-010": "4507baa5cc9c1f8c24cd5f895e3a2bb4f2eb180251b99d625fffc3ed05eac8f8",
+        "UC-011": "d478ec9843fbeb1867d25123718eb10f44b9a11c082fb4e2a1158a8b132b462b",
+        "SEQ-001": "31d5c960319c8cd07ff69b1236b9651ff98d6a886a02adf08f511ceea1d94099",
+        "SEQ-002": "71157b96602ebb4fcc3d8f9fb112c42cfd8c0ce093e2a3dd6fcabe0be76631f1",
+        "SEQ-003": "4697cf68fbf491662f75c91e959e5218e586db93305531b64c6f2db9f28380ce",
+        "SEQ-004": "aea52384f5c62e8a64c66073bb675605459484e2ed83a3a55da5c8e078d8f707",
+        "SEQ-005": "07ea22f81bafb726b63ec1ae119ae24ba44394c209328eb96bc4806d9a042750",
+        "SEQ-006": "a343b5bcf6aec60bcbf4b037f98ed8af6ee07cbc558e9d5e4a359fc04b618226",
+        "SEQ-007": "efa5b1cfbe08c38b63f0b25fcb6ab1052f5f787e3738c527eaae6b6dba1c16f4",
+        "SEQ-008": "c9138918462706d3fb51b3da247a87333e1afdf9bb2ca8e6e743b5c6d8d80b51",
+        "SEQ-009": "121a7f7c6f6f67c6e50f79de6a66fca6908d235ca8448f468c55ab89ca3c9333",
+        "SEQ-010": "bdabbb3edef5a3b16c77ed9a24bfbef5e05103e788c53caca6fbcf4f98dd9afd",
+        "SEQ-011": "586ca43540e7988fa9295df868c1731ebfec79ef726cd3b71b7b5739f6deb8c1"
+      }
     },
     "P6": {
-      "status": "not_started"
+      "status": "approved",
+      "approvedAt": "2026-11-27T13:38:57.070Z",
+      "deployHashes": {
+        "DSN-021": "5b18e3ddfb86c5a98a5ff6f7ebf323ebe0f2315a24c9fd57f026ca7db3c212ba",
+        "dependencies": "45c93ca748e57462e98272018be92de1d2bd1c85c4fa38b9addfb2a1abd84837",
+        "code": "fe6d7a0410e62d5f73cbb89a74a741d288d8a2debf674f52c12795b54cb1df30"
+      }
     },
     "P7": {
       "status": "not_started"

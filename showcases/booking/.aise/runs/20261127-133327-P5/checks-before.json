@@ -1,0 +1,4 @@
+{
+  ".aise/checks/P4.json": "{\n  \"at\": \"2026-11-27T13:33:25.359Z\",\n  \"codeHash\": \"c5257dd20698a6490afe47f6b16446369c51846ed7f31296d08419712bd164a6\",\n  \"designHash\": \"27db4b03215a4a2f64b1ae9fa8eea81d1fb121806414df9b68cb08fde75bc248\",\n  \"typecheck\": {\n    \"ok\": true,\n    \"errors\": [],\n    \"timedOut\": false\n  },\n  \"drift\": [],\n  \"start\": {\n    \"ok\": true,\n    \"entries\": [\n      {\n        \"entry\": \"src/app/main.ts\",\n        \"portVar\": \"PORT\",\n        \"port\": 8080,\n        \"ok\": true,\n        \"log\": \"\"\n      }\n    ],\n    \"timedOut\": false\n  }\n}\n",
+  ".aise/checks/P5.json": null
+}
