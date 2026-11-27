@@ -307,6 +307,23 @@ export function traceId(id: string, input: TraceInput): Trace | null {
 	};
 }
 
+/** Every REQ, UC, SEQ, DSN and ACT ID of the project with its trace, for the UI's links. */
+export function traceAll(input: TraceInput): Record<string, Trace> {
+	const d = input.design ?? EMPTY;
+	const ids = [
+		...input.requirements.map((r) => r.id),
+		...[d.actors, d.useCases, d.classes, d.components, d.nodes, d.sequences].flatMap((l) =>
+			l.map((x) => x.id)
+		)
+	];
+	const out: Record<string, Trace> = {};
+	for (const id of ids) {
+		const t = traceId(id, input);
+		if (t) out[id] = t;
+	}
+	return out;
+}
+
 /** Whether a stored result tests a criterion of `reqId`: run (passed or failed) or a manual todo, like `coverage`. */
 const testsReq = (t: TestResult, r: Requirement) => {
 	const p = parseTestName(t.title);

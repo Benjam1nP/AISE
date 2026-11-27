@@ -237,4 +237,17 @@ describe('CodePanel', () => {
 		await screen.findByLabelText('Trace');
 		expect(document.activeElement).toBe(document.body);
 	});
+
+	it('makes the trace IDs of a file links when it can show them', async () => {
+		serve({ 'src/tasks/Task.ts': TASK });
+		const onopenid = vi.fn();
+		render(CodePanel, {
+			snapshot: snapshotOf({ name: 'todo', files }),
+			open: { path: 'src/tasks/Task.ts' },
+			onopenid
+		});
+		await userEvent.click(await screen.findByRole('button', { name: 'Show REQ-002' }));
+		expect(onopenid).toHaveBeenCalledWith('REQ-002');
+		expect(screen.getByRole('button', { name: 'Show DSN-001' })).toBeTruthy();
+	});
 });

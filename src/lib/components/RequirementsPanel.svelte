@@ -16,6 +16,8 @@
 	} from '#lib/requirements-edit.ts';
 	import type { RequirementsDoc, Requirement } from '#lib/server/core/schemas/requirements.ts';
 	import type { ProjectSnapshot } from '#lib/server/index.ts';
+	import type { Trace } from '#lib/server/core/trace.ts';
+	import TraceLinks from './TraceLinks.svelte';
 	import {
 		Badge,
 		Banner,
@@ -35,9 +37,37 @@
 		type TableColumn
 	} from '#lib/ui/index.ts';
 
-	type Props = { snapshot: ProjectSnapshot };
+	type Props = {
+		snapshot: ProjectSnapshot;
+		traces?: Record<string, Trace>;
+		names?: Record<string, string>;
+		/** The requirement to open and scroll to; pass a new object to show it again. */
+		focus?: { id: string };
+		onopenid?: (id: string) => void;
+		onopenfile?: (open: { path: string; line?: number }) => void;
+	};
 
-	let { snapshot }: Props = $props();
+	let {
+		snapshot,
+		traces = {},
+		names = {},
+		focus,
+		onopenid = () => {},
+		onopenfile = () => {}
+	}: Props = $props();
+
+	const uid = $props.id();
+	const rowId = (id: string) => `${uid}-${id}`;
+
+	// Runs for every new `focus` object: opens the row, brings it into view and moves focus to it.
+	$effect(() => {
+		if (!focus) return;
+		const el = document.getElementById(rowId(focus.id));
+		if (!(el instanceof HTMLDetailsElement)) return;
+		el.open = true;
+		el.scrollIntoView?.({ block: 'center' });
+		el.querySelector('summary')?.focus({ preventScroll: true });
+	});
 
 	const COLUMNS: TableColumn[] = [
 		{ key: 'id', label: 'ID', width: '6rem' },
@@ -281,7 +311,7 @@
 				{#snippet cell({ row, column })}
 					{@const r = row as unknown as Requirement}
 					{#if column.key === 'title'}
-						<Disclosure bare summary={r.title} open={editing === r.id}>
+						<Disclosure bare summary={r.title} open={editing === r.id} id={rowId(r.id)}>
 							<Stack gap={3}>
 								{#if changed.has(r.id)}
 									<div>
@@ -298,6 +328,12 @@
 											{#each r.acceptanceCriteria as line, i (i)}<li>{line}</li>{/each}
 										</ul>
 									</div>
+									{#if traces[r.id]}
+										<div class="trace">
+											<p class="label">Trace</p>
+											<TraceLinks trace={traces[r.id]} {names} {onopenid} {onopenfile} />
+										</div>
+									{/if}
 									{#if !editing}
 										<div><Button size="sm" onclick={() => startEdit(r)}>Edit</Button></div>
 									{/if}
@@ -409,6 +445,11 @@
 	.note {
 		color: var(--color-text-muted);
 		font-size: var(--text-sm);
+	}
+
+	/* On a phone the title column is narrow; the table scrolls sideways rather than squeeze the links. */
+	.trace {
+		min-width: 16rem;
 	}
 
 	.new {
