@@ -509,7 +509,9 @@ describe('GatePanel for P6', () => {
 			gates: p6Gate([{ label: 'Deployment files exist', ok: true }])
 		});
 		render(GatePanel, { snapshot, phase: 'P6', form: null });
-		expect(screen.getByText(/start scripts or dependencies changed after approval/)).toBeTruthy();
+		expect(
+			screen.getByText(/start scripts, dependencies or code changed after approval/)
+		).toBeTruthy();
 	});
 });
 

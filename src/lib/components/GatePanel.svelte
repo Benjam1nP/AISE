@@ -50,7 +50,7 @@
 		P2: 'requirements',
 		P4: 'design',
 		P5: 'requirements or design',
-		P6: 'services, start scripts or dependencies'
+		P6: 'services, start scripts, dependencies or code'
 	} as const;
 	/** The longest list of items shown under a check. */
 	const MAX_ITEMS = 10;

@@ -109,8 +109,8 @@ export function deployBrief(
 }
 
 /**
- * The user message of an update run: the changed, added and removed IDs (service nodes, or
- * `dependencies`), named with their service names, then the full current plan. A removed ID is no
+ * The user message of an update run: the changed, added and removed IDs (service nodes,
+ * `dependencies` or `code`), named with their service names, then the full current plan. A removed ID is no
  * longer in the plan or the design, so it stays as it is.
  */
 export function deployUpdateBrief(
@@ -123,6 +123,8 @@ export function deployUpdateBrief(
 ): string {
 	const nameOf = (id: string): string => {
 		if (id === 'dependencies') return 'dependencies (the dependency lists of package.json)';
+		if (id === 'code')
+			return 'code (the files under src/ and public/ or tsconfig.json; the deploy check must run on the new code)';
 		const service = plan.services.find((s) => s.nodeId === id);
 		if (service) return `${id} (service ${service.name})`;
 		const node = design?.nodes.find((n) => n.id === id);
