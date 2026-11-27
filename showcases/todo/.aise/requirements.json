@@ -1,0 +1,108 @@
+{
+  "requirements": [
+    {
+      "id": "REQ-001",
+      "title": "Add task",
+      "text": "The system shall let the user add a task by entering a text description which, after leading and trailing spaces are trimmed, is 1 to 200 characters long.",
+      "type": "functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "Entering text and confirming adds a new task to the list",
+        "The new task is shown as not done",
+        "An empty description is not added",
+        "A description consisting only of spaces is not added",
+        "Leading and trailing spaces are removed from the stored text",
+        "A description of 200 characters after trimming is accepted",
+        "A description of 201 characters after trimming is rejected"
+      ]
+    },
+    {
+      "id": "REQ-002",
+      "title": "Mark task done or not done",
+      "text": "The system shall let the user mark a task as done and mark a done task as not done again.",
+      "type": "functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "Ticking a task changes it to the done state",
+        "Unticking a done task changes it back to the not-done state",
+        "The done state is visibly distinguishable from the not-done state"
+      ]
+    },
+    {
+      "id": "REQ-003",
+      "title": "Persist tasks on server",
+      "text": "The system shall store tasks and their done state on a server so they are available when the user returns, including after the browser's local data is reset.",
+      "type": "functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "After adding tasks and ticking some, closing and reopening the app shows the same tasks with the same done states",
+        "After clearing the browser's local storage and cookies, reopening the app shows the same tasks"
+      ]
+    },
+    {
+      "id": "REQ-004",
+      "title": "Run in browser",
+      "text": "The system shall be usable in a web browser.",
+      "type": "non-functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "All features are usable in a web browser without installing additional software"
+      ]
+    },
+    {
+      "id": "REQ-005",
+      "title": "Edit task",
+      "text": "The system shall let the user edit the text of an existing task, applying the same trimming and length rules as when adding a task.",
+      "type": "functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "After editing and confirming, the task shows the new text and keeps its done state",
+        "The edited text is kept after reopening the app",
+        "An empty, whitespace-only, or over 200 character (after trimming) edit is rejected and the old text is kept",
+        "Leading and trailing spaces in the edited text are removed"
+      ]
+    },
+    {
+      "id": "REQ-006",
+      "title": "Delete task",
+      "text": "The system shall let the user delete a task.",
+      "type": "functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "After deleting, the task no longer appears in the list",
+        "The task is still gone after reopening the app"
+      ]
+    },
+    {
+      "id": "REQ-007",
+      "title": "Done tasks display and order",
+      "text": "The system shall keep done tasks in the list, show their text struck through, list open tasks before done tasks, and order tasks within each group oldest first by creation time.",
+      "type": "functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "A done task remains visible in the list with struck-through text",
+        "Every open task appears above every done task",
+        "Within the open tasks, the earliest created task is first",
+        "Within the done tasks, the earliest created task is first",
+        "Unticking a done task shows it without strike-through among the open tasks, at its creation-time position"
+      ]
+    },
+    {
+      "id": "REQ-008",
+      "title": "Single user without login",
+      "text": "The system shall serve a single user and shall not require login.",
+      "type": "non-functional",
+      "priority": "must",
+      "acceptanceCriteria": [
+        "The app opens directly to the task list without any login step"
+      ]
+    }
+  ],
+  "openQuestions": [],
+  "assumptions": [],
+  "outOfScope": [
+    "User accounts, login and multi-user support",
+    "Due dates, priorities and categories",
+    "Browser-only storage as the sole persistence"
+  ]
+}

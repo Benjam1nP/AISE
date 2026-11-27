@@ -1,0 +1,13 @@
+{
+  "findings": [],
+  "testFixes": [],
+  "fixResults": [
+    {
+      "runId": "20261127-121806-P5",
+      "findingId": "20261127-121737-P5-1",
+      "outcome": "fixed",
+      "reason": "DELETE /api/tasks/:id now answers 200 with JSON instead of 204. Typecheck is clean. I did not run detect_drift, since only src/app/app.ts changed.",
+      "at": "2026-11-27T12:18:15.133Z"
+    }
+  ]
+}

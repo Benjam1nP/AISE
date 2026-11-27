@@ -1,0 +1,13 @@
+[
+  "package.json",
+  "package-lock.json",
+  "tsconfig.json",
+  "src/tasks-app/Task.ts",
+  "src/tasks-app/TaskStore.ts",
+  "src/tasks-app/TaskService.ts",
+  "src/tasks-app/TaskController.ts",
+  "src/app/app.ts",
+  "src/app/main.ts",
+  "public/index.html",
+  "README.md"
+]

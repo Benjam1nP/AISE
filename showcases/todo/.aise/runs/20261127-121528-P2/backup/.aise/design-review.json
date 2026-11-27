@@ -1,0 +1,252 @@
+{
+  "designHash": "30b52a9185db75b5d109f65b08c30b49ba0692b8a431f233c14f879bdbb5254b",
+  "rows": [
+    {
+      "reqId": "REQ-001",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "add"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "add"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "normalizeText"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "normalizeText"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 5,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "normalizeText"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 6,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "normalizeText"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-001",
+      "criterion": 7,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "normalizeText"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-002",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "setDone"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-002",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "setDone"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-002",
+      "criterion": 3,
+      "coveredBy": [],
+      "note": "Visual styling in the browser page, covered by the Browser page component and Task.done."
+    },
+    {
+      "reqId": "REQ-003",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-008",
+          "method": "insert"
+        },
+        {
+          "classId": "DSN-008",
+          "method": "findAll"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-003",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-008",
+          "method": "findAll"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-004",
+      "criterion": 1,
+      "coveredBy": [],
+      "note": "Satisfied by the Browser page component and Tasks node serving the page over http."
+    },
+    {
+      "reqId": "REQ-005",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "editText"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-005",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-008",
+          "method": "update"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-005",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "normalizeText"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-005",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "normalizeText"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-006",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "remove"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-006",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-008",
+          "method": "delete"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-007",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "list"
+        }
+      ],
+      "note": "Strike-through rendered by the browser page."
+    },
+    {
+      "reqId": "REQ-007",
+      "criterion": 2,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "list"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-007",
+      "criterion": 3,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "list"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-007",
+      "criterion": 4,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "list"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-007",
+      "criterion": 5,
+      "coveredBy": [
+        {
+          "classId": "DSN-007",
+          "method": "list"
+        }
+      ]
+    },
+    {
+      "reqId": "REQ-008",
+      "criterion": 1,
+      "coveredBy": [
+        {
+          "classId": "DSN-006",
+          "method": "page"
+        }
+      ]
+    }
+  ]
+}

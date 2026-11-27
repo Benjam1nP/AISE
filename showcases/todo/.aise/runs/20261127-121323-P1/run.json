@@ -1,0 +1,21 @@
+{
+  "id": "20261127-121323-P1",
+  "phase": "P1",
+  "agent": "requirements",
+  "status": "done",
+  "startedAt": "2026-11-27T12:13:23.585Z",
+  "finishedAt": "2026-11-27T12:13:36.561Z",
+  "usage": {
+    "input": 510,
+    "output": 1818,
+    "cacheRead": 7349,
+    "cacheWrite": 2697
+  },
+  "costUsd": 0.0242226,
+  "summary": "The agent read and rewrote the requirements document for phase P1, updating it with your answers on storage, single-user access, untick behaviour, edit and delete split, done-task display, and task text limits, and listing the out-of-scope items. Both tool calls succeeded, so there are no failures to chase. Before approving, decide two open questions the agent raised: whether whitespace-only task text should be rejected as empty, and what order open and done tasks should appear in (oldest first, newest first, or other).",
+  "prevPhase": {
+    "status": "awaiting_approval"
+  },
+  "prevArtefactHash": "b5b1783074ee24b559d6709189f149e3b7fbcc4624d951da0b8bb405fc10ab5c",
+  "postArtefactHash": "db3f1c11021869949ce695368a03e2b67fdd7b6fd68d25a94a66df754f5bb4de"
+}

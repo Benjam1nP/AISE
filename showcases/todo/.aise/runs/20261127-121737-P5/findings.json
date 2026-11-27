@@ -1,0 +1,15 @@
+{
+  "findings": [
+    {
+      "id": "20261127-121737-P5-1",
+      "runId": "20261127-121737-P5",
+      "test": "REQ-006 AC1: After deleting, the task no longer appears in the list",
+      "file": "test/UC-005.test.ts",
+      "reqId": "REQ-006",
+      "explanation": "DELETE /api/tasks/:id answers 204. The wiring contract says a handler answers 200 for everything except a create (201). The test is right to expect 200.",
+      "proposedFix": "Make DELETE /api/tasks/:id answer 200 and send the controller result as JSON, as the generated wiring does for other routes, instead of 204."
+    }
+  ],
+  "testFixes": [],
+  "fixResults": []
+}

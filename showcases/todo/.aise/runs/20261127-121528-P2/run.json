@@ -1,0 +1,31 @@
+{
+  "id": "20261127-121528-P2",
+  "phase": "P2",
+  "agent": "design",
+  "status": "done",
+  "startedAt": "2026-11-27T12:15:28.403Z",
+  "finishedAt": "2026-11-27T12:15:57.030Z",
+  "usage": {
+    "input": 557,
+    "output": 5249,
+    "cacheRead": 42790,
+    "cacheWrite": 11301
+  },
+  "costUsd": 0.08346219999999997,
+  "summary": "The agent updated the design so the done and open task states and the PATCH toggle behaviour are described in UC-001 and UC-003, but the SEQ-003 ending was not modelled as a real re-render step because the browser has no class. REQ-002 criterion 3 (visual distinction of the done state) is still uncovered, since it is purely visual and no class method backs it, so decide whether the documentation in the use cases and the Browser page component is enough or whether the design needs a stronger link. All four tool calls succeeded, with no failures.",
+  "prevPhase": {
+    "status": "awaiting_approval"
+  },
+  "prevArtefactHash": "30b52a9185db75b5d109f65b08c30b49ba0692b8a431f233c14f879bdbb5254b",
+  "postArtefactHash": "ba01fbd11d1111749a330ced3643292a5942b96060d475194eb5ec4ef975a8e5",
+  "reqHashes": {
+    "REQ-001": "dd2178e696584311b9db920d04e9019d8160ee2ca86c5e27845810a03c8470d1",
+    "REQ-002": "8194c9f5f5ec51c3c6141cd9da26e60519043b8ea81af4a0d44df6cbacb1b73f",
+    "REQ-003": "ea117479352a811725da3deb218a6479510c32f9c4468969640ce907f31a5817",
+    "REQ-004": "fbb008e714fd25c3d816038213b387e9db937782e7c89e380eeb090ac3dca4c6",
+    "REQ-005": "6b7c0a7f0d9a62019eda6287e749eead6f26cd9f70eba024836e705b6fcbd440",
+    "REQ-006": "4da07fea6bebed336b08d51838fa9734d6af4ceddef62d266084b9600f751143",
+    "REQ-007": "594572812fba023d410326cc9819df731303ac1ceee9a5fbf3b992b8c0c3ea5f",
+    "REQ-008": "914a6219c5fe0adfeb81eca4c5239baf19626241f9132561f51f7ade81534ff2"
+  }
+}

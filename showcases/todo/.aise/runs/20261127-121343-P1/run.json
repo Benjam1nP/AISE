@@ -1,0 +1,21 @@
+{
+  "id": "20261127-121343-P1",
+  "phase": "P1",
+  "agent": "requirements",
+  "status": "done",
+  "startedAt": "2026-11-27T12:13:43.122Z",
+  "finishedAt": "2026-11-27T12:13:55.534Z",
+  "usage": {
+    "input": 405,
+    "output": 1785,
+    "cacheRead": 8905,
+    "cacheWrite": 3331
+  },
+  "costUsd": 0.0257557,
+  "summary": "Phase P1 (requirements) is done: the agent read the requirements, then saved the document with the two answers applied, covering whitespace trimming and the ordering of open and done tasks by creation time. Before approving, check the ordering decision, since the agent assumed \"oldest\" means creation time and that unticked tasks return to their original position rather than the end; ask for a change if you want either handled differently. Both tool calls succeeded and no questions are left open.",
+  "prevPhase": {
+    "status": "awaiting_approval"
+  },
+  "prevArtefactHash": "db3f1c11021869949ce695368a03e2b67fdd7b6fd68d25a94a66df754f5bb4de",
+  "postArtefactHash": "e06f121a677b28a29c42a8b595f6e17de1e0cc842a4b03b8802670f8e3d6c7ac"
+}

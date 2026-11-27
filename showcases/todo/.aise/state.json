@@ -1,0 +1,76 @@
+{
+  "phases": {
+    "P1": {
+      "status": "approved",
+      "approvedAt": "2026-11-27T12:14:02.333Z"
+    },
+    "P2": {
+      "status": "approved",
+      "approvedAt": "2026-11-27T12:16:18.229Z",
+      "reqHashes": {
+        "REQ-001": "dd2178e696584311b9db920d04e9019d8160ee2ca86c5e27845810a03c8470d1",
+        "REQ-002": "8194c9f5f5ec51c3c6141cd9da26e60519043b8ea81af4a0d44df6cbacb1b73f",
+        "REQ-003": "ea117479352a811725da3deb218a6479510c32f9c4468969640ce907f31a5817",
+        "REQ-004": "fbb008e714fd25c3d816038213b387e9db937782e7c89e380eeb090ac3dca4c6",
+        "REQ-005": "6b7c0a7f0d9a62019eda6287e749eead6f26cd9f70eba024836e705b6fcbd440",
+        "REQ-006": "4da07fea6bebed336b08d51838fa9734d6af4ceddef62d266084b9600f751143",
+        "REQ-007": "594572812fba023d410326cc9819df731303ac1ceee9a5fbf3b992b8c0c3ea5f",
+        "REQ-008": "914a6219c5fe0adfeb81eca4c5239baf19626241f9132561f51f7ade81534ff2"
+      }
+    },
+    "P3": {
+      "status": "not_started"
+    },
+    "P4": {
+      "status": "approved",
+      "approvedAt": "2026-11-27T12:17:37.640Z",
+      "designHashes": {
+        "DSN-005": "c94459b6053aac99e520971e86cda8c59ef12d70d470d4bb544e953c5ca5e31c",
+        "DSN-006": "ac910026ed198677d2b2772728d0f7fb50ffe400c0b4cbf3959be72e8707e458",
+        "DSN-007": "a4db7c4b59be8b0ab2984ddc6e585afdc91dbb2fd441ebd9695b813ff8848c11",
+        "DSN-008": "319c016b2e756716c3494cb2ec5340e81be403572aced060b0634d0083ad4d24",
+        "DSN-003": "ef68c1afa77c96b9569776cc628dbffc1b53da6c215e3c1d577c7cd5f8b2f46d",
+        "DSN-004": "9f41fc238897f1e57fd8a3d570ce896ac781f931d30de48995e92140b93173c8",
+        "DSN-001": "597488c14b5303d7e7f1933958608e6196bf6ed33ad375d2d9a55a639163b1fa",
+        "DSN-002": "281af52c9317d5e11bd90b75f9ceb522cdb02f2e52c3cafa2b4044fe77032112"
+      }
+    },
+    "P5": {
+      "status": "approved",
+      "approvedAt": "2026-11-27T12:18:31.160Z",
+      "reqHashes": {
+        "REQ-001": "dd2178e696584311b9db920d04e9019d8160ee2ca86c5e27845810a03c8470d1",
+        "REQ-002": "8194c9f5f5ec51c3c6141cd9da26e60519043b8ea81af4a0d44df6cbacb1b73f",
+        "REQ-003": "ea117479352a811725da3deb218a6479510c32f9c4468969640ce907f31a5817",
+        "REQ-004": "fbb008e714fd25c3d816038213b387e9db937782e7c89e380eeb090ac3dca4c6",
+        "REQ-005": "6b7c0a7f0d9a62019eda6287e749eead6f26cd9f70eba024836e705b6fcbd440",
+        "REQ-006": "4da07fea6bebed336b08d51838fa9734d6af4ceddef62d266084b9600f751143",
+        "REQ-007": "594572812fba023d410326cc9819df731303ac1ceee9a5fbf3b992b8c0c3ea5f",
+        "REQ-008": "914a6219c5fe0adfeb81eca4c5239baf19626241f9132561f51f7ade81534ff2"
+      },
+      "useCaseHashes": {
+        "UC-001": "214aa31246a8fa105f23268d5db34a5e84938c6ea90c74dcc4d4d622dc6185eb",
+        "UC-002": "8e47e1d7c68c519650fa9a4a3226692ca8dacfc413f732684ce12ddd2e1017ef",
+        "UC-003": "b1fa3f6452a147018d7575c210f2e1b979b348e595ec87f1031230373390662a",
+        "UC-004": "e187f98e1e36102b23c5299b79d62f2846676dad240f92759d004910ea97e55d",
+        "UC-005": "962ac7d265f8ed87a5b205d11f57beb0892f4e105adae41036281ca4c397a31e",
+        "SEQ-001": "a8f41dd8e05c4b5af5141c7d7385ed4940d55307c26ee3378b3898260497c515",
+        "SEQ-002": "c1c6e121a14a13c033eddc73d4225e1d7c7138770ef5036812ef099b18b7a1ff",
+        "SEQ-003": "d830354c98807673ac6f45164df7ced47995c987b2a67dffbecd463a63a875eb",
+        "SEQ-004": "15d9756809656982d0049e5a76a20a6a511ba933398b313f8735054a39465fd5",
+        "SEQ-005": "aa4215cb9707dd51981deb0c2c09188a91216f74a38e81de97f4e6330ae82f22"
+      }
+    },
+    "P6": {
+      "status": "approved",
+      "approvedAt": "2026-11-27T12:18:57.400Z",
+      "deployHashes": {
+        "DSN-002": "fecc38807d889e99f06e1d2cdaf5e4554206aff5cf20d3230af943c007e5de6c",
+        "dependencies": "45c93ca748e57462e98272018be92de1d2bd1c85c4fa38b9addfb2a1abd84837"
+      }
+    },
+    "P7": {
+      "status": "not_started"
+    }
+  }
+}

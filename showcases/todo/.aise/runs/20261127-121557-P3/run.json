@@ -1,0 +1,16 @@
+{
+  "id": "20261127-121557-P3",
+  "phase": "P3",
+  "agent": "review",
+  "status": "done",
+  "startedAt": "2026-11-27T12:15:57.040Z",
+  "finishedAt": "2026-11-27T12:16:03.066Z",
+  "usage": {
+    "input": 337,
+    "output": 507,
+    "cacheRead": 10560,
+    "cacheWrite": 5980
+  },
+  "costUsd": 0.0196144,
+  "summary": "The agent reviewed the requirements and design for phase P3 and reported no design proposals, concluding that REQ-002 AC3 (the done state is visibly distinguishable) is already covered by UC-003 and UC-001, with SEQ-003 re-rendering the Task returned by PATCH. Before approving, check that you agree the ticked checkbox and struck-through text in those use cases fully satisfy AC3, since the agent found no other gaps and all three tool calls succeeded."
+}
