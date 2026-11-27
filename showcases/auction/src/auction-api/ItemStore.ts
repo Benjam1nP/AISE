@@ -7,7 +7,7 @@ import { AuctionStatus } from './AuctionStatus.js';
 /**
  * Persistence of items and bids, in the API server's SQLite database.
  *
- * @trace DSN-029 REQ-001 REQ-002 REQ-004
+ * @trace DSN-029 REQ-001 REQ-002 REQ-004 REQ-012
  */
 export class ItemStore {
   private readonly db: DatabaseSync;
@@ -19,6 +19,7 @@ export class ItemStore {
       sellerId TEXT NOT NULL,
       title TEXT NOT NULL,
       startingPrice REAL NOT NULL,
+      reservePrice REAL,
       currency TEXT NOT NULL,
       endTime TEXT NOT NULL,
       status TEXT NOT NULL,
@@ -26,6 +27,11 @@ export class ItemStore {
       highestBidderId TEXT,
       winnerId TEXT
     )`);
+    // Databases created before the reserve price existed lack the column.
+    const columns = this.db.prepare('PRAGMA table_info(items)').all() as unknown as { name: string }[];
+    if (!columns.some((c) => c.name === 'reservePrice')) {
+      this.db.exec('ALTER TABLE items ADD COLUMN reservePrice REAL');
+    }
     this.db.exec(`CREATE TABLE IF NOT EXISTS bids (
       id TEXT PRIMARY KEY,
       itemId TEXT NOT NULL,
@@ -40,12 +46,13 @@ export class ItemStore {
     const exists = this.db.prepare('SELECT id FROM items WHERE id = ?').get(item.id) !== undefined;
     if (exists) {
       this.db
-        .prepare(`UPDATE items SET sellerId = ?, title = ?, startingPrice = ?, currency = ?, endTime = ?,
+        .prepare(`UPDATE items SET sellerId = ?, title = ?, startingPrice = ?, reservePrice = ?, currency = ?, endTime = ?,
           status = ?, highestBidAmount = ?, highestBidderId = ?, winnerId = ? WHERE id = ?`)
         .run(
           item.sellerId,
           item.title,
           item.startingPrice,
+          item.reservePrice,
           item.currency,
           item.endTime.toISOString(),
           item.status,
@@ -56,13 +63,14 @@ export class ItemStore {
         );
     } else {
       this.db
-        .prepare(`INSERT INTO items (id, sellerId, title, startingPrice, currency, endTime, status,
-          highestBidAmount, highestBidderId, winnerId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+        .prepare(`INSERT INTO items (id, sellerId, title, startingPrice, reservePrice, currency, endTime, status,
+          highestBidAmount, highestBidderId, winnerId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
         .run(
           item.id,
           item.sellerId,
           item.title,
           item.startingPrice,
+          item.reservePrice,
           item.currency,
           item.endTime.toISOString(),
           item.status,
@@ -120,6 +128,7 @@ export class ItemStore {
       row.sellerId,
       row.title,
       row.startingPrice,
+      row.reservePrice,
       row.currency as Currency,
       new Date(row.endTime),
       row.status as AuctionStatus,
@@ -135,6 +144,7 @@ type ItemRow = {
   sellerId: string;
   title: string;
   startingPrice: number;
+  reservePrice: number | null;
   currency: string;
   endTime: string;
   status: string;

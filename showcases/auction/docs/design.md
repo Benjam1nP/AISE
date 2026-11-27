@@ -62,6 +62,7 @@ classDiagram
     +sellerId : string
     +title : string
     +startingPrice : number
+    +reservePrice : number | null
     +currency : Currency
     +endTime : Date
     +status : AuctionStatus
@@ -72,6 +73,8 @@ classDiagram
     +minimumBid() number
     +extendIfLate(now: Date) boolean
     +recordBid(bidderId: string, amount: number) void
+    +isReserveMet() boolean | null
+    +close() void
   }
   class Bid {
     +id : string
@@ -82,18 +85,32 @@ classDiagram
   }
   class ItemView {
     <<interface>>
-    +item : Item
+    +item : PublicItem
     +displayCurrency : Currency | null
     +convertedStartingPrice : number | null
     +convertedHighestBid : number | null
+  }
+  class PublicItem {
+    <<interface>>
+    +id : string
+    +sellerId : string
+    +title : string
+    +startingPrice : number
+    +currency : Currency
+    +endTime : Date
+    +status : AuctionStatus
+    +highestBidAmount : number | null
+    +highestBidderId : string | null
+    +winnerId : string | null
+    +reserveMet : boolean | null
   }
   class UserController {
     +register(displayName: string) Promise~User~
   }
   class ItemController {
-    +listItem(userId: string, title: string, startingPrice: number, endTime: string, currency: string) Promise~Item~
+    +listItem(userId: string, title: string, startingPrice: number, endTime: string, currency: string, reservePrice: number | null) Promise~PublicItem~
     +getItem(id: string, displayCurrency: string | undefined) Promise~ItemView~
-    +listOpenItems() Promise~Item[]~
+    +listOpenItems() Promise~PublicItem[]~
   }
   class BidController {
     +placeBid(itemId: string, userId: string, amount: number) Promise~Bid~
@@ -102,9 +119,9 @@ classDiagram
     +register(displayName: string) Promise~User~
   }
   class ItemService {
-    +listItem(sellerId: string, title: string, startingPrice: number, endTime: Date, currency: string) Promise~Item~
-    +getItem(id: string) Promise~Item~
-    +listOpenItems() Promise~Item[]~
+    +listItem(sellerId: string, title: string, startingPrice: number, endTime: Date, currency: string, reservePrice: number | null) Promise~PublicItem~
+    +getItem(id: string) Promise~PublicItem~
+    +listOpenItems() Promise~PublicItem[]~
     +closeDueAuctions(now: Date) Promise~void~
   }
   class BidService {
@@ -158,7 +175,9 @@ classDiagram
   Item --> AuctionStatus
   Bid --> "0..*" Item
   Bid --> "1" User : bidder
-  ItemView --> Item
+  ItemView --> PublicItem
+  PublicItem --> Currency
+  PublicItem --> AuctionStatus
   UserController ..> UserService
   ItemController ..> ItemService
   ItemController ..> ExchangeRateService
@@ -183,6 +202,7 @@ classDiagram
   click Item call aiseSelect("DSN-015")
   click Bid call aiseSelect("DSN-016")
   click ItemView call aiseSelect("DSN-017")
+  click PublicItem call aiseSelect("DSN-044")
   click UserController call aiseSelect("DSN-018")
   click ItemController call aiseSelect("DSN-019")
   click BidController call aiseSelect("DSN-020")
@@ -226,8 +246,8 @@ sequenceDiagram
   participant DSN_022 as ItemService
   participant DSN_028 as UserStore
   participant DSN_029 as ItemStore
-  ACT_001->>DSN_019: listItem(userId, title, startingPrice, endTime, currency)
-  DSN_019->>DSN_022: listItem(sellerId, title, startingPrice, endTime, currency)
+  ACT_001->>DSN_019: listItem(userId, title, startingPrice, endTime, currency, reservePrice)
+  DSN_019->>DSN_022: listItem(sellerId, title, startingPrice, endTime, currency, reservePrice)
   DSN_022->>DSN_028: findById(id)
   DSN_022->>DSN_029: saveItem(item)
 ```
@@ -254,6 +274,7 @@ sequenceDiagram
   DSN_023->>DSN_015: minimumBid()
   DSN_023->>DSN_015: extendIfLate(now)
   DSN_023->>DSN_015: recordBid(bidderId, amount)
+  DSN_023->>DSN_015: isReserveMet()
   DSN_023->>DSN_029: saveBid(bid)
   DSN_023->>DSN_029: saveItem(item)
   DSN_023->>DSN_031: publishBidAccepted(bid, item)
@@ -284,6 +305,7 @@ sequenceDiagram
   participant DSN_024 as AuctionCloser
   participant DSN_022 as ItemService
   participant DSN_029 as ItemStore
+  participant DSN_015 as Item
   participant DSN_030 as AuctionEventPublisher
   participant DSN_034 as EventFeed
   participant DSN_032 as EventFeedClient
@@ -291,6 +313,7 @@ sequenceDiagram
   ACT_003->>DSN_024: tick()
   DSN_024->>DSN_022: closeDueAuctions(now)
   DSN_022->>DSN_029: findDueItems(now)
+  DSN_022->>DSN_015: close()
   DSN_022->>DSN_029: saveItem(item)
   DSN_022->>DSN_030: publishAuctionClosed(item)
   DSN_030->>DSN_034: publish(topic, payload)
@@ -342,37 +365,38 @@ flowchart TB
 - ACT-002 Frankfurter API (actor)
 - ACT-003 Scheduler (actor)
 - UC-001 Register display name (use case) (REQ-008)
-- UC-002 List item (use case) (REQ-001, REQ-008)
-- UC-003 Place bid (use case) (REQ-002, REQ-009, REQ-003, REQ-011)
-- UC-004 Watch item live (use case) (REQ-003, REQ-009, REQ-011, REQ-007)
-- UC-005 Close auction (use case) (REQ-004, REQ-003)
-- UC-006 View prices in display currency (use case) (REQ-005, REQ-010)
+- UC-002 List item (use case) (REQ-001, REQ-008, REQ-012)
+- UC-003 Place bid (use case) (REQ-002, REQ-009, REQ-003, REQ-011, REQ-012)
+- UC-004 Watch item live (use case) (REQ-003, REQ-009, REQ-011, REQ-007, REQ-012)
+- UC-005 Close auction (use case) (REQ-004, REQ-003, REQ-012)
+- UC-006 View prices in display currency (use case) (REQ-005, REQ-010, REQ-012)
 - DSN-012 Currency (enum) (REQ-001, REQ-005)
 - DSN-013 AuctionStatus (enum) (REQ-001, REQ-004)
 - DSN-014 User (class) (REQ-008)
-- DSN-015 Item (class) (REQ-001, REQ-002, REQ-004, REQ-009)
+- DSN-015 Item (class) (REQ-001, REQ-002, REQ-004, REQ-009, REQ-012)
 - DSN-016 Bid (class) (REQ-002)
-- DSN-017 ItemView (interface) (REQ-005, REQ-010)
+- DSN-017 ItemView (interface) (REQ-005, REQ-010, REQ-012)
+- DSN-044 PublicItem (interface) (REQ-012)
 - DSN-018 UserController (class) (REQ-008)
-- DSN-019 ItemController (class) (REQ-001, REQ-005, REQ-004)
+- DSN-019 ItemController (class) (REQ-001, REQ-005, REQ-004, REQ-012)
 - DSN-020 BidController (class) (REQ-002)
 - DSN-021 UserService (class) (REQ-008)
-- DSN-022 ItemService (class) (REQ-001, REQ-004)
-- DSN-023 BidService (class) (REQ-002, REQ-009, REQ-003, REQ-011)
+- DSN-022 ItemService (class) (REQ-001, REQ-004, REQ-012)
+- DSN-023 BidService (class) (REQ-002, REQ-009, REQ-003, REQ-011, REQ-012)
 - DSN-024 AuctionCloser (class) (REQ-004)
 - DSN-025 ExchangeRateService (class) (REQ-005, REQ-010)
 - DSN-026 FrankfurterClient (class) (REQ-005, REQ-010)
 - DSN-028 UserStore (class) (REQ-008)
-- DSN-029 ItemStore (class) (REQ-001, REQ-002, REQ-004)
-- DSN-030 AuctionEventPublisher (class) (REQ-003, REQ-004, REQ-007)
-- DSN-031 BidEventPublisher (class) (REQ-003, REQ-007, REQ-011)
+- DSN-029 ItemStore (class) (REQ-001, REQ-002, REQ-004, REQ-012)
+- DSN-030 AuctionEventPublisher (class) (REQ-003, REQ-004, REQ-007, REQ-012)
+- DSN-031 BidEventPublisher (class) (REQ-003, REQ-007, REQ-011, REQ-012)
 - DSN-032 EventFeedClient (class) (REQ-003, REQ-007, REQ-011)
-- DSN-033 LiveGateway (class) (REQ-003, REQ-009, REQ-011, REQ-004)
+- DSN-033 LiveGateway (class) (REQ-003, REQ-009, REQ-011, REQ-004, REQ-012)
 - DSN-034 EventFeed (class) (REQ-003, REQ-007, REQ-011)
-- DSN-007 AuctionApi (component) (REQ-001, REQ-002, REQ-004, REQ-006, REQ-007, REQ-008, REQ-009)
+- DSN-007 AuctionApi (component) (REQ-001, REQ-002, REQ-004, REQ-006, REQ-007, REQ-008, REQ-009, REQ-012)
 - DSN-008 ExchangeRates (component) (REQ-005, REQ-010)
-- DSN-009 LiveUpdates (component) (REQ-003, REQ-006, REQ-007, REQ-011)
-- DSN-042 WebClient (component) (REQ-001, REQ-002, REQ-003, REQ-004, REQ-005, REQ-008, REQ-009)
+- DSN-009 LiveUpdates (component) (REQ-003, REQ-006, REQ-007, REQ-011, REQ-012)
+- DSN-042 WebClient (component) (REQ-001, REQ-002, REQ-003, REQ-004, REQ-005, REQ-008, REQ-009, REQ-012)
 - DSN-001 API Server (service node) (REQ-002, REQ-006, REQ-007, REQ-008)
 - DSN-002 Live Update Server (service node) (REQ-006, REQ-007, REQ-011)
 - DSN-005 Frankfurter API (external node) (REQ-005, REQ-010)

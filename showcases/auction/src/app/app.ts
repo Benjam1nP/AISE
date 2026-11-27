@@ -54,7 +54,7 @@ export function createApp(db: DatabaseSync = new DatabaseSync(':memory:')): Expr
   });
   app.post('/api/items', async (req, res) => {
     const b = req.body ?? {};
-    res.status(201).json(await itemController.listItem(b.userId, b.title, b.startingPrice, b.endTime, b.currency));
+    res.status(201).json(await itemController.listItem(b.userId, b.title, b.startingPrice, b.endTime, b.currency, b.reservePrice ?? null));
   });
   app.get('/api/items', async (_req, res) => {
     res.json(await itemController.listOpenItems());

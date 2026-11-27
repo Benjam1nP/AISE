@@ -6,13 +6,15 @@
 
 functional, must
 
-The system shall allow a seller to list an item with a starting price, an end time and an item currency chosen from CHF, EUR or USD.
+The system shall allow a seller to list an item with a starting price, an end time, an item currency chosen from CHF, EUR or USD, and an optional reserve price.
 
 Acceptance criteria:
 
 - A seller can submit an item with a starting price, an end time and a currency (CHF, EUR or USD) and it then appears as an open auction.
 - A listing without a starting price, end time or currency is rejected with an error message.
 - A listing with a currency other than CHF, EUR or USD is rejected.
+- A listing submitted without a reserve price is accepted and appears as an open auction.
+- A listing submitted with a reserve price is accepted subject to the rules in REQ-012.
 
 ## REQ-002 Place bid
 
@@ -45,13 +47,15 @@ Acceptance criteria:
 
 functional, must
 
-The system shall close an auction when its (possibly extended) end time is reached, declare the highest bidder the winner, and mark the item as unsold if it has no bids.
+The system shall close an auction when its (possibly extended) end time is reached, declare the highest bidder the winner if the item has no reserve price or the highest bid meets the reserve, and otherwise mark the item as unsold with no winner, including when it has no bids.
 
 Acceptance criteria:
 
 - At the end time the item no longer accepts bids.
-- The bidder with the highest bid at the end time is recorded as the winner and the winning user sees on the item page that they won.
-- Watchers of the item see the closed state and the winner.
+- For an item without a reserve price, the bidder with the highest bid at the end time is recorded as the winner and the winning user sees on the item page that they won.
+- For an item with a reserve price, a highest bid at or above the reserve makes that bidder the winner.
+- For an item with a reserve price, a highest bid below the reserve makes the item unsold, with no winner recorded or announced.
+- Watchers of the item see the closed state and the winner, or the unsold state when there is no winner.
 - An auction that ends with no bids is shown as unsold and has no winner.
 
 ## REQ-005 Prices in bidder currency
@@ -140,6 +144,29 @@ Acceptance criteria:
 - With 200 clients watching one item and a few bids per second, each accepted bid appears on every client within 1 second.
 - No accepted bid is lost under this load.
 
+## REQ-012 Reserve price
+
+functional, must
+
+The system shall let a seller set an optional reserve price when listing an item, reject a reserve below the starting price, and show bidders only whether the reserve is met, never its amount.
+
+Acceptance criteria:
+
+- A listing with a reserve price lower than the starting price is rejected with an error message and no item is created.
+- A listing with a reserve price equal to or higher than the starting price is accepted.
+- A listing without a reserve price is accepted and works as before.
+- When the auction closes with a highest bid below the reserve, the item is unsold and no winner is announced.
+- When the auction closes with a highest bid at or above the reserve, the highest bidder wins.
+- Item pages and lists of open items show whether the reserve is met (reserve met / not met) for items that have a reserve.
+- No item view, item list, API response or live event sent to bidders contains the reserve amount.
+- Live bid and close events carry the reserve-met state, so watchers see it update without reloading.
+
+## Assumptions
+
+- Assumed: Is the reserve price entered and stored in the item currency, like the starting price and bids?
+- Assumed: Should the seller be able to see their own reserve amount after listing (e.g. on their item page)? The ticket says only that bidders never see it.
+- Assumed: For items without a reserve, should the item page show no reserve indicator at all (assumed), or something like 'no reserve'?
+
 ## Out of scope
 
 - Payment processing
@@ -147,3 +174,4 @@ Acceptance criteria:
 - Passwords, accounts with login and an admin role
 - Scale beyond demo level (more than 200 watchers per item or more than a few bids per second)
 - Display currencies other than CHF, EUR and USD
+- Changing or removing a reserve price after the item is listed

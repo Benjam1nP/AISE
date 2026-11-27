@@ -22,6 +22,7 @@ async function setup() {
     'u-seller',
     'Lamp',
     50,
+    null,
     Currency.CHF,
     endTime,
     AuctionStatus.open,

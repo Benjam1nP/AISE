@@ -1,0 +1,26 @@
+{
+  "id": "20261127-111016-P6",
+  "phase": "P6",
+  "agent": "deploy",
+  "status": "done",
+  "startedAt": "2026-11-27T11:10:16.642Z",
+  "finishedAt": "2026-11-27T11:10:39.307Z",
+  "usage": {
+    "input": 461,
+    "output": 1388,
+    "cacheRead": 17930,
+    "cacheWrite": 16686
+  },
+  "costUsd": 0.059763800000000006,
+  "summary": "The agent wrote a Dockerfile, compose.yaml and RUN.md, and its one deploy_check run passed, with both health URLs returning 200 and `{\"status\":\"ok\"}`. Before approving, confirm that the ports bound to 127.0.0.1 and the `/data` volume on `api-server` only match the design, since the reply states these but the tool log does not show them. No tool calls failed.",
+  "prevPhase": {
+    "status": "not_started"
+  },
+  "prevArtefactHash": null,
+  "postArtefactHash": "265fafd1fb7d734ad95c63bc2a572e0e7364cd1efa5c3f8b5e81b5efd44cc515",
+  "deployHashes": {
+    "DSN-001": "0f155bb5e11be07f0d3b0f965f8a776dd7611dccaac2d736b52e4ccd5dc1d9b9",
+    "DSN-002": "7c79da6d7029cd680ce7ae034b623daa3da506807ca6e13d1ee1824db0c82720",
+    "dependencies": "45c93ca748e57462e98272018be92de1d2bd1c85c4fa38b9addfb2a1abd84837"
+  }
+}

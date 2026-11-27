@@ -2,7 +2,7 @@ import { WebSocket } from 'ws';
 
 /**
  * WebSocket gateway that pushes each bid update only to the browser sockets watching that item.
- * @trace DSN-033 REQ-003 REQ-009 REQ-011 REQ-004
+ * @trace DSN-033 REQ-003 REQ-009 REQ-011 REQ-004 REQ-012
  */
 export class LiveGateway {
   private watchers: Map<string, Set<string>> = new Map();

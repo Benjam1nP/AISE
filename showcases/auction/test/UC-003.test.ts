@@ -26,6 +26,7 @@ function makeItem(overrides: { endTime?: Date; highestBidAmount?: number | null;
     'seller-1',
     'Vase',
     100,
+    null,
     'USD' as unknown as Item['currency'],
     overrides.endTime ?? new Date(NOW.getTime() + ONE_HOUR_MS),
     'open' as unknown as Item['status'],

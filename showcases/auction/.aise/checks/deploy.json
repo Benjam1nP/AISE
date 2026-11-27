@@ -1,0 +1,17 @@
+{
+  "at": "2026-11-27T11:20:14.484Z",
+  "filesHash": "ef5d66ca3085930ea94b395c0d4520b8a0ece3eeccb43b3a1916ba1481a34525",
+  "passed": true,
+  "services": [
+    {
+      "url": "http://localhost:8080/health",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:8081/health",
+      "status": 200
+    }
+  ],
+  "logTail": "api-server-1          | \napi-server-1          | > start\napi-server-1          | > tsx src/app/main.ts\napi-server-1          | \napi-server-1          | (node:30) ExperimentalWarning: SQLite is an experimental feature and might change at any time\napi-server-1          | (Use `node --trace-warnings ...` to show where the warning was created)\napi-server-1          | API server listening on 8080\nlive-update-server-1  | \nlive-update-server-1  | > start:live-update-server\nlive-update-server-1  | > tsx src/app/live-update-server.ts\nlive-update-server-1  | \nlive-update-server-1  | Live update server listening on 8081",
+  "durationMs": 4547
+}

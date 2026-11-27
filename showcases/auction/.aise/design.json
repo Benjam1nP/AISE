@@ -31,19 +31,20 @@
     {
       "id": "UC-002",
       "name": "List item",
-      "description": "Seller lists an item with starting price, end time and currency.",
+      "description": "Seller lists an item with starting price, end time, currency and an optional reserve price (rejected if below the starting price).",
       "actorIds": [
         "ACT-001"
       ],
       "reqIds": [
         "REQ-001",
-        "REQ-008"
+        "REQ-008",
+        "REQ-012"
       ]
     },
     {
       "id": "UC-003",
       "name": "Place bid",
-      "description": "Bidder places a bid; validated, stored in item currency, end time extended if late, pushed to watchers.",
+      "description": "Bidder places a bid; validated, stored in item currency, end time extended if late, pushed to watchers with the reserve-met state.",
       "actorIds": [
         "ACT-001"
       ],
@@ -51,13 +52,14 @@
         "REQ-002",
         "REQ-009",
         "REQ-003",
-        "REQ-011"
+        "REQ-011",
+        "REQ-012"
       ]
     },
     {
       "id": "UC-004",
       "name": "Watch item live",
-      "description": "Client watches an item and receives bids, new end times and closing without reloading.",
+      "description": "Client watches an item and receives bids, new end times, reserve-met state and closing without reloading.",
       "actorIds": [
         "ACT-001"
       ],
@@ -65,20 +67,22 @@
         "REQ-003",
         "REQ-009",
         "REQ-011",
-        "REQ-007"
+        "REQ-007",
+        "REQ-012"
       ]
     },
     {
       "id": "UC-005",
       "name": "Close auction",
-      "description": "At end time the auction closes, winner is recorded or item marked unsold, watchers are informed.",
+      "description": "At end time the auction closes: the highest bidder wins if there is no reserve or the highest bid meets it, otherwise the item is unsold with no winner (also with no bids); watchers are informed.",
       "actorIds": [
         "ACT-003",
         "ACT-001"
       ],
       "reqIds": [
         "REQ-004",
-        "REQ-003"
+        "REQ-003",
+        "REQ-012"
       ]
     },
     {
@@ -91,7 +95,8 @@
       ],
       "reqIds": [
         "REQ-005",
-        "REQ-010"
+        "REQ-010",
+        "REQ-012"
       ]
     }
   ],
@@ -158,7 +163,7 @@
       "id": "DSN-015",
       "name": "Item",
       "kind": "class",
-      "description": "Auction item, prices in item currency.",
+      "description": "Auction item, prices in item currency. The optional reserve price is internal and never sent to clients. close() makes the highest bidder the winner if there is no reserve or the highest bid meets it, otherwise sets status unsold with no winner (also when there are no bids).",
       "attributes": [
         {
           "name": "id",
@@ -175,6 +180,10 @@
         {
           "name": "startingPrice",
           "type": "number"
+        },
+        {
+          "name": "reservePrice",
+          "type": "number | null"
         },
         {
           "name": "currency",
@@ -240,6 +249,16 @@
             }
           ],
           "returnType": "void"
+        },
+        {
+          "name": "isReserveMet",
+          "params": [],
+          "returnType": "boolean | null"
+        },
+        {
+          "name": "close",
+          "params": [],
+          "returnType": "void"
         }
       ],
       "values": [],
@@ -263,7 +282,8 @@
         "REQ-001",
         "REQ-002",
         "REQ-004",
-        "REQ-009"
+        "REQ-009",
+        "REQ-012"
       ]
     },
     {
@@ -316,11 +336,11 @@
       "id": "DSN-017",
       "name": "ItemView",
       "kind": "interface",
-      "description": "Item as shown to a client, with optional converted prices.",
+      "description": "Item as shown to a client, with optional converted prices. Never contains the reserve amount.",
       "attributes": [
         {
           "name": "item",
-          "type": "Item"
+          "type": "PublicItem"
         },
         {
           "name": "displayCurrency",
@@ -340,12 +360,80 @@
       "relations": [
         {
           "kind": "association",
-          "targetId": "DSN-015"
+          "targetId": "DSN-044"
         }
       ],
       "reqIds": [
         "REQ-005",
-        "REQ-010"
+        "REQ-010",
+        "REQ-012"
+      ]
+    },
+    {
+      "id": "DSN-044",
+      "name": "PublicItem",
+      "kind": "interface",
+      "description": "Item data sent to bidders in API responses and lists. Has the reserve-met state (null when the item has no reserve) and never the reserve amount.",
+      "attributes": [
+        {
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "name": "sellerId",
+          "type": "string"
+        },
+        {
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "name": "startingPrice",
+          "type": "number"
+        },
+        {
+          "name": "currency",
+          "type": "Currency"
+        },
+        {
+          "name": "endTime",
+          "type": "Date"
+        },
+        {
+          "name": "status",
+          "type": "AuctionStatus"
+        },
+        {
+          "name": "highestBidAmount",
+          "type": "number | null"
+        },
+        {
+          "name": "highestBidderId",
+          "type": "string | null"
+        },
+        {
+          "name": "winnerId",
+          "type": "string | null"
+        },
+        {
+          "name": "reserveMet",
+          "type": "boolean | null"
+        }
+      ],
+      "methods": [],
+      "values": [],
+      "relations": [
+        {
+          "kind": "association",
+          "targetId": "DSN-012"
+        },
+        {
+          "kind": "association",
+          "targetId": "DSN-013"
+        }
+      ],
+      "reqIds": [
+        "REQ-012"
       ]
     },
     {
@@ -381,7 +469,7 @@
       "id": "DSN-019",
       "name": "ItemController",
       "kind": "class",
-      "description": "HTTP routes for items: POST /items, GET /items, GET /items/:id.",
+      "description": "HTTP routes for items: POST /items, GET /items, GET /items/:id. Responses use PublicItem and never contain the reserve amount.",
       "attributes": [],
       "methods": [
         {
@@ -406,9 +494,13 @@
             {
               "name": "currency",
               "type": "string"
+            },
+            {
+              "name": "reservePrice",
+              "type": "number | null"
             }
           ],
-          "returnType": "Promise<Item>"
+          "returnType": "Promise<PublicItem>"
         },
         {
           "name": "getItem",
@@ -427,7 +519,7 @@
         {
           "name": "listOpenItems",
           "params": [],
-          "returnType": "Promise<Item[]>"
+          "returnType": "Promise<PublicItem[]>"
         }
       ],
       "values": [],
@@ -444,7 +536,8 @@
       "reqIds": [
         "REQ-001",
         "REQ-005",
-        "REQ-004"
+        "REQ-004",
+        "REQ-012"
       ]
     },
     {
@@ -517,7 +610,7 @@
       "id": "DSN-022",
       "name": "ItemService",
       "kind": "class",
-      "description": "Creates and reads items, closes due auctions.",
+      "description": "Creates and reads items, closes due auctions. Rejects a listing without starting price, end time or currency, with a currency outside CHF/EUR/USD, or with a reserve below the starting price (no item is created). Converts items to PublicItem without the reserve amount.",
       "attributes": [],
       "methods": [
         {
@@ -542,9 +635,13 @@
             {
               "name": "currency",
               "type": "string"
+            },
+            {
+              "name": "reservePrice",
+              "type": "number | null"
             }
           ],
-          "returnType": "Promise<Item>"
+          "returnType": "Promise<PublicItem>"
         },
         {
           "name": "getItem",
@@ -554,12 +651,12 @@
               "type": "string"
             }
           ],
-          "returnType": "Promise<Item>"
+          "returnType": "Promise<PublicItem>"
         },
         {
           "name": "listOpenItems",
           "params": [],
-          "returnType": "Promise<Item[]>"
+          "returnType": "Promise<PublicItem[]>"
         },
         {
           "name": "closeDueAuctions",
@@ -589,14 +686,15 @@
       ],
       "reqIds": [
         "REQ-001",
-        "REQ-004"
+        "REQ-004",
+        "REQ-012"
       ]
     },
     {
       "id": "DSN-023",
       "name": "BidService",
       "kind": "class",
-      "description": "Validates and stores bids, extends end time, publishes events to the event feed.",
+      "description": "Validates and stores bids, extends end time, publishes events (carrying the reserve-met state) to the event feed.",
       "attributes": [],
       "methods": [
         {
@@ -637,7 +735,8 @@
         "REQ-002",
         "REQ-009",
         "REQ-003",
-        "REQ-011"
+        "REQ-011",
+        "REQ-012"
       ]
     },
     {
@@ -785,7 +884,7 @@
       "id": "DSN-029",
       "name": "ItemStore",
       "kind": "class",
-      "description": "Persistence of items and bids, in the API server's SQLite database. Dates are stored as ISO 8601 TEXT columns.",
+      "description": "Persistence of items (including the optional reserve price) and bids, in the API server's SQLite database. Dates are stored as ISO 8601 TEXT columns.",
       "attributes": [],
       "methods": [
         {
@@ -850,14 +949,15 @@
       "reqIds": [
         "REQ-001",
         "REQ-002",
-        "REQ-004"
+        "REQ-004",
+        "REQ-012"
       ]
     },
     {
       "id": "DSN-030",
       "name": "AuctionEventPublisher",
       "kind": "class",
-      "description": "Publishes auction closed events to the internal ws event feed.",
+      "description": "Publishes auction closed events (closed or unsold state, winner if any, reserve-met state, never the reserve amount) to the internal ws event feed.",
       "attributes": [],
       "methods": [
         {
@@ -881,14 +981,15 @@
       "reqIds": [
         "REQ-003",
         "REQ-004",
-        "REQ-007"
+        "REQ-007",
+        "REQ-012"
       ]
     },
     {
       "id": "DSN-031",
       "name": "BidEventPublisher",
       "kind": "class",
-      "description": "Publishes accepted bid events to the internal ws event feed.",
+      "description": "Publishes accepted bid events (with the reserve-met state, never the reserve amount) to the internal ws event feed.",
       "attributes": [],
       "methods": [
         {
@@ -916,7 +1017,8 @@
       "reqIds": [
         "REQ-003",
         "REQ-007",
-        "REQ-011"
+        "REQ-011",
+        "REQ-012"
       ]
     },
     {
@@ -1020,7 +1122,8 @@
         "REQ-003",
         "REQ-009",
         "REQ-011",
-        "REQ-004"
+        "REQ-004",
+        "REQ-012"
       ]
     },
     {
@@ -1081,7 +1184,8 @@
         "DSN-031",
         "DSN-034",
         "DSN-012",
-        "DSN-013"
+        "DSN-013",
+        "DSN-044"
       ],
       "nodeId": "DSN-001",
       "reqIds": [
@@ -1091,7 +1195,8 @@
         "REQ-006",
         "REQ-007",
         "REQ-008",
-        "REQ-009"
+        "REQ-009",
+        "REQ-012"
       ]
     },
     {
@@ -1119,7 +1224,8 @@
         "REQ-003",
         "REQ-006",
         "REQ-007",
-        "REQ-011"
+        "REQ-011",
+        "REQ-012"
       ]
     },
     {
@@ -1134,7 +1240,8 @@
         "REQ-004",
         "REQ-005",
         "REQ-008",
-        "REQ-009"
+        "REQ-009",
+        "REQ-012"
       ]
     }
   ],
@@ -1244,7 +1351,8 @@
         {
           "fromId": "DSN-019",
           "toId": "DSN-022",
-          "method": "listItem"
+          "method": "listItem",
+          "label": "validates fields, currency and reserve >= starting price"
         },
         {
           "fromId": "DSN-022",
@@ -1305,6 +1413,12 @@
           "toId": "DSN-015",
           "method": "recordBid",
           "label": "sets highestBidAmount and highestBidderId"
+        },
+        {
+          "fromId": "DSN-023",
+          "toId": "DSN-015",
+          "method": "isReserveMet",
+          "label": "reserve-met state for the event"
         },
         {
           "fromId": "DSN-023",
@@ -1391,6 +1505,12 @@
         },
         {
           "fromId": "DSN-022",
+          "toId": "DSN-015",
+          "method": "close",
+          "label": "winner, or unsold if reserve not met or no bids"
+        },
+        {
+          "fromId": "DSN-022",
           "toId": "DSN-029",
           "method": "saveItem"
         },
@@ -1431,7 +1551,8 @@
         {
           "fromId": "DSN-019",
           "toId": "DSN-022",
-          "method": "getItem"
+          "method": "getItem",
+          "label": "returns PublicItem with reserve-met state, no reserve amount"
         },
         {
           "fromId": "DSN-019",

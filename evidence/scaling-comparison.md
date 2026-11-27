@@ -79,3 +79,38 @@ misleading artefacts or a later phase will break; low means friction.
 | #17 Drift: dependency and association relations and constructors                | 5                    |
 | #18 Generated projects ship the runner lockfile                                 | 10                   |
 | #19 P2 design checks: acceptance criteria coverage, empty classes, next free ID | 9, 11, 12            |
+
+## Auction through P5 to P7
+
+Run on 2026-11-27 for issue #5 with `npx tsx scripts/run-auction.ts`, which drives
+`showcases/auction` in place through the orchestrator calls the UI makes. Docker 29.8.
+
+| Step                       | Run                | Cost (USD) | Agent time | Result                                                            |
+| -------------------------- | ------------------ | ---------- | ---------- | ----------------------------------------------------------------- |
+| P4 and P5 approval         | none (checks only) | 0          |            | P4 gate 5/5, P5 gate 4/4, 45 tests pass                           |
+| P6, started by P5 approval | 20261127-111016-P6 | 0.06       | 23 s       | 2 services (`api-server`, `live-update-server`), deploy check 200 |
+| P7 triage, TCK-001         | 20261127-111202-P7 | 0.23       | 32 s       | plan: entry P1, 15 affected IDs, 8 steps                          |
+| P1 entry                   | 20261127-111235-P1 | 0.07       | 24 s       | new REQ-012 "Reserve price", REQ-001 and REQ-004 amended          |
+| P2 update                  | 20261127-111259-P2 | 0.27       | 77 s       | `Item.reservePrice`, new `PublicItem` (DSN-044), 3 sequences      |
+| P4 update                  | 20261127-111416-P4 | 0.39       | 99 s       | gate failed on out of date tests, approved with override          |
+| P5 update                  | 20261127-111636-P5 | 0.46       | 132 s      | 6 test files updated, REQ-012 AC1 to AC8 covered, 57 tests pass   |
+| P7 change report           | 20261127-111900-P7 | 0.18       | 19 s       | TCK-001 done                                                      |
+| total                      | 7 runs             | 1.65       | 6.8 min    | project total over all runs: 6.33                                 |
+
+Final checks after the ticket: P4 5/5, P5 4/4, P6 3/3, deploy check on both services 200.
+
+Hand probe of the final compose stack (outside the tool): a bid placed over HTTP on `api-server`
+reached a ws client on `live-update-server` in 13 ms with `reserveMet: false`; item views and the
+open list carry `reserveMet` and never `reservePrice`; a reserve below the starting price is
+rejected with 400.
+
+### What failed or needed manual help
+
+| #   | Problem                                                                                                                                                                                                                                        | Evidence                                                                                                                 | Follow up                                          | Severity |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------- | -------- |
+| 18  | A P4 change to a constructor fails the P4 gate on the old tests, which only P5 may update after P4 approval. The walk stops; the developer has to approve P4 with an override. P5 then fixed the tests and the gate passed 5/5.                | Run 20261127-111416-P4: 8 TS2554 errors, all in `test/`. Override recorded in `.aise/state.json` (`P4.override.failed`). | [#18](https://github.com/Benjam1nP/AISE/issues/18) | medium   |
+| 19  | P6 is not stale after a code change. The walk closed the ticket with the deploy check from before the change; a manual deploy check was needed to prove the new code deploys.                                                                  | `.aise/checks/deploy.json` was from 11:10, the ticket closed at 11:19. `scripts/run-auction.ts check` reran it.          | [#19](https://github.com/Benjam1nP/AISE/issues/19) | medium   |
+| 20  | Open points the change report names itself: the live event payload is not in the design (the test takes `reserveMet` from `PublicItem`), no test covers the reserve display in `public/index.html`, and P1 recorded 3 unconfirmed assumptions. | TCK-001 report in `.aise/tickets.json`.                                                                                  | left open, visible in the report                   | low      |
+
+Earlier P4 and P5 work on this showcase (findings 1 to 17) brought the project to $4.68 before this
+run. Nothing hit a turn or cost limit; the deploy agent needed one deploy check.

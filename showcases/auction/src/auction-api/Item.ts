@@ -6,12 +6,15 @@ const EXTENSION_MS = 2 * 60 * 1000;
 
 /**
  * Auction item listed by a seller, with prices in the item currency.
- * @trace DSN-015 REQ-001 REQ-002 REQ-004 REQ-009
+ * @trace DSN-015 REQ-001 REQ-002 REQ-004 REQ-009 REQ-012
  */
 export class Item {
-  constructor(public id: string, public sellerId: string, public title: string, public startingPrice: number, public currency: Currency, public endTime: Date, public status: AuctionStatus, public highestBidAmount: number | null, public highestBidderId: string | null, public winnerId: string | null) {
+  constructor(public id: string, public sellerId: string, public title: string, public startingPrice: number, public reservePrice: number | null, public currency: Currency, public endTime: Date, public status: AuctionStatus, public highestBidAmount: number | null, public highestBidderId: string | null, public winnerId: string | null) {
     if (!Number.isFinite(startingPrice) || startingPrice < 0) {
       throw new Error('Starting price must be a non-negative number');
+    }
+    if (reservePrice !== null && (!Number.isFinite(reservePrice) || reservePrice < startingPrice)) {
+      throw new Error('Reserve price must not be below the starting price');
     }
     if (!Object.values(Currency).includes(currency)) {
       throw new Error('Currency must be CHF, EUR or USD');
@@ -62,5 +65,24 @@ export class Item {
     }
     this.highestBidAmount = amount;
     this.highestBidderId = bidderId;
+  }
+
+  /** Returns whether the highest bid meets the reserve, or null when the item has no reserve. */
+  isReserveMet(): boolean | null {
+    if (this.reservePrice === null) {
+      return null;
+    }
+    return this.highestBidAmount !== null && this.highestBidAmount >= this.reservePrice;
+  }
+
+  /** Closes the auction: the highest bidder wins unless there is no bid or the reserve is not met, then it is unsold. */
+  close(): void {
+    if (this.highestBidAmount === null || this.highestBidderId === null || this.isReserveMet() === false) {
+      this.status = AuctionStatus.unsold;
+      this.winnerId = null;
+    } else {
+      this.status = AuctionStatus.closed;
+      this.winnerId = this.highestBidderId;
+    }
   }
 }

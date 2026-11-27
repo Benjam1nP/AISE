@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-<!-- @trace DSN-042 REQ-001 REQ-002 REQ-003 REQ-004 REQ-005 REQ-008 REQ-009 -->
+<!-- @trace DSN-042 REQ-001 REQ-002 REQ-003 REQ-004 REQ-005 REQ-008 REQ-009 REQ-012 -->
 <meta charset="utf-8">
 <title>Auction</title>
 <style>
@@ -27,6 +27,7 @@ li{margin:.3em 0}
 <h2>List item</h2>
 <input id="title" placeholder="Title">
 <input id="price" type="number" min="0" step="0.01" placeholder="Starting price">
+<input id="reserve" type="number" min="0" step="0.01" placeholder="Reserve (optional)">
 <select id="currency"><option>CHF</option><option>EUR</option><option>USD</option></select>
 <input id="end" type="datetime-local">
 <button id="list">List</button>
@@ -75,6 +76,7 @@ function describe(v) {
       s += ' (highest ' + (v.convertedHighestBid === null ? 'no rate' : v.convertedHighestBid.toFixed(2) + ' ' + v.displayCurrency) + ')';
     }
   }
+  if (it.reserveMet !== null && it.reserveMet !== undefined) s += it.reserveMet ? ', reserve met' : ', reserve not met';
   s += ', ends ' + new Date(it.endTime).toLocaleString();
   if (it.status !== 'open') {
     if (it.winnerId) s += it.winnerId === userId ? ', You won!' : ', winner ' + it.winnerId;
@@ -172,12 +174,15 @@ $('list').onclick = async () => {
     if (!userId) throw new Error('Register first');
     const priceText = $('price').value.trim();
     if (priceText === '' || !Number.isFinite(Number(priceText))) throw new Error('Enter a starting price');
+    const reserveText = $('reserve').value.trim();
+    if (reserveText !== '' && !Number.isFinite(Number(reserveText))) throw new Error('Enter a valid reserve price');
     const end = new Date($('end').value);
     if ($('end').value === '' || Number.isNaN(end.getTime())) throw new Error('Enter a valid end time');
     await api('POST', '/api/items', {
       userId,
       title: $('title').value,
       startingPrice: Number(priceText),
+      reservePrice: reserveText === '' ? null : Number(reserveText),
       endTime: end.toISOString(),
       currency: $('currency').value,
     });

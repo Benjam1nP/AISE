@@ -5,7 +5,7 @@ import { EventFeed } from './EventFeed.js';
 /**
  * Publishes accepted bid events to the internal ws event feed.
  *
- * @trace DSN-031 REQ-003 REQ-007 REQ-011
+ * @trace DSN-031 REQ-003 REQ-007 REQ-011 REQ-012
  */
 export class BidEventPublisher {
   constructor(private readonly eventFeed: EventFeed) {}
@@ -25,6 +25,7 @@ export class BidEventPublisher {
       highestBidderId: item.highestBidderId,
       endTime: item.endTime.toISOString(),
       status: item.status,
+      reserveMet: item.isReserveMet(),
     });
     this.eventFeed.publish(`item:${item.id}`, payload);
   }

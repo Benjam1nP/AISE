@@ -1,7 +1,7 @@
 {
-  "at": "2026-11-24T14:23:32.933Z",
-  "codeHash": "913b96a730016a6cce5f531a876ff25cc5d5e89b800f17a916fdd3a0819150df",
-  "designHash": "d0db3fe88996b4f246fa4c4068fba626902f8b1a290f6c4d4bc0b3b0489241e3",
+  "at": "2026-11-27T11:19:55.888Z",
+  "codeHash": "4613160a81986b0e1d48a0128dae4e711069a78ba43a757a9d7341ca782ed324",
+  "designHash": "065b9491b8a87be816fd872c54c891f39910cc7343723e2c0600368907c394f7",
   "typecheck": {
     "ok": true,
     "errors": [],

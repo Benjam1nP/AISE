@@ -1,13 +1,13 @@
-import { Item } from './Item.js';
+import { PublicItem } from './PublicItem.js';
 import { Currency } from './Currency.js';
 
 /**
  * Item as shown to a client, with optional converted prices.
  *
- * @trace DSN-017 REQ-005 REQ-010
+ * @trace DSN-017 REQ-005 REQ-010 REQ-012
  */
 export interface ItemView {
-  item: Item;
+  item: PublicItem;
   displayCurrency: Currency | null;
   convertedStartingPrice: number | null;
   convertedHighestBid: number | null;
