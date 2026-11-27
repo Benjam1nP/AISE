@@ -148,6 +148,9 @@ export function renderDeployment(d: DesignDoc): string {
 	for (const l of d.links) {
 		lines.push(`  ${toMermaidId(l.from)} -->|${quoted(linkLabel(l))}| ${toMermaidId(l.to)}`);
 	}
+	// Components and the nodes drawn as boxes take a click; Mermaid gives a subgraph none.
+	const boxed = d.nodes.filter((n) => !d.components.some((c) => c.nodeId === n.id));
+	for (const x of [...d.components, ...boxed]) lines.push(`  ${clickLine(x.id)}`);
 	return lines.join('\n');
 }
 

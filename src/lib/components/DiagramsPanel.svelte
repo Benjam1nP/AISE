@@ -1,16 +1,48 @@
 <script lang="ts">
 	import Network from '@lucide/svelte/icons/network';
+	import X from '@lucide/svelte/icons/x';
+	import type { DesignDoc } from '#lib/server/core/schemas/design.ts';
+	import type { Trace } from '#lib/server/core/trace.ts';
 	import type { ProjectSnapshot } from '#lib/server/index.ts';
-	import { EmptyState, Panel, Select, Stack, Tabs, type TabItem } from '#lib/ui/index.ts';
+	import { focusSource, type DiagramKind } from '#lib/trace-nav.ts';
+	import {
+		Button,
+		EmptyState,
+		Icon,
+		Panel,
+		Select,
+		Stack,
+		Tabs,
+		type TabItem
+	} from '#lib/ui/index.ts';
 	import Mermaid from './Mermaid.svelte';
+	import TraceLinks from './TraceLinks.svelte';
+
+	/** The diagram and element to show; pass a new object to show it again. */
+	export type DiagramFocus = { id: string; kind: DiagramKind; seqId?: string };
 
 	type Props = {
 		diagrams: ProjectSnapshot['diagrams'];
+		design?: DesignDoc | null;
 		/** Puts text (an element ID) into the chat message being written. */
 		oninsert: (text: string) => void;
+		focus?: DiagramFocus;
+		traces?: Record<string, Trace>;
+		names?: Record<string, string>;
+		onopenid?: (id: string) => void;
+		onopenfile?: (open: { path: string; line?: number }) => void;
 	};
 
-	let { diagrams, oninsert }: Props = $props();
+	let {
+		diagrams,
+		design = null,
+		oninsert,
+		focus,
+		traces = {},
+		names = {},
+		onopenid = () => {},
+		onopenfile = () => {}
+	}: Props = $props();
 
 	const KINDS: TabItem[] = [
 		{ id: 'useCase', label: 'Use case' },
@@ -25,11 +57,33 @@
 		deployment: 'Deployment diagram'
 	};
 
-	let kind = $state('useCase');
-	let picked = $state('');
+	// Writable deriveds: a new `focus` object replaces the developer's choice, a click replaces it too.
+	const incoming = $derived(focus);
+	let kind = $derived<string>(incoming?.kind ?? 'useCase');
+	let picked = $derived(incoming?.seqId ?? '');
+	/** The element whose trace shows below the diagram: the link's element, or the one clicked. */
+	let selected = $derived<string | undefined>(incoming?.id);
+	/**
+	 * The element the diagram marks and centres on: a link's only. A click does not mark, because a
+	 * new source draws the diagram again and the view would jump while the developer picks elements.
+	 */
+	const marked = $derived(incoming?.id);
+
 	const sequences = $derived(diagrams?.sequences ?? []);
 	const sequence = $derived(sequences.find((s) => s.id === picked) ?? sequences[0]);
-	const select = (id: string) => oninsert(`${id} `);
+	const trace = $derived(selected ? traces[selected] : undefined);
+
+	/** Another diagram drops the card: its element is not on screen anymore. */
+	function choose(k: string) {
+		kind = k;
+		selected = undefined;
+	}
+
+	function select(id: string) {
+		selected = id;
+		oninsert(`${id} `);
+	}
+	const source = (k: DiagramKind, text: string) => focusSource(text, k, marked, design);
 </script>
 
 <Panel title="Diagrams">
@@ -40,41 +94,89 @@
 			text="The design agent draws the diagrams after you approve the requirements."
 		/>
 	{:else}
-		<Tabs tabs={KINDS} bind:active={kind}>
-			{#snippet children(active)}
-				{#if active === 'sequence'}
-					{#if sequence}
-						<Stack>
-							<Select
-								label="Sequence diagram"
-								options={sequences.map((s) => ({ value: s.id, label: `${s.id} ${s.name}` }))}
-								bind:value={() => sequence.id, (v) => (picked = v)}
+		<Stack>
+			<Tabs tabs={KINDS} bind:active={() => kind, choose}>
+				{#snippet children(active)}
+					{#if active === 'sequence'}
+						{#if sequence}
+							<Stack>
+								<Select
+									label="Sequence diagram"
+									options={sequences.map((s) => ({ value: s.id, label: `${s.id} ${s.name}` }))}
+									bind:value={() => sequence.id, (v) => ((picked = v), (selected = undefined))}
+								/>
+								<Mermaid
+									source={sequence.mermaid}
+									label="{sequence.id} {sequence.name}"
+									onselect={select}
+								/>
+							</Stack>
+						{:else}
+							<EmptyState
+								icon={Network}
+								title="No sequence diagrams"
+								text="The design has no sequences yet. Ask the design agent for one."
 							/>
-							<Mermaid
-								source={sequence.mermaid}
-								label="{sequence.id} {sequence.name}"
-								onselect={select}
-							/>
-						</Stack>
+						{/if}
 					{:else}
-						<EmptyState
-							icon={Network}
-							title="No sequence diagrams"
-							text="The design has no sequences yet. Ask the design agent for one."
+						{@const k = active as DiagramKind}
+						<Mermaid
+							source={source(
+								k,
+								k === 'useCase'
+									? diagrams.useCase
+									: k === 'class'
+										? diagrams.class
+										: diagrams.deployment
+							)}
+							label={NAMES[k]}
+							onselect={select}
 						/>
 					{/if}
-				{:else}
-					<Mermaid
-						source={active === 'useCase'
-							? diagrams.useCase
-							: active === 'class'
-								? diagrams.class
-								: diagrams.deployment}
-						label={NAMES[active]}
-						onselect={select}
-					/>
-				{/if}
-			{/snippet}
-		</Tabs>
+				{/snippet}
+			</Tabs>
+			{#if trace}
+				<section class="selected" aria-label="Selected {trace.id}">
+					<header class="head">
+						<h3><span class="id">{trace.id}</span> {names[trace.id] ?? ''}</h3>
+						<Button
+							size="sm"
+							variant="ghost"
+							square
+							aria-label="Close the trace"
+							onclick={() => (selected = undefined)}><Icon icon={X} size={16} /></Button
+						>
+					</header>
+					<TraceLinks {trace} {names} {onopenid} {onopenfile} />
+				</section>
+			{/if}
+		</Stack>
 	{/if}
 </Panel>
+
+<style>
+	.selected {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-3);
+		padding: var(--space-3);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-md);
+	}
+
+	.head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-2);
+	}
+
+	h3 {
+		font-size: var(--text-base);
+		font-weight: var(--weight-semibold);
+	}
+
+	.id {
+		font-family: var(--font-mono);
+	}
+</style>

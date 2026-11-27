@@ -418,7 +418,7 @@ describe('workspace page, P3', () => {
 	};
 	const mountP3 = () =>
 		mount({
-			design: {},
+			design: { actors: [], useCases: [], classes: [], components: [], nodes: [], sequences: [] },
 			diagrams,
 			proposals: { designHash: 'h', proposals: [proposal] }
 		});

@@ -17,6 +17,7 @@
 
 	const uid = $props.id();
 	let host: HTMLDivElement | undefined = $state();
+	let panzoom: ReturnType<typeof PanZoom> | undefined = $state();
 	let mermaid = $state.raw<MermaidApi>();
 	let loadError = $state<string>();
 	let renderError = $state<string>();
@@ -24,6 +25,8 @@
 	/** Bumped when `data-theme` changes or a failed render is retried. */
 	let revision = $state(0);
 	let renders = 0;
+	/** The source the view was last set for; the same source drawn again keeps the view. */
+	let shownSource: string | undefined;
 
 	const message = (e: unknown) => (e instanceof Error ? e.message : String(e));
 	const token = (name: string) =>
@@ -84,6 +87,10 @@
 				if (!current || !host) return;
 				naturalSize(host.querySelector('svg'));
 				result.bindFunctions?.(host);
+				// A new mark in a diagram of the same size resizes nothing, so the view is set here too.
+				// A theme change draws the same source again and keeps the developer's view.
+				if (text !== shownSource) panzoom?.show();
+				shownSource = text;
 			} catch (e) {
 				document.getElementById(`d${id}`)?.remove();
 				if (!current) return;
@@ -127,7 +134,7 @@
 	{/if}
 	<!-- The SVG comes from mermaid.render; every label in the source is escaped server side (mermaid.ts), and Mermaid sanitises the output. -->
 	<div class={{ hidden: !svg }}>
-		<PanZoom>
+		<PanZoom bind:this={panzoom}>
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 			<div bind:this={host}>{@html svg}</div>
 		</PanZoom>
@@ -143,5 +150,10 @@
 
 	.hidden {
 		display: none;
+	}
+
+	/* The element a trace link opened the diagram for (trace-nav.ts adds the class to the source). */
+	.diagram :global(.aiseFocus) :global(:is(rect, path, polygon, circle, ellipse, line)) {
+		stroke: var(--color-brand) !important;
 	}
 </style>

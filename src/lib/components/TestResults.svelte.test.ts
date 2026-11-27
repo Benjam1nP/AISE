@@ -112,4 +112,13 @@ describe('TestResults', () => {
 		render(TestResults, props({ checks: testChecksOf({ result: null }) }));
 		expect(screen.getByText(/did not run/)).toBeTruthy();
 	});
+
+	it('links each test to its requirement or sequence, and an untested criterion too', async () => {
+		const onopenid = vi.fn();
+		render(TestResults, props({ onopenid }));
+		const links = screen.getAllByRole('button', { name: /^Show / });
+		expect(links.map((b) => b.textContent)).toContain('SEQ-001');
+		await userEvent.click(links[0]!);
+		expect(onopenid).toHaveBeenCalledWith('REQ-001');
+	});
 });

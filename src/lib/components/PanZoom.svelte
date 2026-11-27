@@ -59,6 +59,29 @@
 		touched = false;
 	}
 
+	/**
+	 * The view a diagram opens with: centred on the element marked `.aiseFocus` (a trace link opened
+	 * the diagram for it) at a readable size, else the whole diagram.
+	 */
+	export function show() {
+		const marked = content?.querySelector('.aiseFocus');
+		if (!viewport || !content || !marked) return fit();
+		const box = marked.getBoundingClientRect();
+		const origin = content.getBoundingClientRect();
+		if (box.width === 0 || box.height === 0) return fit();
+		const vw = viewport.clientWidth;
+		const vh = viewport.clientHeight;
+		// The box is in screen pixels at the current scale; these are the diagram's own units.
+		const w = box.width / scale;
+		const h = box.height / scale;
+		const cx = (box.left - origin.left) / scale + w / 2;
+		const cy = (box.top - origin.top) / scale + h / 2;
+		scale = Math.max(MIN, Math.min(1, vw / (w * 1.5), vh / (h * 1.5)));
+		x = vw / 2 - cx * scale;
+		y = vh / 2 - cy * scale;
+		touched = true;
+	}
+
 	function onwheel(event: WheelEvent) {
 		if (!viewport) return;
 		event.preventDefault();
@@ -151,14 +174,14 @@
 		}
 	}
 
-	// A new diagram (content size) always refits; a resized space refits only an untouched view.
+	// A new diagram (content size) always refits (or centres on its marked element); a resized space refits only an untouched view.
 	// The transform does not affect layout, so fitting never triggers these observers again.
 	$effect(() => {
 		if (!viewport || !content || typeof ResizeObserver === 'undefined') return;
 		const space = new ResizeObserver(() => {
 			if (!touched) fit();
 		});
-		const diagram = new ResizeObserver(() => fit());
+		const diagram = new ResizeObserver(() => show());
 		space.observe(viewport);
 		diagram.observe(content);
 		return () => {

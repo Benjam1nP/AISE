@@ -8,7 +8,7 @@
 	import CodegenProgress from '#lib/components/CodegenProgress.svelte';
 	import CodePanel from '#lib/components/CodePanel.svelte';
 	import DeployPanel from '#lib/components/DeployPanel.svelte';
-	import DiagramsPanel from '#lib/components/DiagramsPanel.svelte';
+	import DiagramsPanel, { type DiagramFocus } from '#lib/components/DiagramsPanel.svelte';
 	import GatePanel from '#lib/components/GatePanel.svelte';
 	import GenerateCode from '#lib/components/GenerateCode.svelte';
 	import GenerateDeployment from '#lib/components/GenerateDeployment.svelte';
@@ -21,13 +21,14 @@
 	import TicketsPanel from '#lib/components/TicketsPanel.svelte';
 	import { hasDeployFiles, hasTestFiles } from '#lib/code-files.ts';
 	import { codegenProgress } from '#lib/live-run.ts';
+	import { traceNames, traceTarget } from '#lib/trace-nav.ts';
+	import { TraceStore } from '#lib/trace-store.svelte.ts';
 	import {
 		activeTabId,
 		attentionPhase,
 		fileBelongsToTab,
 		selectedTicketId,
 		tabForFile,
-		tabForId,
 		ticketsTabOpen,
 		workPhase,
 		workspaceTabs,
@@ -54,6 +55,29 @@
 	onMount(() => stream.connect(data.snapshot.name));
 
 	const snapshot = $derived(data.snapshot);
+
+	// The traces behind the links between the tabs; fetched again when what they are built from changes.
+	const traceStore = new TraceStore();
+	const traceKey = $derived(
+		JSON.stringify([
+			snapshot.name,
+			// A run can edit a file in place and a discard restores it; neither changes the list.
+			snapshot.lastRun?.id,
+			snapshot.lastRun?.status,
+			snapshot.discardedRunIds.length,
+			snapshot.files,
+			snapshot.checks?.at,
+			snapshot.testChecks?.at,
+			snapshot.requirements?.requirements,
+			snapshot.design
+		])
+	);
+	$effect(() => {
+		// A run changes files one by one; each fetch parses the code, so wait for the run to end.
+		if (snapshot.activeRun) return;
+		void traceStore.load(snapshot.name, traceKey);
+	});
+	const names = $derived(traceNames(snapshot.requirements?.requirements ?? [], snapshot.design));
 
 	// The Tickets tab opens once the tests are approved, or as soon as a ticket exists.
 	const ticketsTab = $derived(ticketsTabOpen(snapshot.state.phases, snapshot.tickets.length));
@@ -173,13 +197,39 @@
 		showTickets();
 	}
 
-	/** An affected ID of a ticket plan: requirements or diagrams. */
+	let reqFocus: { id: string } | undefined = $state();
+	let diagramFocus: DiagramFocus | undefined = $state();
+	/**
+	 * A trace link or an affected ID of a ticket plan: a requirement opens its row, a design element
+	 * the diagram that draws it, marked. Any other ID is ignored.
+	 */
 	function showId(id: string) {
-		const target = tabForId(id);
-		if (!target) return;
-		pickTab(target);
+		const target = traceTarget(id, snapshot.design);
+		if (!target) {
+			// A plan can name an element a later change removed: show the diagrams, nothing marked.
+			if (/^(UC|SEQ|ACT|DSN)-/.test(id)) showDiagrams();
+			return;
+		}
+		if (target.tab === 'requirements') reqFocus = { id };
+		else diagramFocus = { id, kind: target.kind, seqId: target.seqId };
+		pickTab(target.tab);
 		pane = 'right';
+		// The requirement row scrolls itself into view; a diagram needs the tabs brought up.
+		if (target.tab === 'diagrams') void revealTabs();
 	}
+
+	function showDiagrams() {
+		diagramFocus = undefined;
+		pickTab('diagrams');
+		pane = 'right';
+		void revealTabs();
+	}
+
+	// A link's target applies once: leaving its tab drops it, so coming back does not jump there again.
+	$effect(() => {
+		if (activeTab !== 'requirements') reqFocus = undefined;
+		if (activeTab !== 'diagrams') diagramFocus = undefined;
+	});
 
 	/** A ticket step that needs review in a phase: leave the Tickets tab for that phase's artefact. Phases the page cannot show are ignored. */
 	function showPhase(p: string) {
@@ -372,15 +422,30 @@
 							<Tabs {tabs} bind:active={() => activeTab, pickTab}>
 								{#snippet children(active)}
 									{#if active === 'diagrams'}
-										<DiagramsPanel diagrams={snapshot.diagrams} oninsert={insertId} />
+										<DiagramsPanel
+											diagrams={snapshot.diagrams}
+											design={snapshot.design}
+											oninsert={insertId}
+											focus={diagramFocus}
+											traces={traceStore.traces}
+											{names}
+											onopenid={showId}
+											onopenfile={showFile}
+										/>
 									{:else if active === 'code'}
 										{#if codeProgress}
 											<CodegenProgress files={codeProgress} />
 										{:else}
-											<CodePanel {snapshot} open={openFile} />
+											<CodePanel {snapshot} open={openFile} onopenid={showId} />
 										{/if}
 									{:else if active === 'tests'}
-										<TestsPanel {snapshot} {form} progress={testProgress} open={openFile} />
+										<TestsPanel
+											{snapshot}
+											{form}
+											progress={testProgress}
+											open={openFile}
+											onopenid={showId}
+										/>
 									{:else if active === 'deploy'}
 										<DeployPanel {snapshot} />
 									{:else if active === 'tickets'}
@@ -395,7 +460,14 @@
 											onselectphase={showPhase}
 										/>
 									{:else}
-										<RequirementsPanel {snapshot} />
+										<RequirementsPanel
+											{snapshot}
+											traces={traceStore.traces}
+											{names}
+											focus={reqFocus}
+											onopenid={showId}
+											onopenfile={showFile}
+										/>
 									{/if}
 								{/snippet}
 							</Tabs>

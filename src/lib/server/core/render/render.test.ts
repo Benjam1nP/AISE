@@ -131,6 +131,8 @@ describe('renderDeployment', () => {
 		expect(out).toContain('subgraph DSN_008["App server"]');
 		expect(out).toContain('DSN_006["Task API"]');
 		expect(out).toContain('DSN_007["Persistence"]');
+		expect(out).toContain('click DSN_006 call aiseSelect("DSN-006")');
+		expect(out).not.toContain('click DSN_008 ');
 		// the relation DSN-005 to DSN-004 across components gives no edge
 		expect(out).not.toContain('-->');
 		const withLink = renderDeployment(linked());

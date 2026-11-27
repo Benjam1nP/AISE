@@ -42,12 +42,6 @@ export function ticketsTabOpen(phases: State['phases'], ticketCount: number): bo
 	return p5 === 'approved' || p5 === 'stale' || ticketCount > 0;
 }
 
-/** The tab that shows an artefact ID of a ticket plan: requirements, or the diagrams the design has. */
-export function tabForId(id: string): 'requirements' | 'diagrams' | undefined {
-	if (id.startsWith('REQ-')) return 'requirements';
-	return /^(UC|SEQ|ACT|DSN)-/.test(id) ? 'diagrams' : undefined;
-}
-
 /** A phase with a gate that a ticket step can open. */
 export function workPhase(phase: string): GatePhase | undefined {
 	return phase === 'P1' || phase === 'P2' || phase === 'P4' || phase === 'P5' || phase === 'P6'

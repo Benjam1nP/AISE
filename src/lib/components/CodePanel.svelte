@@ -21,9 +21,11 @@
 		snapshot: ProjectSnapshot;
 		/** The file to show, and the line to mark in it. Pass a new object to open again. */
 		open?: Open;
+		/** Shows a trace ID (requirement or design element) in its tab; without it the IDs are plain badges. */
+		onopenid?: (id: string) => void;
 	};
 
-	let { snapshot, open }: Props = $props();
+	let { snapshot, open, onopenid }: Props = $props();
 
 	const files = $derived(snapshot.files);
 	/** A class file first, then any source file, then whatever is there. */
@@ -81,12 +83,13 @@
 
 	/**
 	 * A file opened from outside (a gate item) takes focus; this runs again for every new `open`.
-	 * The page only scrolls when the header is off screen.
+	 * The page only scrolls when the panel is not fully on screen, and then as little as it can, so a
+	 * file opened below a long list (test results) shows its code, not just its header.
 	 */
 	function focusOnOpen(node: HTMLElement) {
 		if (!open) return;
 		node.focus({ preventScroll: true });
-		node.scrollIntoView?.({ block: 'nearest' });
+		(node.closest('.code') ?? node).scrollIntoView?.({ block: 'nearest' });
 	}
 
 	// The last loaded file stays on screen until the next one has loaded: swapping it for a
@@ -191,7 +194,20 @@
 					{@const ids = traceIds(shown.loaded.text)}
 					{#if ids.length > 0}
 						<ul class="trace" aria-label="Trace">
-							{#each ids as id (id)}<li><Badge tone="info">{id}</Badge></li>{/each}
+							{#each ids as id (id)}
+								<li>
+									{#if onopenid}
+										<button
+											type="button"
+											class="trace-link aise-hit"
+											aria-label="Show {id}"
+											onclick={() => onopenid(id)}><Badge tone="info">{id}</Badge></button
+										>
+									{:else}
+										<Badge tone="info">{id}</Badge>
+									{/if}
+								</li>
+							{/each}
 						</ul>
 					{/if}
 				{/if}
@@ -371,6 +387,19 @@
 		font-family: var(--font-mono);
 		font-size: var(--text-xs);
 		overflow-wrap: anywhere;
+	}
+
+	.trace-link {
+		padding: 0;
+		border: 0;
+		border-radius: var(--radius-sm);
+		background: none;
+		font: inherit;
+		cursor: pointer;
+	}
+
+	.trace-link:hover :global(.badge) {
+		text-decoration: underline;
 	}
 
 	.trace {
