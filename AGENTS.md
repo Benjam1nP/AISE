@@ -39,9 +39,10 @@ C1 phases beyond coding, C2 artefact alignment under change, C3 usability, C4 do
 - `docs/superpowers/specs/2026-11-04-ai-se-environment-design.md` the design. Read it before architectural work.
 - `docs/pdf/` the requirements PDF; the course slides in `docs/pdf/slides/` are gitignored (local copy only). Reference material only; do not modify.
 - `docs/context/` structured Markdown translations and master cross-reference index (`docs/context/INDEX.md`) for AI agents.
-- `docs/assets/` README banner. `docs/questions/` kickoff questions and answers; `docs/diagrams/` overview diagram and visual design summary (`design-summary.html`).
+- `docs/assets/` README banner. `docs/questions/` kickoff questions and answers; `docs/diagrams/` project overview, agent architecture (also exported as SVG and PNG) and visual design summary (`design-summary.html`); `docs/superpowers/plans/` the implementation plans next to the specs.
+- `runner/` the fixed stack (`package.json`, lockfile, `Dockerfile`) of the Docker runner image that type checks and tests generated code.
 
-- `src/` one TypeScript package: SvelteKit UI and server code. Server code goes in `src/lib/server/` (`core/`, `agents/`, `orchestrator/`, `mcp/`) as it lands.
+- `src/` one TypeScript package: SvelteKit UI and server code. Server code is in `src/lib/server/` (`core/`, `agents/`, `orchestrator/`, `codegen/`, `testgen/`, `mcp/`).
 - `test/` tests outside `src/`.
 - `showcases/<name>/` the three hand in projects (todo, booking, auction) with their `.aise/` artefacts; index in `showcases/README.md`. Tickets (`.aise/tickets.json` and the ticket chats) are committed with the showcase they belong to. Any other folder under `showcases/` is gitignored scratch.
 - `evidence/` the evidence per grading criterion (index in `evidence/README.md`): scaling comparison, change propagation, injected bug, artefact quality.

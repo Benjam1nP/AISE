@@ -4,7 +4,7 @@ One entry per decision: date, what, why. Newest entries go at the bottom.
 
 - 2026-11-04: One plan per week; this plan covers week 1 only. Why: each plan ends in working software and the later plans can use what we learn.
 - 2026-11-04: `write_requirements` and `update_design` take the whole document. Why: simplest to validate and to explain; update mode with affected IDs arrives with P7.
-- 2026-11-04: The design agent gets the `trace` tool in week 2, together with the trace query. Why: nothing in P2 needs it yet.
+- 2026-11-04: The design agent gets the `trace` tool in week 2, together with the trace query. Why: nothing in P2 needs it yet. (Changed: the `trace` tool went to the code and maintenance agents, the design agent has `code_model` instead, see 2026-11-22.)
 - 2026-11-04: Actors get `ACT-` IDs; classes, components and nodes share `DSN-` numbering. Why: sequences and use cases need stable references to actors.
 - 2026-11-04: Own design system in `src/lib/ui/` (tokens, about 25 components, `/dev/ui` showcase, guardrail test) following the Design System Blueprint checklist, with the colours of `design-summary.html` and a dark theme. Why: consistent UI from the first screen, no later migration, and no component library we would have to explain.
 - 2026-11-04: Opus and Sonnet calls use server side refusal fallbacks (`fallbacks: "default"`). Why: a false positive refusal during the live demo should not stop a run.

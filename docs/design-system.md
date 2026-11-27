@@ -176,7 +176,7 @@ How this app applies them:
 | Rule | In the code |
 | --- | --- |
 | R16 Long agent work shows an orb | `ThinkingOrb`: `working` while waiting for the model, `searching` while tools run, `composing` while text streams. 20 px in the chat stream; 64 px is available for start states but so far only shown in `/dev/ui`. Theme follows `data-theme`; reduced motion shows one static frame. |
-| R17 Buttons stay enabled | `Button` `loading` sets `aria-busy`, shows the spinner and stays focusable (no `disabled` attribute). `disabled` only for things that cannot happen (phases P3 to P7, later tabs), always with visible text why. Approve with a failing gate stays enabled and moves focus to the gate checklist. |
+| R17 Buttons stay enabled | `Button` `loading` sets `aria-busy`, shows the spinner and stays focusable (no `disabled` attribute). `disabled` only for things that cannot happen (phases and tabs not reached yet, the Trace tab), always with visible text why. Approve with a failing gate stays enabled and moves focus to the gate checklist. |
 | R18 Field states and timing | `Input`, `Textarea`, `Select` take `error`, `success` and (Input, Textarea) `loading`; `createFieldValidation` runs blur then live. |
 | R19 Discard asks with named buttons | `Modal` says what is restored; buttons "Discard run" and "Keep run". |
 | R20 Delay and error surfaces | `Spinner` and `Skeleton` take `delay` (fetches use 300). Failed run: error `Banner` with Retry. Lost connection: warning `Banner`. Action errors sit next to the control that caused them. |
@@ -208,7 +208,7 @@ How this app applies them:
 - `font-size` without `var(--text-*)`, `font-family` without a `var(--font-*)` token;
 - `padding`, `margin`, `gap` or `inset` with a non zero length other than `1px` (`0`, `auto`, `inherit`, percentages and `calc()` built from tokens are fine);
 - `transition` or `animation` durations without `var(--duration-*)`;
-- an export of `src/lib/ui/index.ts` missing from `src/routes/dev/ui/+page.svelte` (skipped until `index.ts` exists).
+- an export of `src/lib/ui/index.ts` missing from `src/routes/dev/ui/+page.svelte`.
 
 ## Contributing a component
 

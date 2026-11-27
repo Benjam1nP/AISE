@@ -51,7 +51,7 @@ cp .env.example .env   # add ANTHROPIC_API_KEY
 npm run dev            # http://localhost:5173
 ```
 
-Requires Node 22.9 or newer (`--env-file-if-exists`). Docker is needed from P4 on: generated code is type checked, tested and deployed only inside containers. `.env.example` sets `HOST=127.0.0.1`, so `npm start` (after `npm run build`) listens on this machine only; the server spends API credit and writes files, so do not expose it to the network.
+Projects are listed from `AISE_PROJECTS_DIR` (default `showcases`; `.env.example` sets it). Requires Node 22.9 or newer (`--env-file-if-exists`). Docker is needed from P4 on: generated code is type checked, tested and deployed only inside containers. `.env.example` sets `HOST=127.0.0.1`, so `npm start` (after `npm run build`) listens on this machine only; the server spends API credit and writes files, so do not expose it to the network.
 
 ### Before a demo
 
@@ -76,7 +76,7 @@ CI runs all four plus a secret scan (gitleaks) and `npm audit`. `/dev/ui` (dev s
 
 Tools: `read_requirements`, `write_requirements`, `read_design`, `update_design`, `report_coverage`, `list_files`, `read_file`, `write_file`, `delete_file`, `code_model`, `detect_drift`, `typecheck`, `run_tests`, `start_app`, `deploy_check`, `read_tickets`, `trace`. Our own agents call the same tools in process. Writes over MCP are recorded as a P7 run with backups but skip the phase gates. Discard of a P7 run (an MCP write, a ticket triage or a close) works through the orchestrator but has no button in the UI yet.
 
-`.mcp.json` also lists 21st.dev and Originkit for UI reference during development; they read `TWENTYFIRST_API_KEY` and `ORIGIN_KIT_KEY` from `.env` and are not part of the product.
+`.mcp.json` also lists 21st.dev, Originkit and Aria Icons for UI reference during development; the first two read `TWENTYFIRST_API_KEY` and `ORIGIN_KIT_KEY` from `.env` and Aria Icons needs no key. None is part of the product.
 
 ## Documentation
 

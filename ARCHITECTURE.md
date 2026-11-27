@@ -1,6 +1,6 @@
 # Architecture
 
-Status: week 2: P1 (requirements), P2 (design), P4 (code generation), P5 (testing), P6 (deployment) and P7 (ticket based maintenance) built end to end in the workspace UI; the MCP server is built. The frozen design record is `docs/superpowers/specs/2026-11-04-ai-se-environment-design.md`. This file is the living architecture.
+Status: all seven phases are built end to end in the workspace UI (P1 requirements, P2 design, P3 design review, P4 code generation, P5 testing, P6 deployment, P7 ticket based maintenance), the three showcases are taken through P7, and the MCP server is built. The frozen design record is `docs/superpowers/specs/2026-11-04-ai-se-environment-design.md`. This file is the living architecture.
 
 ## Overview
 
@@ -253,7 +253,7 @@ Form action -> `Orchestrator` (claims the project, records the user message and 
 
 After a run, a phase that was approved (or stale) keeps that state when the run left its artefact unchanged; otherwise it reopens for approval. Discard last run restores the files and the phase state the run started from, then recomputes P2 staleness, and leaves the run's chat messages out of later agent history.
 
-## Workspace UI (week 1)
+## Workspace UI
 
 - `/` lists projects and creates one (`create` action, validated with `isValidProjectName` on the server). `/p/<name>` is the workspace: phase rail (`PhaseBar.svelte`, all seven phases with their status and cost), chat bound to P1, P2, P4, P5 or P6 (or to a ticket, see below), artefact tabs (Requirements, Diagrams, Code, Tests, Deploy, Tickets, Trace); run costs show in the phase rail.
 - Form actions on `/p/<name>` (`send`, `approve`, `stillValid`, `update`, `generate`, `checkCode`, `generateTests`, `checkTests`, `triageTests`, `fixLoop`, `generateDeployment`, `checkDeploy`, `applyFix`, `discard`, `editRequirements`, and the ticket actions `createTicket`, `ticketSend`, `approvePlan`, `rejectTicket`, `closeTicket`, `openDriftTicket`, and the P3 actions `reviewDesign`, `acceptProposal`, `rejectProposal` with a `proposalId`) call the orchestrator; `src/lib/action-errors.server.ts` maps `ConflictError` to 409, `PathError` and zod errors to 400 and `NotFoundError` to 404, always with a plain `message`.

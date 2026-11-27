@@ -63,7 +63,12 @@ export function workspaceTabs(open: OpenTabs): TabItem[] {
 		gated('tests', 'Tests', open.tests, 'Available once the tests are generated'),
 		gated('deploy', 'Deploy', open.deploy, 'Available once the deployment is generated'),
 		gated('tickets', 'Tickets', open.tickets, 'Available once the tests are approved'),
-		{ id: 'trace', label: 'Trace', disabled: true, hint: 'Available from week 2' }
+		{
+			id: 'trace',
+			label: 'Trace',
+			disabled: true,
+			hint: 'Open a requirement row or click a diagram element to see its trace'
+		}
 	];
 }
 
