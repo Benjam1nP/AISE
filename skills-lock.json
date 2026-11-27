@@ -29,6 +29,20 @@
       "skillPath": "skills/pptx/SKILL.md",
       "computedHash": "e3c37c284de3a271a7e135d0cea5ead7cfaf002b83719d72e958963ccc5dd52f"
     },
+    "presentation-design": {
+      "source": "jwynia/agent-skills",
+      "commit": "e02ec7e226a6e4f8419fd3b88a1d8e472d421b32",
+      "sourceType": "github",
+      "skillPath": "skills/general/communication/presentation-design/SKILL.md",
+      "computedHash": "47862b82a1b4450493d18ead2c64346399152f6f509de170aeca67b97c235dfe"
+    },
+    "public-speaking": {
+      "source": "RefoundAI/lenny-skills",
+      "commit": "13598cc54e09399bc1bc1398b0fca284110efb2f",
+      "sourceType": "github",
+      "skillPath": "skills/public-speaking/SKILL.md",
+      "computedHash": "90685d7ecf6cea259fe56b934f303d488089cf0ccda9627cbf58579124b66c7a"
+    },
     "systematic-debugging": {
       "source": "obra/superpowers",
       "commit": "22f0b463e7a5e579904dd6211a520321035526f7",
