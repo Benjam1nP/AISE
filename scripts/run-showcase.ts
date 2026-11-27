@@ -32,7 +32,7 @@ const TICKETS = {
 } as const;
 
 const [name, ...args] = process.argv.slice(2);
-if (!(name in TICKETS)) {
+if (!name || !Object.hasOwn(TICKETS, name)) {
 	console.error(`unknown showcase: ${name ?? '(none)'}\n${USAGE}`);
 	process.exit(1);
 }
