@@ -11,16 +11,16 @@ Source: `docs/context/project_requirements.md` (§5 grading criteria, §10 prese
 
 ## Slide plan (about 12 minutes)
 
-| # | Slide | Time | Content |
-|---|---|---|---|
-| 1 | Title | 0:15 | Project name, one line description, both names, course, date |
-| 2 | Problem and idea | 0:45 | AI writes code well; the "wings" (requirements, design, tests, deployment, maintenance) are the hard part. Our answer: design first, developer approves every phase, every artefact traceable by ID |
-| 3 | Architecture (required, C4) | 1:30 | One diagram, see below |
-| 4 | Workflow P1 to P7 | 0:30 | The seven phases as one strip with the approval gate between them; this slide is the map for the demo |
-| 5 | Live demo | 7:30 | Switch to the app, see the demo script below. No slides during the demo |
-| 6 | Showcases and limits (C6) | 0:45 | Small / medium / larger (to do, booking, auction): what worked, where it broke and why |
-| 7 | Lessons learned | 0:30 | Two or three honest points: where AI helped, where it failed |
-| 8 | Thanks / Q&A | 0:15 | Repo link, names |
+| #   | Slide                       | Time | Content                                                                                                                                                                                             |
+| --- | --------------------------- | ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Title                       | 0:15 | Project name, one line description, both names, course, date                                                                                                                                        |
+| 2   | Problem and idea            | 0:45 | AI writes code well; the "wings" (requirements, design, tests, deployment, maintenance) are the hard part. Our answer: design first, developer approves every phase, every artefact traceable by ID |
+| 3   | Architecture (required, C4) | 1:30 | One diagram, see below                                                                                                                                                                              |
+| 4   | Workflow P1 to P7           | 0:30 | The seven phases as one strip with the approval gate between them; this slide is the map for the demo                                                                                               |
+| 5   | Live demo                   | 7:30 | Switch to the app, see the demo script below. No slides during the demo                                                                                                                             |
+| 6   | Showcases and limits (C6)   | 0:45 | Small / medium / larger (to do, booking, auction): what worked, where it broke and why                                                                                                              |
+| 7   | Lessons learned             | 0:30 | Two or three honest points: where AI helped, where it failed                                                                                                                                        |
+| 8   | Thanks / Q&A                | 0:15 | Repo link, names                                                                                                                                                                                    |
 
 Keep a hidden backup slide after slide 8 with screenshots of every demo step, in case the live demo breaks.
 
