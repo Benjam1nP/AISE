@@ -150,10 +150,16 @@ P6 again and closed with its change report in `.aise/tickets.json`:
 | P2 and P3        | 4    | 0.33       | 108 s      | `dueDate`, `TaskView` (DSN-009), `TaskService.isOverdue`; 4 proposals rejected |
 | P4               | 1    | 0.15       | 55 s       | gate met, old test type errors shown for P5 (#18), app starts                  |
 | P5               | 1    | 0.29       | 95 s       | 48 passed, 2 manual; tests of UC-001 to UC-005 updated                         |
-| P6               | 0    | 0          | 7 s check  | deploy check out of date after the code change (#19), rerun passed             |
+| P6               | 0    | 0          | 7 s check  | deploy check out of date after the code change (#19), rerun passed (note 1)    |
 | Close and report | 1    | 0.18       | 22 s       | change report, open items listed                                               |
 | ticket total     | 9    | 1.13       | 5.4 min    | no override                                                                    |
 | project total    | 22   | 1.73       | 9.7 min    | 10 requirements, 5 classes, 434 lines of code, 48 tests                        |
+
+Costs are rounded per step, so the step rows add up to 1.14 against the exact ticket total.
+
+Note 1: the P6 approval in `.aise/state.json` is still the one from 12:18. Its hashes predate P6
+tracking the code (#19), so the code change made only the deploy check stale, not the approval;
+the rerun deploy check (13:03, `.aise/checks/deploy.json`) covers the final code.
 
 What happened in P7:
 
