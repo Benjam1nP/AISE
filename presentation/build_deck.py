@@ -346,7 +346,7 @@ s = new_slide("Nur Titel")
 header(s, "Showcases and limits", "Three projects of growing size; the larger one exposes where the checks stop.")
 cols = [
     ("Small · to do", "48", "tests green after a P7 change ticket", "10 requirements, 5 classes, $1.73 in total"),
-    ("Medium · booking", "13", "classes and 11 use cases", "12 requirements, room booking rules"),
+    ("Medium · booking", "58", "tests green after a P7 change ticket", "12 requirements, 14 classes, $2.63 in total"),
     ("Larger · auction", "57", "tests green after a P7 change ticket", "23 classes, 4 nodes, 2 live services"),
 ]
 cw, cg = 3.9, 0.295
@@ -368,8 +368,8 @@ for i, (h, b) in enumerate(limits):
     box(s, x, 4.8, cw, 1.5, fill=WHITE, line=GREEN, shape=MSO_SHAPE.RECTANGLE, name=f"Limit {i + 1}")
     text(s, x + 0.2, 4.93, cw - 0.4, 0.3, h, size=14, bold=True, color=GREEN)
     text(s, x + 0.2, 5.3, cw - 0.4, 1.2, b, size=13)
-source(s, "showcases/, evidence/scaling-comparison.md (to do: 22 runs, $1.73; auction: 35 runs, $6.33 in total)")
-notes(s, "0:45. To do is the small one we just demoed: 10 requirements and 5 classes, taken through a due date change ticket with 48 tests green, for 1.73 dollars over 22 runs. Booking is medium: 12 requirements, 11 use cases, 13 classes. Auction is the larger one: 23 classes on four nodes, two live services, taken through a reserve price change ticket with 57 tests green, for 6.33 dollars over 35 runs. Where it broke: the gates were green while concurrent bids could overwrite each other, because generated tests do not race requests; the design agent adds infrastructure outside our stack; and the auction ticket showed two gate problems, which we have since fixed. CHECK BEFORE THE TALK: update the booking numbers once issue #4 is done.")
+source(s, "showcases/, evidence/scaling-comparison.md (to do: 22 runs, $1.73; booking: 20 runs, $2.63; auction: 35 runs, $6.33 in total)")
+notes(s, "0:45. To do is the small one we just demoed: 10 requirements and 5 classes, taken through a due date change ticket with 48 tests green, for 1.73 dollars over 22 runs. Booking is medium: 12 requirements and 14 classes, taken through a design change ticket that moved the overlap rule into one class, with 58 tests green, for 2.63 dollars over 20 runs. Auction is the larger one: 23 classes on four nodes, two live services, taken through a reserve price change ticket with 57 tests green, for 6.33 dollars over 35 runs. Where it broke: the gates were green while concurrent bids could overwrite each other, because generated tests do not race requests; the design agent adds infrastructure outside our stack; and the auction ticket showed two gate problems, which we have since fixed.")
 
 # 8 Lessons learned -----------------------------------------------------------
 s = new_slide("Nur Titel")
